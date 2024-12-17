@@ -41,12 +41,14 @@ Otherwise, requirements for this configuration are:
 - Clone repository with `git clone git@github.com:redjax/neovim` (or with HTTPS: `git clone https://github.com/redjax/neovim ./neovim`)
 - Run one of the [setup scripts](./scripts/)
   - Linux:
-    - (Debian, Ubuntu, etc): [`./scripts/linux/install-neovim-deb.sh](./scripts/linux/install-neovim-deb.sh)
+    - (Debian, Ubuntu, etc): [`./scripts/linux/install-neovim-deb.sh`](./scripts/linux/install-neovim-deb.sh)
   - Windows:
     - [`./scripts/windows/install-neovim-win.ps1`](./scripts/windows/install-neovim-win.ps1)
 - Create a symbolic link of [`config/nvim`](./config/nvim) at:
   - (Linux): `$HOME/.config/nvim`
-  - (Windows): `$env:USERPROFILE/.config/nvim`
+    - `ln -l /path/to/this-repo/config/nvim $HOME/.config/nvim`
+  - (Windows PowerShell): `$env:LOCALAPPDATA\nvim`
+    - `cmd /c mklink /J "C:\path\to\this-repo\config\nvim" "$env:LOCALAPPDATA\nvim"`
 - More to come...
 
 ## Notes
