@@ -1,8 +1,5 @@
 #!/bin/bash
 
-## Exit immediately if a command exits with a non-zero status
-set -e
-
 ## Set path where script was called from
 CWD=$(pwd)
 # echo "[DEBUG] CWD: ${CWD}"
@@ -12,7 +9,7 @@ NVIM_CONFIG_DIR="$HOME/.config/nvim"
 # echo "[DEBUG] Neovim config path: ${NVIM_CONFIG_DIR}"
 
 ## Neovim dependency packages installable with apt
-declare -a NVIM_APT_DEPENDENCIES=("build-essential")
+declare -a NVIM_APT_DEPENDENCIES=("build-essential" "ripgrep" "xclip" "git" "fzf" "libssl-dev" "fuse")
 # echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_APT_DEPENDENCIES[@]}"
 
 function return_to_root() {
@@ -27,7 +24,9 @@ function install-nerdfont() {
     TEMP_DIR="/tmp/firacode-nerdfont"
 
     if [[ ! -d "$FONT_DIR/FiraCode" ]]; then
+        echo ""
         echo "[ Neovim Setup - Install NerdFont ]"
+        echo ""
     else
         return
     fi
@@ -66,6 +65,84 @@ function install-nerdfont() {
     fc-cache -fv
 
     ## Change path back to starting point
+    return_to_root
+}
+
+function install-dependencies() {
+    ## Install all neovim dependencies
+
+    echo ""
+    echo "[ Neovim Setup - Install neovim dependencies ]"
+    echo ""
+
+    sudo apt update -y
+    sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
+
+    if ! command -v nvm > /dev/null 2>&1; then
+        echo "[WARNING] nvm is not installed."
+
+        ## Download & install nvm
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+
+        source ~/.bashrc
+    fi
+
+    if ! command -v npm > /dev/null 2>&1; then
+        echo "[WARNING] node is not installed."
+
+        nvm install --lts
+        nvm alias default lts/*
+    fi
+}
+
+function install-neovim() {
+    ## Install Neovim from Github release
+
+    TEMP_DIR="/tmp/neovim"
+    NEOVIM_DOWNLOAD_URL="https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
+
+    # if command -v nvim > /dev/null 2>&1; then
+    #     echo ""
+    #     echo "Neovim is already installed."
+    #     # echo "[DEBUG] Neovim path: " $(which nvim)
+    #     echo ""
+
+    #     return
+    # fi
+
+    # if [[ -f /usr/bin/nvim ]]; then
+    #     echo ""
+    #     echo "Neovim is already installed at path /usr/bin/nvim"
+        
+    #     return
+    # fi
+
+    echo ""
+    echo "[ Neovim Setup - Install neovim ]"
+    echo ""
+
+    if [[ ! -d $TEMP_DIR ]]; then
+        echo "Creating directory: $TEMP_DIR"
+
+        mkdir -pv "${TEMP_DIR}"
+    fi
+
+    cd $TEMP_DIR
+
+    if [[ ! -f "${TEMP_DIR}/nvim.appimage" ]]; then
+        echo "Downloading latest stable release from Github"
+        curl -LO "${NEOVIM_DOWNLOAD_URL}"
+    fi
+
+    ## Make it executable
+    chmod +x nvim.appimage
+
+    # Replace the old version
+    sudo mv nvim.appimage /usr/bin/nvim
+
+    # Verify the update
+    nvim --version
+
     return_to_root
 }
 
@@ -118,7 +195,12 @@ function main() {
 
     ## Install NERDFont
     install-nerdfont
-    
+
+    ## Install neovim dependencies
+    install-dependencies
+
+    ## Install neovim from github
+    install-neovim
 }
 
 ## Run script
