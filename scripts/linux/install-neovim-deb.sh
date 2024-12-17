@@ -93,6 +93,11 @@ function install-dependencies() {
         nvm install --lts
         nvm alias default lts/*
     fi
+
+    if ! command -v tree-sitter --version > /dev/null 2>&1; then
+        echo "[WARNING] tree-sitter is not installed."
+        npm install -g tree-sitter-cli
+    fi
 }
 
 function install-neovim() {
