@@ -1,4 +1,4 @@
-# Neovim Configurations <!-- omit in toc -->
+# Configuration Profiles <!-- omit in toc -->
 
 My Neovim configurations. The default configuration in [`nvim`](./nvim/) is my main template. I make best efforts for a cross-platform configuration that will work on Linux and Windows.
 

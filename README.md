@@ -1,5 +1,13 @@
 # Neovim Configuration <!-- omit in toc -->
 
+![GitHub Created At](https://img.shields.io/github/created-at/redjax/neovim)
+![GitHub last commit](https://img.shields.io/github/last-commit/redjax/neovim)
+![GitHub commits this year](https://img.shields.io/github/commit-activity/y/redjax/neovim)
+![GitHub repo size](https://img.shields.io/github/repo-size/redjax/neovim)
+<!-- ![GitHub Latest Release](https://img.shields.io/github/release-date/redjax/neovim) -->
+<!-- ![GitHub commits since latest release](https://img.shields.io/github/commits-since/redjax/neovim/latest) -->
+<!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/redjax/neovim/tests.yml) -->
+
 My `neovim` configuration as a git repository.
 
 ```
