@@ -12,6 +12,16 @@ If ( $DryRun ) {
     Write-Host "-DryRun enabled. Actions will be described, instead of taken. Messages will appear in purple where a live action would be taken." -ForegroundColor Magenta
 }
 
+$NeovimDependencies = @(
+    "win32yank",
+    "nodejs-lts",
+    "fzf",
+    "tree-sitter",
+    "ripgrep",
+    "FiraCode-NF-Mono",
+    "cmake"
+)
+
 function Install-ScoopCli {
     Write-Information "Install scoop from https://get.scoop.sh"
     Write-Host "Download & install scoop"
@@ -85,7 +95,7 @@ Install-ScoopCli
 Initialize-ScoopCli
 
 ## Install neovim dependencies with scoop
-ForEach ( $app in ("nodejs-lts", "fzf", "tree-sitter", "neovim") ) {
+ForEach ( $app in $NeovimDependencies ) {
     Write-Host "Installing $app"
     try {
         scoop install $app
@@ -93,3 +103,14 @@ ForEach ( $app in ("nodejs-lts", "fzf", "tree-sitter", "neovim") ) {
         Write-Error "Error installing app '$app'. Details: $($_.Exception.message)"
     }
 }
+
+If ( -Not (Get-Command nvim) ) {
+    ## Install neovim
+
+    Write-Host "Installing neovim"
+    try {
+        scoop install neovim
+    } catch {
+        Write-Error "Error installing neovim. Details: $($_.Exception.Message)"
+    }
+} 
