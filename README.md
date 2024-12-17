@@ -49,6 +49,11 @@ Otherwise, requirements for this configuration are:
     - `ln -l /path/to/this-repo/config/nvim $HOME/.config/nvim`
   - (Windows PowerShell): `$env:LOCALAPPDATA\nvim`
     - `cmd /c mklink /J "C:\path\to\this-repo\config\nvim" "$env:LOCALAPPDATA\nvim"`
+- Run `nvim` from the root of this repository
+  - The first time you run `nvim`, the Lazy plugin installer will run and do the environment setup.
+  - You should run this from this repository, in the same path as [`lazy-lock.json`](./lazy-lock.json).
+    - This ensures that the installer installs the plugin versions known to be compatible with this repository.
+    - I will make an effort to ensure the `main` branch of this repository is always in a "working" state.
 - More to come...
 
 ## Notes
