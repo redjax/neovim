@@ -35,6 +35,7 @@ $NeovimDependencies = @(
     "ripgrep",
     "FiraCode-NF-Mono",
     "cmake"
+    "gcc"
 )
 
 function Test-IsAdmin {
