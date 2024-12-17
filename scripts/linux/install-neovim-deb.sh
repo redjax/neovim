@@ -4,6 +4,9 @@
 CWD=$(pwd)
 # echo "[DEBUG] CWD: ${CWD}"
 
+NVIM_CONFIG_SRC="${CWD}/config/nvim"
+# echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
+
 ## Path to neovim configuration
 NVIM_CONFIG_DIR="$HOME/.config/nvim"
 # echo "[DEBUG] Neovim config path: ${NVIM_CONFIG_DIR}"
@@ -151,6 +154,25 @@ function install-neovim() {
     return_to_root
 }
 
+function symlink-config() {
+    ## Create symbolic link from repository's config/nvim path to ~/.config/nvim
+
+    if [[ -d $NVIM_CONFIG_DIR ]]; then
+        echo "Neovim config already exists at $NVIM_CONFIG_DIR"
+
+        if [ -L "${NVIM_CONFIG_DIR}" ]; then
+            echo "Neovim path is a symlink. Removing link"
+            rm "${NVIM_CONFIG_DIR}"
+        else
+            echo "Neovim path is not a symlink. Backing up to ${NVIM_CONFIG_DIR}.bak"
+            mv "${NVIM_CONFIG_DIR}" "${NVIM_CONFIG_DIR}.bak"
+        fi
+    fi
+
+    echo "Creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DIR}"
+    ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DIR}"
+}
+
 ######################
 # Check Dependencies #
 ######################
@@ -193,9 +215,13 @@ function main() {
     echo ""
 
     if [[ -d $NVIM_CONFIG_DIR ]]; then
-        echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
+        if [[ ! -L $NVIM_CONFIG_DIR ]];
+            then echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
 
-        mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
+            mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
+        else
+            echo "Existing neovim configuration is a symlink. Leaving in place."
+        fi
     fi
 
     ## Install NERDFont
@@ -206,6 +232,9 @@ function main() {
 
     ## Install neovim from github
     install-neovim
+
+    ## Symlink neovim configuration
+    symlink-config
 }
 
 ## Run script
