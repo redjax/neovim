@@ -23,6 +23,7 @@ jobs:
         run: |
           # Get the latest tag and strip the 'v' from the version
           latest_tag=$(git describe --tags --abbrev=0 2>/dev/null)
+          echo "[DEBUG] Latest tag script exit code: $?"
           
           # If no tag exists, start from v1.0
           if [[ -z "$latest_tag" ]]; then
@@ -31,9 +32,12 @@ jobs:
             git tag $latest_tag
             git push origin $latest_tag
           fi
+          echo "[DEBUG] Latest tag exit code: $?"
 
           # Increment the version (e.g., v1.1 -> v1.2)
           version_number=$(echo "$latest_tag" | sed 's/^v//')
+          echo "[DEBUG] SED get version number exit code: $?"
+
           version_array=(${version_number//./ })
           major=${version_array[0]}
           minor=${version_array[1]}
