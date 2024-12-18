@@ -1,53 +1,23 @@
-name: Update version and create Release's PR Workflow
+name: Create Archive
 
-on:
-  workflow_dispatch:
-		inputs:
-			version:
-				description: 'Version name'
-				required: true
-				default: 'minor'
-				type: choice
-				options:
-					- major
-					- minor
-					- patch
+on: workflow_dispatch
 
 jobs:
-	version:
-		runs-on: ubuntu-latest
-		steps:
-			- name: Checkout code
-				uses: actions/checkout@v3
-			- name: Setup Node.js
-				uses: actions/setup-node@v3
-				with:
-					node-version: "16.x"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    ## https://github.com/TheDoctor0/zip-release
+    - uses: actions/checkout@master
+    - name: Archive Release
+      uses: thedoctor0/zip-release@0.7.5
+      with:
+        type: 'zip'
+        filename: 'release.zip'
+        path: 'config/nvim'
+        exclusions: '*.git* /*node_modules/* .editorconfig'
 
-			- name: Install dependencies
-				run: npm install
-		
-			- name: Set up Git
-				run: |
-						git config user.name "Your GitHub User Name"
-						git config user.email "Your GitHub User Email"
-
-			- name: Update the version
-				id: update_version
-				run: |
-					echo "version=$(npm version ${{ github.event.inputs.version }} --no-git-				  	tag-version)" >> $GITHUB_OUTPUT
-
-			- name: Update Changelog
-				id: update_changelog
-					run: |
-						sed -i 's/Unreleased/${{ steps.update_version.outputs.version }}/g'   CHANGELOG.md
-
-			- name: Create pull request
-				id: create_pr
-				uses: peter-evans/create-pull-request@v5
-				with:
-					token: ${{ secrets.GITHUB_TOKEN }}
-					branch: release/${{ steps.update_version.outputs.version }}
-					title: "Release: ${{ steps.update_version.outputs.version }} Pull Request"
-					body: "This pull request contains the updated package.json with the new   	release version"
-					base: main
+    - name: Upload Release
+      uses: ncipollo/release-action@v1.12.0
+      with:
+        artifacts: "release.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}
