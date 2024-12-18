@@ -60,9 +60,6 @@ Otherwise, requirements for this configuration are:
     - **NOTE**: Windows requires Administrator priviliges to create path junctions. If you use the [Windows setup script](./scripts/windows/install-neovim-win.ps1), the junction will call the `Run-AsAdmin` command if the script is not running in an elevated session; you may see a UAC prompt, have to type a password, or you might see a blue Powershell window flash on the screen for a moment.
 - Run `nvim` from the root of this repository
   - The first time you run `nvim`, the Lazy plugin installer will run and do the environment setup.
-  - You should run this from this repository, in the same path as [`lazy-lock.json`](./lazy-lock.json).
-    - This ensures that the installer installs the plugin versions known to be compatible with this repository.
-    - I will make an effort to ensure the `main` branch of this repository is always in a "working" state.
 - More to come...
 
 ## Notes
