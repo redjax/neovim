@@ -7,39 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  stylua:
-    name: Stylua
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: JohnnyMorganz/stylua-action@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: latest
-          args: --check lua
-  setup:
-    name: Run neovim setup
-    needs:
-      - stylua
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        # os: [ubuntu-latest, windows-latest]
-        os: [ubuntu-latest]
-        neovim_version: ["v0.9.5", "v0.10.2", "nightly"]
-        # Does not work; https://github.com/Allaman/kustomize.nvim/actions/runs/11244235042/job/31261846739
-        # include:
-        #   - os: macos-latest
-        #     neovim_version: v0.10.2
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Neovim
-        uses: rhysd/action-setup-vim@v1
-        with:
-          neovim: true
-          version: ${{ matrix.neovim_version }}
   release:
     name: release
     if: ${{ github.ref == 'refs/heads/main' }}
