@@ -82,7 +82,7 @@ function install-dependencies() {
     sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
 
     if ! command -v nvm > /dev/null 2>&1; then
-        echo "[WARNING] nvm is not installed."
+        echo "[WARNING] nvm is not installed. Installing..."
 
         ## Download & install nvm
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
@@ -91,14 +91,14 @@ function install-dependencies() {
     fi
 
     if ! command -v npm > /dev/null 2>&1; then
-        echo "[WARNING] node is not installed."
+        echo "[WARNING] node is not installed. Installing..."
 
         nvm install --lts
         nvm alias default lts/*
     fi
 
     if ! command -v tree-sitter --version > /dev/null 2>&1; then
-        echo "[WARNING] tree-sitter is not installed."
+        echo "[WARNING] tree-sitter is not installed. Installing..."
         npm install -g tree-sitter-cli
     fi
 }
@@ -178,29 +178,29 @@ function symlink-config() {
 ######################
 
 ## Check if neovim is installed
-if ! command -v nvim > /dev/null 2>&1; then
-    echo "[WARNING] Neovim is not installed."
+# if ! command -v nvim > /dev/null 2>&1; then
+#     echo "[WARNING] Neovim is not installed. Installing..."
     
-    sudo apt update -y && sudo apt install -y neovim
-fi
+#     sudo apt update -y && sudo apt install -y neovim
+# fi
 
 ## Check if curl is installed
 if ! command -v curl > /dev/null 2>&1; then
-    echo "[WARNING] curl is not installed."
+    echo "[WARNING] curl is not installed. Installing..."
 
     sudo apt update -y && sudo apt install -y curl
 fi
 
 ## Check if unzip is installed
 if ! command -v unzip > /dev/null 2>&1; then
-    echo "[WARNING] unzip is not installed."
+    echo "[WARNING] unzip is not installed. Installing..."
 
     sudo apt update -y && sudo apt install -y unzip
 fi
 
 ## Check if fontconfig is installed
 if ! command -v fc-cache > /dev/null 2>&1; then
-    echo "[WARNING] fontconfig is not installed."
+    echo "[WARNING] fontconfig is not installed. Installing..."
 
     sudo apt update -y && sudo apt install -y fontconfig
 fi

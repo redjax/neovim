@@ -9,4 +9,4 @@ echo ""
 echo "Starting Neovim Docker container"
 echo ""
 
-docker run -it neovim-setup
+docker run --name neovim-setup --rm -it neovim-setup /bin/bash
