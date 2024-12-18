@@ -23,6 +23,8 @@ I am developing my Neovim configuration based on the Kickstart.nvim template, bu
 
 - [Requirements](#requirements)
 - [Instructions](#instructions)
+  - [Linux](#linux)
+  - [Windows](#windows)
 - [Notes](#notes)
 - [Links](#links)
 
@@ -47,24 +49,32 @@ Otherwise, requirements for this configuration are:
 ## Instructions
 
 - Clone repository with `git clone git@github.com:redjax/neovim` (or with HTTPS: `git clone https://github.com/redjax/neovim ./neovim`)
-- Run one of the [setup scripts](./scripts/)
-  - Linux:
-    - (Debian, Ubuntu, etc): [`./scripts/linux/install-neovim-deb.sh`](./scripts/linux/install-neovim-deb.sh)
-  - Windows:
-    - [`./scripts/windows/install-neovim-win.ps1`](./scripts/windows/install-neovim-win.ps1)
-- Create a symbolic link of [`config/nvim`](./config/nvim) at:
-  - (Linux): `$HOME/.config/nvim`
-    - `ln -l /path/to/this-repo/config/nvim $HOME/.config/nvim`
-  - (Windows PowerShell): `$env:LOCALAPPDATA\nvim`
-    - `cmd /c mklink /J "C:\path\to\this-repo\config\nvim" "$env:LOCALAPPDATA\nvim"`
-    - **NOTE**: Windows requires Administrator priviliges to create path junctions. If you use the [Windows setup script](./scripts/windows/install-neovim-win.ps1), the junction will call the `Run-AsAdmin` command if the script is not running in an elevated session; you may see a UAC prompt, have to type a password, or you might see a blue Powershell window flash on the screen for a moment.
-- Run `nvim` from the root of this repository
-  - The first time you run `nvim`, the Lazy plugin installer will run and do the environment setup.
-- More to come...
+- Run the setup script for your platform:
+  - [Linux](#linux)
+  - [Windows](#windows)
+- Run `nvim` to ensure everything installed correctly.
+
+### Linux
+
+The Linux setup scripts install & configure `neovim` and any dependencies needed to build/configure/run the program. The script also creates a symlink of the [`config/nvim`](./config/nvim) profile at `~/.config/nvim`.
+
+- Debian-based OSes (Debian, Ubuntu, etc)
+  - Run [`./scripts/linux/install-neovim-deb.sh`](./scripts/linux/install-neovim-deb.sh)
+
+### Windows
+
+The [Windows setup script](./scripts/windows/install-neovim-win.ps1) installs the [`scoop` package manager](https://scoop.sh), then installs all `neovim` requirements (including `nodejs-lts`) with it. `neovim` itself is installed with `scoop` using this script.
+
+I chose `scoop` over other options like `winget` and `chocolatey` because every dependency I need is there, the setup is simple, and it keeps everything contained to a path instead of throwing shit all over the OS's `$PATH`.
+
+- Run [`./scripts/windows/install-neovim-win.ps1`](./scripts/windows/install-neovim-win.ps1)
+  - **NOTE**: Windows requires Administrator priviliges to create path junctions. If you use the [Windows setup script](./scripts/windows/install-neovim-win.ps1), the junction will call the `Run-AsAdmin` command if the script is not running in an elevated session; you may see a UAC prompt, have to type a password, or you might see a blue Powershell window flash on the screen for a moment.
 
 ## Notes
 
 - View available colorschemes by opening neovim and running `:Telescope colorscheme`
+- Press `<Space>` to open an interactive menu
+- Run `:Lazy` to open the package manager
 
 ## Links
 
