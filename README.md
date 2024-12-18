@@ -64,6 +64,10 @@ Otherwise, requirements for this configuration are:
 
 ## Notes
 
+- View available colorschemes by opening neovim and running `:Telescope colorscheme`
+
 ## Links
 
 - [Github: kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
+- [Github: lazy.nvim](https://github.com/folke/lazy.nvim)
+- [LazyVim Docs](https://lazy.folke.io)
