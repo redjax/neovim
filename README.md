@@ -64,6 +64,8 @@ Otherwise, requirements for this configuration are:
 
 ## Notes
 
+- View available colorschemes by opening neovim and running `:Telescope colorscheme`
+
 ## Links
 
 - [Github: kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
