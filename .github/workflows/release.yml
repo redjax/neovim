@@ -1,76 +1,53 @@
-name: Create Release on PR merge
+name: Update version and create Release's PR Workflow
 
 on:
-  pull_request:
-    types: [closed]
-    branches:
-      - main
+  workflow_dispatch:
+		inputs:
+			version:
+				description: 'Version name'
+				required: true
+				default: 'minor'
+				type: choice
+				options:
+					- major
+					- minor
+					- patch
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+	version:
+		runs-on: ubuntu-latest
+		steps:
+			- name: Checkout code
+				uses: actions/checkout@v3
+			- name: Setup Node.js
+				uses: actions/setup-node@v3
+				with:
+					node-version: "16.x"
 
-      - name: Set up Git
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
+			- name: Install dependencies
+				run: npm install
+		
+			- name: Set up Git
+				run: |
+						git config user.name "Your GitHub User Name"
+						git config user.email "Your GitHub User Email"
 
-      - name: Get the latest tag and increment version
-        id: version
-        run: |
-          # Get the latest tag and strip the 'v' from the version
-          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null)
-          echo "[DEBUG] Latest tag script exit code: $?"
-          
-          # If no tag exists, start from v1.0
-          if [[ -z "$latest_tag" ]]; then
-            latest_tag="v1.0"
-            # Create the initial tag (v1.0)
-            git tag $latest_tag
-            git push origin $latest_tag
-          fi
-          echo "[DEBUG] Latest tag exit code: $?"
+			- name: Update the version
+				id: update_version
+				run: |
+					echo "version=$(npm version ${{ github.event.inputs.version }} --no-git-				  	tag-version)" >> $GITHUB_OUTPUT
 
-          # Increment the version (e.g., v1.1 -> v1.2)
-          version_number=$(echo "$latest_tag" | sed 's/^v//')
-          echo "[DEBUG] SED get version number exit code: $?"
+			- name: Update Changelog
+				id: update_changelog
+					run: |
+						sed -i 's/Unreleased/${{ steps.update_version.outputs.version }}/g'   CHANGELOG.md
 
-          version_array=(${version_number//./ })
-          major=${version_array[0]}
-          minor=${version_array[1]}
-          
-          # Increment minor version by 1
-          minor=$((minor + 1))
-          
-          # Ensure the version is in the form v1.x
-          new_version="v$major.$minor"
-          
-          echo "New version: $new_version"
-          echo "::set-output name=version::$new_version"
-
-      - name: Create release files
-        run: |
-          version="${{ steps.version.outputs.version }}"
-          # Make sure the config folder is in the tar and zip files
-          mkdir -p release
-          cp -r config/nvim release/
-          
-          # Create tar.gz file
-          tar -czf "release/$version.tar.gz" -C release .
-
-          # Create zip file
-          zip -r "release/$version.zip" release
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: release/*.tar.gz,release/*.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Clean up
-        run: |
-          rm -rf release
+			- name: Create pull request
+				id: create_pr
+				uses: peter-evans/create-pull-request@v5
+				with:
+					token: ${{ secrets.GITHUB_TOKEN }}
+					branch: release/${{ steps.update_version.outputs.version }}
+					title: "Release: ${{ steps.update_version.outputs.version }} Pull Request"
+					body: "This pull request contains the updated package.json with the new   	release version"
+					base: main
