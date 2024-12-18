@@ -7,22 +7,22 @@ ENV DEBIAN_FRONTEND=noninteractive
 ## Update system
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        apt-utils \
-        sudo \
-        kmod \
-        git \
-        curl \
-        build-essential \
-        ripgrep \
-        xclip \
-        git \
-        fzf \
-        libssl-dev \
-        fuse \
-        unzip \
-        fontconfig \
-        tmux \
+    ca-certificates \
+    apt-utils \
+    sudo \
+    kmod \
+    git \
+    curl \
+    build-essential \
+    ripgrep \
+    xclip \
+    git \
+    fzf \
+    libssl-dev \
+    fuse \
+    unzip \
+    fontconfig \
+    tmux \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
