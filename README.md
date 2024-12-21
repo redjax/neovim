@@ -30,6 +30,17 @@ I am developing my Neovim configuration based on the Kickstart.nvim template, bu
 
 ## Requirements
 
+```warning
+
+WARNING
+-------
+
+The Linux install script(s) do not support LXC container environments or ARM CPUs.
+
+I have access to both of these environments and will develop the configuration for those platforms,
+but until this message is removed, LXC containers and ARM CPUs are not supported.
+```
+
 If you install `neovim` using one of the [install/setup scripts](./scripts/), the dependencies for my `neovim` configuration will be installed automatically.
 
 Otherwise, requirements for this configuration are:
