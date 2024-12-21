@@ -38,7 +38,7 @@ WARNING
 The Linux install script(s) do not support LXC container environments or ARM CPUs.
 
 I have access to both of these environments and will develop the configuration for those platforms,
-but until this message is removed, LXC containers and ARM cpus are not supported.
+but until this message is removed, LXC containers and ARM CPUs are not supported.
 ```
 
 If you install `neovim` using one of the [install/setup scripts](./scripts/), the dependencies for my `neovim` configuration will be installed automatically.
