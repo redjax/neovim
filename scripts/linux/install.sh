@@ -4,9 +4,6 @@
 CWD=$(pwd)
 # echo "[DEBUG] CWD: ${CWD}"
 
-## Determine OS type
-#!/bin/bash
-
 # Determine the OS type
 OS_TYPE=$(uname -s)
 
@@ -14,6 +11,7 @@ OS_TYPE=$(uname -s)
 if [ -f /etc/os-release ]; then
     . /etc/os-release
     OS_RELEASE=$NAME
+    OS_VERSION=${VERSION_ID:-"Unknown"}
     OS_FAMILY="Unknown"
 
     # Check for ID_LIKE or use ID as a fallback
@@ -32,6 +30,7 @@ if [ -f /etc/os-release ]; then
     fi
 else
     OS_RELEASE="Unknown"
+    OS_VERSION="Unknown"
     OS_FAMILY="Unknown"
 fi
 
@@ -44,6 +43,7 @@ export OS_TYPE OS_RELEASE OS_FAMILY CPU_ARCH
 # Output the variables for verification
 # echo "[DEBUG] OS_TYPE: $OS_TYPE"
 # echo "[DEBUG] OS_RELEASE: $OS_RELEASE"
+# echo "[DEBUG] OS_VERSION: $OS_VERSION"
 # echo "[DEBUG] OS_FAMILY: $OS_FAMILY"
 # echo "[DEBUG] CPU_ARCH: $CPU_ARCH"
 
@@ -62,14 +62,22 @@ if [[ $OS_FAMILY -eq "RedHat-Family" ]]; then
         PKG_MGR="dnf"
     fi
 
-    echo "[ (CPU:${CPU_ARCH}) OS Family: ${OS_FAMILY} (release: ${OS_RELEASE}) | Package Manager: ${PKG_MGR} ]"
+    echo "[ (CPU:${CPU_ARCH}) OS Family: ${OS_FAMILY} (release: ${OS_RELEASE}, version: ${OS_VERSION}) | Package Manager: ${PKG_MGR} ]"
 else
     echo "[WARNING] Non-RedHat OSes not supported yet."
     exit 1
 fi
 
-DOTCONFIG_DIR="${HOME}/.config"
+## Check if host platform is an LXC container
+if grep -q 'container=lxc' /proc/1/environ 2>/dev/null; then
+    IS_LXC="true"
+else
+    IS_LXC="false"
+fi
 
+## Path for .config directory
+DOTCONFIG_DIR="${HOME}/.config"
+## Path to neovim configuration directory src in this repository
 NVIM_CONFIG_SRC="${CWD}/config/nvim"
 # echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
 
@@ -304,7 +312,7 @@ fi
 
 function main() {
     echo ""
-    echo "[ Install Neovim Configuration - Debian Linux ]"
+    echo "[ Install Neovim Configuration - ${OS_FAMILY} ($CPU_ARCH) (release: ${OS_RELEASE}, version: ${OS_VERSION}) ]"
     echo ""
 
     if [[ -d $NVIM_CONFIG_DIR ]]; then
