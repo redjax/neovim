@@ -385,7 +385,7 @@ function main() {
 
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then
-        install-dependencies-dns
+        install-dependencies-dnf
     elif [[ ${PKG_MGR} == "apt" ]]; then
         install-dependencies-apt
     else
