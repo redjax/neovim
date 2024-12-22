@@ -7,6 +7,16 @@ CWD=$(pwd)
 # Determine the OS type
 OS_TYPE=$(uname -s)
 
+function eval_last() {
+    ## Evaluate the last exit code
+    if [[ $1 -eq 0 ]]; then
+        return
+    elif [[ $1 -eq 1 ]]; then
+        echo "Non-zero exit code on the last command. Exiting."
+        exit 1
+    fi
+}
+
 # Determine OS release and family
 if [ -f /etc/os-release ]; then
     . /etc/os-release
@@ -40,14 +50,14 @@ CPU_ARCH=$(uname -m)
 # Export the variables
 export OS_TYPE OS_RELEASE OS_FAMILY CPU_ARCH
 
-# Output the variables for verification
+## Uncomment to debug print values
 # echo "[DEBUG] OS_TYPE: $OS_TYPE"
 # echo "[DEBUG] OS_RELEASE: $OS_RELEASE"
 # echo "[DEBUG] OS_VERSION: $OS_VERSION"
 # echo "[DEBUG] OS_FAMILY: $OS_FAMILY"
 # echo "[DEBUG] CPU_ARCH: $CPU_ARCH"
 
-if [[ $OS_FAMILY -eq "RedHat-Family" ]]; then
+if [[ $OS_FAMILY == "RedHat-family" ]]; then
     echo "[DEBUG] RedHat-family OS detected."
     if ! command -v dnf > /dev/null 2>&1; then
         echo "dnf not detected. Trying yum"
@@ -61,12 +71,33 @@ if [[ $OS_FAMILY -eq "RedHat-Family" ]]; then
     else
         PKG_MGR="dnf"
     fi
-
-    echo "[ (CPU:${CPU_ARCH}) OS Family: ${OS_FAMILY} (release: ${OS_RELEASE}, version: ${OS_VERSION}) | Package Manager: ${PKG_MGR} ]"
+elif [[ $OS_FAMILY == "Debian-family" ]]; then
+    echo "[DEBUG] Debian-family OS detected."
+    PKG_MGR="apt"
 else
-    echo "[WARNING] Non-RedHat OSes not supported yet."
+    echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
     exit 1
 fi
+
+## Create a print-able platform string
+PLATFORM_STR="\n
+[ Platform Info ]\n
+CPU: ${CPU_ARCH}\n
+OS Family: ${OS_FAMILY}\n
+Release: ${OS_RELEASE}\n
+Release Version: ${OS_VERSION}\n
+Package Manager: ${PKG_MGR}\n
+"
+
+function print_platform() {
+    echo -e $PLATFORM_STR
+}
+
+function print_unsupported_platform() {
+    echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
+}
+
+# print_platform
 
 ## Check if host platform is an LXC container
 if grep -q 'container=lxc' /proc/1/environ 2>/dev/null; then
@@ -153,7 +184,8 @@ function install-dependencies-apt() {
     ## Install all neovim dependencies
 
     echo ""
-    echo "[ Neovim Setup - Install neovim dependencies ]"
+    echo "[ Neovim Setup - Install neovim dependencies (apt) ]"
+    echo "Please enter your admin password when prompted to install dependency packages"
     echo ""
 
     sudo apt update -y
@@ -165,13 +197,21 @@ function install-dependencies-apt() {
         ## Download & install nvm
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-        source ~/.bashrc
+        ## Load NVM
+        echo "Loading nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
+
+    ## Load NVM
+    echo "Loading nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    eval_last $?
 
     if ! command -v npm > /dev/null 2>&1; then
         echo "[WARNING] node is not installed."
 
         nvm install --lts
+        eval_last $?
         nvm alias default lts/*
     fi
 
@@ -185,7 +225,8 @@ function install-dependencies-dnf() {
     ## Install all neovim dependencies
 
     echo ""
-    echo "[ Neovim Setup - Install neovim dependencies ]"
+    echo "[ Neovim Setup - Install neovim dependencies (dnf) ]"
+    echo "Please enter your admin password when prompted to install dependency packages"
     echo ""
 
     sudo dnf update -y
@@ -221,7 +262,7 @@ function install-neovim-appimg() {
     NEOVIM_DOWNLOAD_URL="https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
 
     echo ""
-    echo "[ Neovim Setup - Install neovim ]"
+    echo "[ Neovim Setup - Install neovim (appimg) ]"
     echo ""
 
     if [[ ! -d $TEMP_DIR ]]; then
@@ -279,10 +320,12 @@ function symlink-config() {
 if ! command -v curl > /dev/null 2>&1; then
     echo "[WARNING] curl is not installed."
 
-    if [[ $PKG_MGR -eq "dnf" ]]; then
+    if [[ $PKG_MGR == "dnf" ]]; then
         sudo dnf update -y && sudo dnf install -y curl
+    elif [[ $PKG_MGR == "apt" ]]; then
+        sudo apt update -y && sudo apt install -y curl
     else
-        echo "[WARNING] Non-RedHat OSes not yet supported."
+        print_unsupported_platform
         exit 1
     fi
 fi
@@ -291,10 +334,12 @@ fi
 if ! command -v unzip > /dev/null 2>&1; then
     echo "[WARNING] unzip is not installed."
 
-    if [[ $PKG_MGR -eq "dnf" ]]; then
+    if [[ $PKG_MGR == "dnf" ]]; then
         sudo dnf update -y && sudo dnf install -y unzip
+    elif [[ $PKG_MGR == "apt" ]]; then
+        sudo apt update -y && sudo apt install -y unzip
     else
-        echo "[WARNING] Non-RedHat OSes not yet supported."
+        print_unsupported_platform
         exit 1
     fi
 fi
@@ -303,7 +348,14 @@ fi
 if ! command -v fc-cache > /dev/null 2>&1; then
     echo "[WARNING] fontconfig is not installed."
 
-    sudo dnf update -y && sudo dnf install -y fontconfig
+    if [[ $PKG_MGR == "dnf" ]]; then
+        sudo dnf update -y && sudo dnf install -y fontconfig
+    elif [[ $PKG_MGR == "apt" ]]; then
+        sudo apt update -y && sudo apt install -y fontconfig
+    else
+        print_unsupported_platform
+        exit 1
+    fi
 fi
 
 #########
@@ -315,6 +367,8 @@ function main() {
     echo "[ Install Neovim Configuration - ${OS_FAMILY} ($CPU_ARCH) (release: ${OS_RELEASE}, version: ${OS_VERSION}) ]"
     echo ""
 
+    print_platform
+
     if [[ -d $NVIM_CONFIG_DIR ]]; then
         if [[ ! -L $NVIM_CONFIG_DIR ]];
             then echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
@@ -324,15 +378,19 @@ function main() {
             echo "Existing neovim configuration is a symlink. Leaving in place."
         fi
     fi
+    eval_last $?
 
     ## Install NERDFont
     install-nerdfont
 
     ## Install neovim dependencies
-    if [[ ${PKG_MGR} -eq "dnf" ]]; then
+    if [[ ${PKG_MGR} == "dnf" ]]; then
         install-dependencies-dns
+    elif [[ ${PKG_MGR} == "apt" ]]; then
+        install-dependencies-apt
     else
-        echo "[WARNING] Non-RedHat OSes not yet supported."
+        print_unsupported_platform
+
         exit 1
     fi    
 
