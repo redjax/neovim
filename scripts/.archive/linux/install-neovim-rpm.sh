@@ -14,8 +14,9 @@ NVIM_CONFIG_DIR="$HOME/.config/nvim"
 # echo "[DEBUG] Neovim config path: ${NVIM_CONFIG_DIR}"
 
 ## Neovim dependency packages installable with apt
-declare -a NVIM_APT_DEPENDENCIES=("build-essential" "ripgrep" "xclip" "git" "fzf" "libssl-dev" "fuse")
-# echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_APT_DEPENDENCIES[@]}"
+declare -a NVIM_DNF_DEPENDENCIES=("ripgrep" "xclip" "git" "fzf" "openssl-dev" "fuse")
+declare -a NVIM_DNF_GROUP_DEPENDENCIES=("Development Tools" "Development Libraries")
+# echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_DNF_DEPENDENCIES[@]}"
 
 function return_to_root() {
     cd $CWD
@@ -80,8 +81,9 @@ function install-dependencies() {
     echo "[ Neovim Setup - Install neovim dependencies ]"
     echo ""
 
-    sudo apt update -y
-    sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
+    sudo dnf update -y
+    sudo dnf install -y "${NVIM_DNF_DEPENDENCIES[@]}"
+    sudo dnf group install -y "${NVIM_DNF_DEPENDENCIES[@]}"
 
     if ! command -v nvm > /dev/null 2>&1; then
         echo "[WARNING] nvm is not installed."
@@ -183,31 +185,31 @@ function symlink-config() {
 ######################
 
 ## Check if neovim is installed
-if ! command -v nvim > /dev/null 2>&1; then
-    echo "[WARNING] Neovim is not installed."
+# if ! command -v nvim > /dev/null 2>&1; then
+#     echo "[WARNING] Neovim is not installed."
     
-    sudo apt update -y && sudo apt install -y neovim
-fi
+#     sudo dnf update -y && sudo dnf install -y neovim
+# fi
 
 ## Check if curl is installed
 if ! command -v curl > /dev/null 2>&1; then
     echo "[WARNING] curl is not installed."
 
-    sudo apt update -y && sudo apt install -y curl
+    sudo dnf update -y && sudo dnf install -y curl
 fi
 
 ## Check if unzip is installed
 if ! command -v unzip > /dev/null 2>&1; then
     echo "[WARNING] unzip is not installed."
 
-    sudo apt update -y && sudo apt install -y unzip
+    sudo dnf update -y && sudo dnf install -y unzip
 fi
 
 ## Check if fontconfig is installed
 if ! command -v fc-cache > /dev/null 2>&1; then
     echo "[WARNING] fontconfig is not installed."
 
-    sudo apt update -y && sudo apt install -y fontconfig
+    sudo dnf update -y && sudo dnf install -y fontconfig
 fi
 
 #########
