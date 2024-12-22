@@ -183,11 +183,11 @@ function symlink-config() {
 ######################
 
 ## Check if neovim is installed
-if ! command -v nvim > /dev/null 2>&1; then
-    echo "[WARNING] Neovim is not installed."
+# if ! command -v nvim > /dev/null 2>&1; then
+#     echo "[WARNING] Neovim is not installed."
     
-    sudo apt update -y && sudo apt install -y neovim
-fi
+#     sudo apt update -y && sudo apt install -y neovim
+# fi
 
 ## Check if curl is installed
 if ! command -v curl > /dev/null 2>&1; then
