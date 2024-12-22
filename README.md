@@ -67,10 +67,9 @@ Otherwise, requirements for this configuration are:
 
 ### Linux
 
-The Linux setup scripts install & configure `neovim` and any dependencies needed to build/configure/run the program. The script also creates a symlink of the [`config/nvim`](./config/nvim) profile at `~/.config/nvim`.
+The [Linux setup script](./scripts/linux/install.sh) installs & configures `neovim` and any dependencies needed to build/configure/run the program. The script also creates a symlink of the [`config/nvim`](./config/nvim) profile at `~/.config/nvim`.
 
-- Debian-based OSes (Debian, Ubuntu, etc)
-  - Run [`./scripts/linux/install-neovim-deb.sh`](./scripts/linux/install-neovim-deb.sh)
+Run `./scripts/linux/install.sh` to install `neovim` and its dependencies.
 
 ### Windows
 
