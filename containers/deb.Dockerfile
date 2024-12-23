@@ -95,5 +95,3 @@ COPY --from=debian-stage /tmp/nvim-state /tmp/nvim-state
 WORKDIR /neovim-setup
 
 CMD ["sleep", "infinity"]
-
-## Fedora layer
