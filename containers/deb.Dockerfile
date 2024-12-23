@@ -1,6 +1,5 @@
 ## Set build arguments with default values
 ARG CONTAINER_ENV=1
-ARG NEOVIM_MAKE_BUILD_DIR=/tmp/build
 
 ## Pull nodejs container
 FROM node:latest AS node-base
@@ -65,7 +64,7 @@ WORKDIR /neovim-setup
 
 ## Run install-neovim-deb.sh script
 RUN chmod +x ./scripts/linux/install.sh && \
-    sudo -E CONTAINER_ENV=$CONTAINER_ENV NEOVIM_MAKE_BUILD_DIR=$NEOVIM_MAKE_BUILD_DIR ./scripts/linux/install.sh
+    sudo -E CONTAINER_ENV=$CONTAINER_ENV ./scripts/linux/install.sh
 
 ## Set temporary paths for nvim to use
 ENV XDG_DATA_HOME=/tmp/nvim-data
