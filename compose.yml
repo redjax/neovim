@@ -1,0 +1,8 @@
+---
+volumes:
+  neovim_home: {}
+  neovim_build: {}
+
+services:
+  nvim-deb:
+    container_name: nvim-deb
