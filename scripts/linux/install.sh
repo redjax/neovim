@@ -131,7 +131,7 @@ declare -a NVIM_APT_DEPENDENCIES=("build-essential" "ripgrep" "xclip" "git" "fzf
 ## If $INSTALL_NVIM_APPIMG=1, add FUSE dependency
 if [[ "${INSTALL_NVIM_APPIMG} -eq 1" ]]; then
     echo "Neovim will be installed by AppImage. Install FUSE dependency."
-    if [[ ! " ${NVIM_DNF_DEPENDENCIES[@]} " =~ " fuse " ]]l then
+    if [[ ! " ${NVIM_DNF_DEPENDENCIES[@]} " =~ " fuse " ]]; then
         ## Add "fuse" to dnf dependencies
         NVIM_DNF_DEPENDENCIES+=("fuse")
     fi
