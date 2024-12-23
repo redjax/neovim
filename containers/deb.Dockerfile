@@ -12,9 +12,6 @@ ENV NEOVIM_MAKE_BUILD_DIR=${NEOVIM_MAKE_BUILD_DIR}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN echo "CONTAINER_ENV: ${CONTAINER_ENV}" && echo "NEOVIM_MAKE_BUILD_DIR: ${NEOVIM_MAKE_BUILD_DIR}"
-
-
 ## Update system
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -41,6 +38,11 @@ RUN useradd -ms /bin/bash neovim && \
     usermod -aG sudo neovim && \
     echo "neovim ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/neovim
 
+## Set permissions on neovim home directory
+RUN chown -R neovim:neovim /home/neovim \
+    && mkdir -pv /home/neovim/.local \
+    && chmod -R u+w /home/neovim/.local
+
 ## Copy npm binary from the node-base image to this image
 COPY --from=node-base /usr/local/bin/npm /usr/local/bin/npm
 
@@ -52,52 +54,47 @@ ENV CONTAINER_ENV=1
 ## Switch to the 'neovim' user
 USER neovim
 
+## Copy home directory from previous stage
+COPY --from=debian-base /home/neovim /home/neovim
 ## Copy the whole repository into the container
 COPY --chown=neovim:neovim ./ /neovim-setup
 ## Copy npm binary from the node-base image to this image
 COPY --from=node-base /usr/local/bin/npm /usr/local/bin/npm
 
-## Debug print $PWD
-# RUN echo "${pwd}" && sleep 2 && ls -la && sleep 5
-
 WORKDIR /neovim-setup
-
-## Set neovim build directory for building from source
-#  NOTE: Doesn't seem to work, commenting out to try
-#  setting this up again later
-# ENV NEOVIM_MAKE_BUILD_DIR="/tmp/build"
-# RUN mkdir -pv ${NEOVIM_MAKE_BUILD_DIR}
 
 ## Run install-neovim-deb.sh script
 RUN chmod +x ./scripts/linux/install.sh && \
     sudo -E CONTAINER_ENV=$CONTAINER_ENV NEOVIM_MAKE_BUILD_DIR=$NEOVIM_MAKE_BUILD_DIR ./scripts/linux/install.sh
 
-# RUN echo "/usr/bin:" && ls /usr/bin && sleep 4 && echo "/usr/local/bin:" && ls /usr/local/bin && sleep 4
+## Set temporary paths for nvim to use
+ENV XDG_DATA_HOME=/tmp/nvim-data
+ENV XDG_STATE_HOME=/tmp/nvim-state
 
-RUN $(which nvim) && sleep 5
+RUN mkdir -p /tmp/nvim-data /tmp/nvim-state
 
 ## Debian runtime
-# FROM debian-stage AS debian-runtime
+FROM debian-stage AS debian-runtime
 
-# ENV CONTAINER_ENV=1
+ENV CONTAINER_ENV=1
 
 ## Switch to the 'neovim' user
-# USER neovim
+USER neovim
 
-# COPY --from=debian-stage /neovim-setup /neovim-setup
-# COPY --from=debian-stage /usr/local/bin /usr/local/bin
-# COPY --from=debian-stage /usr/bin /usr/bin
-
-## Copy the neovim repository from the stage
-# COPY --from=debian-stage /neovim-setup /neovim-setup
-## Copy neovim config directory from the stage
-# COPY --from=debian-stage /home/neovim/.config/nvim /home/neovim/.config/nvim
-## Copy neovim binary from the stage
-# COPY --from=debian-stage /usr/local/bin/nvim /usr/local/bin/nvim
+## Copy home directory from previous stage
+COPY --from=debian-stage /home/neovim /home/neovim
+## Copy /neovim-setup from previous stage
+COPY --from=debian-stage /neovim-setup /neovim-setup
+## Copy nvim binary built from source in previous stage
+COPY --from=debian-stage /usr/local/bin/nvim /usr/local/bin/nvim
 ## Copy npm binary from the node-base image to this image
-# COPY --from=node-base /usr/local/bin/npm /usr/local/bin/npm
-# WORKDIR /neovim-setup
+COPY --from=node-base /usr/local/bin/npm /usr/local/bin/npm
+## Copy neovim state & data dirs from previous stage
+COPY --from=debian-stage /tmp/nvim-data /tmp/nvim-data
+COPY --from=debian-stage /tmp/nvim-state /tmp/nvim-state
 
-# CMD ["sleep", "infinity"]
+WORKDIR /neovim-setup
+
+CMD ["sleep", "infinity"]
 
 ## Fedora layer
