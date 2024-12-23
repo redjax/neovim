@@ -62,15 +62,15 @@ COPY --from=node-base /usr/local/bin/npm /usr/local/bin/npm
 
 WORKDIR /neovim-setup
 
-## Run install-neovim-deb.sh script
-RUN chmod +x ./scripts/linux/install.sh && \
-    sudo -E CONTAINER_ENV=$CONTAINER_ENV ./scripts/linux/install.sh
-
 ## Set temporary paths for nvim to use
 ENV XDG_DATA_HOME=/tmp/nvim-data
 ENV XDG_STATE_HOME=/tmp/nvim-state
 
 RUN mkdir -p /tmp/nvim-data /tmp/nvim-state
+
+## Run install-neovim-deb.sh script
+RUN chmod +x ./scripts/linux/install.sh && \
+    sudo -E CONTAINER_ENV=$CONTAINER_ENV ./scripts/linux/install.sh
 
 ## Debian runtime
 FROM debian-stage AS debian-runtime
