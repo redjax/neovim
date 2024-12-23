@@ -23,17 +23,25 @@ INSTALL_NVIM_APPIMG=${INSTALL_NEOVIM_APPIMG:-0}
 echo "[DEBUG] INSTALL_NVIM_APPIMG: ${INSTALL_NVIM_APPIMG}"
 
 ## Set build directory from environment variable or default path
-export BUILD_DIR="${NEOVIM_MAKE_BUILD_DIR:-${CWD}/build}"
-# echo "[DEBUG] BUILD_DIR: ${BUILD_DIR}"
-if [[ ! -d $BUILD_DIR ]]; then
-    echo "Creating build path: ${BUILD_DIR}"
-    mkdir -pv "${BUILD_DIR}"
-fi
+DEFAULT_BUILD_DIR="${CWD}/build"
+if [[ "$CONTAINER_ENV" = "1" ]]; then
+    NEOVIM_MAKE_BUILD_DIR="${CWD}/clean-build"
 
-if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
-    echo "[DEBUG] Build dir: ${BUILD_DIR}"
-    ## Pause to allow viewing output in a Docker environment
-    # sleep 4
+    if [[ -d $NEOVIM_MAKE_BUILD_DIR ]]; then
+        echo "[WARNING] Container build path $NEOVIM_MAKE_BUILD_DIR exists, but build script is running in a container.
+        Removing path: ${NEOVIM_MAKE_BUILD_DIR}
+        "
+
+        rm -r "${NEOVIM_MAKE_BUILD_DIR}"
+    fi
+fi
+NEOVIM_MAKE_BUILD_DIR=${NEOVIM_MAKE_BUILD_DIR:-$DEFAULT_BUILD_DIR}
+echo "[DEBUG] NEOVIM_MAKE_BUILD_DIR: ${NEOVIM_MAKE_BUILD_DIR}"
+
+## Create build directory
+if [[ ! -d $NEOVIM_MAKE_BUILD_DIR ]]; then
+    echo "Creating build path: ${NEOVIM_MAKE_BUILD_DIR}"
+    mkdir -pv "${NEOVIM_MAKE_BUILD_DIR}"
 fi
 
 function exit_with_error() {
@@ -43,10 +51,10 @@ function exit_with_error() {
     ## Do exit tasks
 
     #  Remove build/ path (assuming build failed)
-    # if [[ -f "${BUILD_DIR}/neovim/CMakeCache.txt" || -d "${BUILD_DIR}/neovim/CMakeFiles" ]]; then
-    #     echo "Previous Make build environment detected, but script failed. Cleaning build path: ${BUILD_DIR}/neovim."
-    #     rm "${BUILD_DIR}/CMakeCache.txt"
-    #     rm -r "${BUILD_DIR}/CMakeFiles"
+    # if [[ -f "${NEOVIM_MAKE_BUILD_DIR}/neovim/CMakeCache.txt" || -d "${NEOVIM_MAKE_BUILD_DIR}/neovim/CMakeFiles" ]]; then
+    #     echo "Previous Make build environment detected, but script failed. Cleaning build path: ${NEOVIM_MAKE_BUILD_DIR}/neovim."
+    #     rm "${NEOVIM_MAKE_BUILD_DIR}/CMakeCache.txt"
+    #     rm -r "${NEOVIM_MAKE_BUILD_DIR}/CMakeFiles"
     # fi
 
     exit 1
@@ -274,7 +282,6 @@ function install_dependencies_apt() {
     echo "Please enter your admin password when prompted to install dependency packages"
     echo ""
 
-    sudo $PKG_MGR update -y
     sudo $PKG_MGR install -y "${NVIM_APT_DEPENDENCIES[@]}"
 
     if ! command -v nvm > /dev/null 2>&1; then
@@ -288,7 +295,7 @@ function install_dependencies_apt() {
 
     ## Load NVM
     echo "Loading nvm"
-    export NVM_DIR="$HOME/.nvm"
+    NVM_DIR="$HOME/.nvm"
     ## This loads nvm
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     ## This loads nvm bash_completion
@@ -400,14 +407,14 @@ function install_neovim_source() {
         exit 1
     fi
 
-    cd $BUILD_DIR
+    cd $NEOVIM_MAKE_BUILD_DIR
     eval_last $?
 
     if [[ ! -d "neovim" ]]; then
         echo "Cloning neovim repeository"
         git clone https://github.com/neovim/neovim.git
     else
-        echo "Neovim repository already exists at ${BUILD_DIR}/neovim. Changes will be pulled, and Neovim will be rebuilt."
+        echo "Neovim repository already exists at ${NEOVIM_MAKE_BUILD_DIR}/neovim. Changes will be pulled, and Neovim will be rebuilt."
     fi
 
     cd neovim
@@ -415,6 +422,18 @@ function install_neovim_source() {
     echo "Running a git pull to get any changes"
     git pull
     eval_last $?
+
+    ## Remove Make cache if in container
+    if [[ $CONTAINER_ENV -eq 1 || "${CONTAINER_ENV}" == "1" ]]; then
+        if [[ -d "${NEOVIM_MAKE_BUILD_DIR}/neovim/cmake.deps/CMakeLists.txt" ]]; then
+            echo "[WARNING] Previous CMake build detected while building in container environment.
+            Removing ${NEOVIM_MAKE_BUILD_DIR}/neovim/cmake.deps directory for a clean build.
+            "
+
+            rm -r "${NEOVIM_MAKE_BUILD_DIR}/neovim/cmake.deps}"
+            eval_last $?
+        fi
+    fi
     
     echo "Building Neovim"
     make CMAKE_BUILD_TYPE=RelWithDebInfo
@@ -468,9 +487,9 @@ function check_system_dependencies() {
         echo "[WARNING] curl is not installed."
 
         if [[ $PKG_MGR == "dnf" ]]; then
-            sudo dnf update -y && sudo dnf install -y curl
+            sudo dnf install -y curl
         elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
-            sudo $PKG_MGR update -y && sudo $PKG_MGR install -y curl
+            sudo $PKG_MGR install -y curl
         else
             print_unsupported_platform
             # sleep 6
@@ -483,9 +502,9 @@ function check_system_dependencies() {
         echo "[WARNING] unzip is not installed."
 
         if [[ $PKG_MGR == "dnf" ]]; then
-            sudo dnf update -y && sudo dnf install -y unzip
+            sudo dnf install -y unzip
         elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
-            sudo $PKG_MGR update -y && sudo $PKG_MGR install -y unzip
+            sudo $PKG_MGR install -y unzip
         else
             print_unsupported_platform
             # sleep 6
@@ -498,14 +517,24 @@ function check_system_dependencies() {
         echo "[WARNING] fontconfig is not installed."
 
         if [[ $PKG_MGR == "dnf" ]]; then
-            sudo dnf update -y && sudo dnf install -y fontconfig
+            sudo dnf install -y fontconfig
         elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
-            sudo $PKG_MGR update -y && sudo $PKG_MGR install -y fontconfig
+            sudo $PKG_MGR install -y fontconfig
         else
             print_unsupported_platform
             # sleep 6
             exit 1
         fi
+    fi
+}
+
+function pkg_mgr_update() {
+    if [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
+        echo "Updating packages with $PKG_MGR"
+        sudo $PKG_MGR update -y
+    elif [[ $PKG_MGR == "dnf" || $PKG_MGR == "yum" ]]; then
+        echo "Updating packages with $PKG_MGR"
+        sudo $PKG_MGR update -y
     fi
 }
 
@@ -519,6 +548,22 @@ function main() {
     echo ""
 
     print_platform
+
+    pkg_mgr_update
+
+    ## Install neovim dependencies
+    if [[ ${PKG_MGR} == "dnf" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_dnf
+    elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_apt
+    else
+        print_unsupported_platform
+        # sleep 6
+        exit 1
+    fi
+    eval_last $?
 
     ## Ensure script dependencies are installed
     check_system_dependencies
@@ -538,20 +583,7 @@ function main() {
 
     ## Install NERDFont
     # echo "[DEBUG] Would install Nerd Fonts"
-    install_nerdfont
-
-    ## Install neovim dependencies
-    if [[ ${PKG_MGR} == "dnf" ]]; then
-        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
-        install_dependencies_dnf
-    elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
-        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
-        install_dependencies_apt
-    else
-        print_unsupported_platform
-        # sleep 6
-        exit 1
-    fi    
+    install_nerdfont  
 
     if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
         # echo "[DEBUG] Would install nvim from appimg"
