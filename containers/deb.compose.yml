@@ -1,6 +1,6 @@
 ---
 volumes:
-  neovim_build: {}
+  neovim_deb_build: {}
 
 services:
   nvim-deb:
@@ -11,7 +11,8 @@ services:
       dockerfile: containers/deb.Dockerfile
       args:
         CONTAINER_ENV: 1
+      target: debian-runtime
     environment:
       CONTAINER_ENV: 1
     volumes:
-      - neovim_build:/neovim-setup
+      - neovim_deb_build:/neovim-setup
