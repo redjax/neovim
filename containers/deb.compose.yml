@@ -1,0 +1,17 @@
+---
+volumes:
+  neovim_build: {}
+
+services:
+  nvim-deb:
+    container_name: nvim-deb
+    restart: unless-stopped
+    build:
+      context: ..
+      dockerfile: containers/deb.Dockerfile
+      args:
+        CONTAINER_ENV: 1
+    environment:
+      CONTAINER_ENV: 1
+    volumes:
+      - neovim_build:/neovim-setup
