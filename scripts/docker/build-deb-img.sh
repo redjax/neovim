@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PLAIN_DOCKER_BUILD_OUTPUT=${PLAIN_DOCKER_BUILD_OUTPUT:-1}
+
 CWD=$(pwd)
 CONTAINER_DIR="${CWD}/containers"
 DOCKERFILE="${CONTAINER_DIR}/deb.Dockerfile"
@@ -30,7 +32,12 @@ fi
 
 ## Build the Docker image
 echo "Building container from Dockerfile: ${DOCKERFILE}, tagging with: ${CONTAINER_IMG_TAG}"
-docker build -f "${DOCKERFILE}" -t "${CONTAINER_IMG_TAG}" .
+
+if [[ $PLAIN_DOCKER_BUILD_OUTPUT -eq 1 || "${PLAIN_DOCKER_BUILD_OUTPUT}" == "1" ]] ; then
+    CONTAINER_ENV=1 NEOVIM_MAKE_BUILD_DIR="/tmp/build" docker build -f "${DOCKERFILE}" -t "${CONTAINER_IMG_TAG}" . --progress=plain
+else
+    docker build -f "${DOCKERFILE}" -t "${CONTAINER_IMG_TAG}" . 
+fi
 
 if [[ ! $? -eq 0 ]]; then
     echo "[ERROR] Failed to build Dockerfile at path: ${DOCKERFILE}"
