@@ -1,0 +1,17 @@
+---
+volumes:
+  neovim_rpm_build: {}
+
+services:
+  nvim-deb:
+    container_name: nvim-rpm
+    restart: unless-stopped
+    build:
+      context: ..
+      dockerfile: containers/rpm.Dockerfile
+      args:
+        CONTAINER_ENV: 1
+    environment:
+      CONTAINER_ENV: 1
+    volumes:
+      - neovim_rpm_build:/neovim-setup
