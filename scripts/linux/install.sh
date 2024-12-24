@@ -325,7 +325,11 @@ function install_dependencies_dnf() {
 
     sudo dnf update -y
     sudo dnf install -y "${NVIM_DNF_DEPENDENCIES[@]}"
-    sudo dnf group install -y "${NVIM_DNF_DEPENDENCIES[@]}"
+    
+    for [[ dnf_group in "${NVIM_DNF_GROUP_DEPENDENCIES[@]}" ]]; do
+        echo "Installing DNF group: ${dnf_group}"
+        sudo dnf group install -y "${dnf_group}"
+    done
 
     if ! command -v nvm > /dev/null 2>&1; then
         echo "[WARNING] nvm is not installed."
