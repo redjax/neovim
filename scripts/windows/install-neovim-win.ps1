@@ -36,6 +36,8 @@ $NeovimDependencies = @(
     "FiraCode-NF-Mono",
     "cmake"
     "gcc"
+    "lua"
+    "luarocks"
 )
 
 function Test-IsAdmin {
