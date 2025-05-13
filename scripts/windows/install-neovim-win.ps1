@@ -36,6 +36,8 @@ $NeovimDependencies = @(
     "FiraCode-NF-Mono",
     "cmake"
     "gcc"
+    "lua"
+    "luarocks"
 )
 
 function Test-IsAdmin {
@@ -142,14 +144,6 @@ function Initialize-ScoopCli {
     }
     catch {
         Write-Error "Failed to install git."
-        Write-Error "Exception details: $($exc.Message)"
-    }
-
-    Write-Host "Install lua"
-    try {
-        scoop install lua
-    } catch {
-        Write-Error "Failed to install Lua."
         Write-Error "Exception details: $($exc.Message)"
     }
 }
