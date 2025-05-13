@@ -324,6 +324,135 @@ require('lazy').setup({
     },
   },
 
+  -- Lualine status line https://github.com/nvim-lualine/lualine.nvim
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('lualine').setup {
+        opts = {
+          icons_enabled = true,
+          theme = 'onedark',
+          component_separators = { left = '', right = ''},
+          section_separators = { left = '', right = ''},
+          disabled_filetypes = {
+            statusline = {},
+            winbar = {},
+          },
+          ignore_focus = {},
+          always_divide_middle = true,
+          always_show_tabline = true,
+          globalstatus = false,
+          refresh = {
+            statusline = 100,
+            tabline = 100,
+            winbar = 100,
+          }
+        },
+        sections = {
+          lualine_a = {'mode'},
+          lualine_b = {'branch', 'diff', 'diagnostics'},
+          lualine_c = {'filename'},
+          lualine_x = {'encoding', 'fileformat', 'filetype'},
+          lualine_y = {'progress'},
+          lualine_z = {'location'}
+        },
+        inactive_sections = {
+          lualine_a = {},
+          lualine_b = {},
+          lualine_c = {'filename'},
+          lualine_x = {'location'},
+          lualine_y = {},
+          lualine_z = {}
+        },
+        tabline = {},
+        winbar = {},
+        inactive_winbar = {},
+        extensions = {}
+      }
+    end,
+  },
+
+  -- Conform https://github.com/stevearc/conform.nvim
+  {
+    'stevearc/conform.nvim',
+    opts = {
+      formatters_by_ft = {
+        lua = { "stylua" },
+        -- Conform will run multiple formatters sequentially
+        python = { "ruff", "black" },
+      },
+      format_on_save = {
+        -- These options will be passed to conform.format()
+        timeout_ms = 500,
+        lsp_format = "fallback",
+      },
+    }
+  },
+
+  -- nvim-ts-autotag https://github.com/windwp/nvim-ts-autotag
+  {
+    "windwp/nvim-ts-autotag",
+    opts = {}
+  },
+
+  -- toggleterm https://github.com/akinsho/toggleterm.nvim
+  {
+    'akinsho/toggleterm.nvim',
+    version = "*",
+    opts = {},
+    config = function()
+      require("toggleterm").setup{
+        size = function(term)
+          if term.direction == "horizontal" then
+            return 15
+          elseif term.direction == "vertical" then
+            return vim.o.columns * 0.4
+          end
+        end,
+
+        open_mapping = [[<c-x>]],
+        on_create = function(t) end,
+        on_open = function(t) end,
+        on_close = function(t) end,
+        on_stdout = function(t, job, data, name) end,
+        on_stderr = function(t, job, data, name) end,
+        on_exit = function(t, job, exit_code, name) end,
+        hide_numbers = true,
+        shade_filetypes = {},
+        autochdir = false,
+        start_in_insert = true,
+        persist_size = true,
+        -- Options: vertical, horizontal, tab, float
+        direction = 'horizontal',
+        close_on_exit = true,
+        clear_env = false,
+        shell = vim.o.shell,
+        auto_scroll = true,
+        winbar = {
+          enabled = false,
+          name_formatter = function(term) --  term: Terminal
+            return term.name
+          end
+        },
+        responsiveness = {
+          -- breakpoint in terms of `vim.o.columns` at which terminals will start to stack on top of each other
+          -- instead of next to each other
+          -- default = 0 which means the feature is turned off
+          horizontal_breakpoint = 135,
+        },
+      }
+    end,
+  },
+
+  -- Luasnip code snippets https://github.com/L3MON4D3/LuaSnip
+  {
+    "L3MON4D3/LuaSnip",
+    version = "v2.*",
+    build = "make install_jsregexp",
+    opts = {}
+  },
+
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -1007,12 +1136,12 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
