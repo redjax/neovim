@@ -1,6 +1,5 @@
 ## Set build arguments with default values
 ARG CONTAINER_ENV=1
-ARG NEOVIM_MAKE_BUILD_DIR=/tmp/build
 
 ## Pull nodejs container
 FROM node:latest AS node-base
@@ -63,15 +62,15 @@ COPY --from=node-base /usr/local/bin/npm /usr/local/bin/npm
 
 WORKDIR /neovim-setup
 
-## Run install-neovim-deb.sh script
-RUN chmod +x ./scripts/linux/install.sh && \
-    sudo -E CONTAINER_ENV=$CONTAINER_ENV NEOVIM_MAKE_BUILD_DIR=$NEOVIM_MAKE_BUILD_DIR ./scripts/linux/install.sh
-
 ## Set temporary paths for nvim to use
 ENV XDG_DATA_HOME=/tmp/nvim-data
 ENV XDG_STATE_HOME=/tmp/nvim-state
 
 RUN mkdir -p /tmp/nvim-data /tmp/nvim-state
+
+## Run install-neovim-deb.sh script
+RUN chmod +x ./scripts/linux/install.sh && \
+    sudo -E CONTAINER_ENV=$CONTAINER_ENV ./scripts/linux/install.sh
 
 ## Debian runtime
 FROM debian-stage AS debian-runtime
@@ -96,5 +95,3 @@ COPY --from=debian-stage /tmp/nvim-state /tmp/nvim-state
 WORKDIR /neovim-setup
 
 CMD ["sleep", "infinity"]
-
-## Fedora layer
