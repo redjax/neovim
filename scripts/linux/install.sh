@@ -195,12 +195,12 @@ NVIM_CONFIG_DIR="${DOTCONFIG_DIR}/nvim"
 # echo "[DEBUG] Neovim config path: ${NVIM_CONFIG_DIR}"
 
 ## Neovim dependency packages installable with dnf
-declare -a NVIM_DNF_DEPENDENCIES=("ripgrep" "xclip" "git" "fzf" "openssl-dev")
+declare -a NVIM_DNF_DEPENDENCIES=("ripgrep" "xclip" "git" "fzf" "openssl-dev" "compat-lua-devel-5.1.5")
 declare -a NVIM_DNF_GROUP_DEPENDENCIES=("Development Tools" "Development Libraries")
 # echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_DNF_DEPENDENCIES[@]}"
 
 ## Neovim dependency packages installable with apt
-declare -a NVIM_APT_DEPENDENCIES=("build-essential" "ripgrep" "xclip" "git" "fzf" "libssl-dev")
+declare -a NVIM_APT_DEPENDENCIES=("build-essential" "ripgrep" "xclip" "git" "fzf" "libssl-dev" "liblua5.1-0-dev")
 # echo "[DEBUG] Neovim dependencies installable with dnf: ${NVIM_APT_DEPENDENCIES[@]}"
 
 ## If $INSTALL_NVIM_APPIMG=1, add FUSE dependency
@@ -326,7 +326,7 @@ function install_dependencies_dnf() {
     sudo dnf update -y
     sudo dnf install -y "${NVIM_DNF_DEPENDENCIES[@]}"
     
-    for [[ dnf_group in "${NVIM_DNF_GROUP_DEPENDENCIES[@]}" ]]; do
+    for dnf_group in "${NVIM_DNF_GROUP_DEPENDENCIES[@]}"; do
         echo "Installing DNF group: ${dnf_group}"
         sudo dnf group install -y "${dnf_group}"
     done

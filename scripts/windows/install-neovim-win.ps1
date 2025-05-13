@@ -144,6 +144,14 @@ function Initialize-ScoopCli {
         Write-Error "Failed to install git."
         Write-Error "Exception details: $($exc.Message)"
     }
+
+    Write-Host "Install lua"
+    try {
+        scoop install lua
+    } catch {
+        Write-Error "Failed to install Lua."
+        Write-Error "Exception details: $($exc.Message)"
+    }
 }
 
 function Install-Dependencies {
