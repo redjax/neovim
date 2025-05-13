@@ -313,6 +313,13 @@ function install_dependencies_apt() {
         echo "[WARNING] tree-sitter is not installed."
         npm install -g tree-sitter-cli
     fi
+
+    ## Install neovim package for npm
+    echo "Installing neovim with npm"
+    npm install -g neovim
+    if [[ $? -ne 0 ]]; then
+        echo "[ERROR] Error installing neovim with npm"
+    fi
 }
 
 function install_dependencies_dnf() {
