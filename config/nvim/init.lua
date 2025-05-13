@@ -979,6 +979,18 @@ require('lazy').setup({
           },
         },
       }
+
+      -- Bash LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#bashls
+      require('lspconfig').bash_ls.setup {
+        cmd = { "bash-language-server", "start" },
+        filtypes = { "bash", "sh" },
+        root_markers = { ".git" },
+        settings = {
+          bashIde = {
+            globPattern = "*@(.sh|.inc|.bash|.command)"
+          },
+        },
+      }
       
     end,
   },
