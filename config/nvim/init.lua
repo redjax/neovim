@@ -991,6 +991,42 @@ require('lazy').setup({
           },
         },
       }
+
+      -- CSS LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#css_variables
+      require('lspconfig').css_variables.setup {
+        cmd = { "css-variables-language-server", "--stdio" },
+        filetypes = { "css", "scss", "less" },
+        root_markers = { "package.json", ".git" },
+        settings = {
+          cssVariables = {
+            blacklistFolders = { "**/.cache", "**/.DS_Store", "**/.git", "**/.hg", "**/.next", "**/.svn", "**/bower_components", "**/CVS", "**/dist", "**/node_modules", "**/tests", "**/tmp" },
+            lookupFiles = { "**/*.less", "**/*.scss", "**/*.sass", "**/*.css" }
+          }
+        }
+      }
+
+      -- Docker Compose LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#docker_compose_language_service
+      require('lspconfig').docker_compose_language_service.setup {
+        cmd = { "docker-compose-langserver", "--stdio" },
+        filetypes = { "yaml.docker-compose" },
+        root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" }
+      }
+
+      -- Docker LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#dockerls
+      require('lspconfig').dockerls.setup {
+        cmd = { "docker-langserver", "--stdio" },
+        filetypes = { "dockerfile" },
+        root_markers = { "Dockerfile" },
+        settings = {
+          docker = {
+            languageserver = {
+              formatter = {
+                ignoreMultilineInstructions = true,
+              },
+            },
+          }
+        }
+      }
       
     end,
   },

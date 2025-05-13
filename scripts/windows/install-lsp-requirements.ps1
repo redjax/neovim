@@ -1,6 +1,9 @@
 $NpmDependencies = @(
     "azure-pipelines-language-server",
-    "bash-language-server"
+    "bash-language-server",
+    "css-variables-language-server",
+    "@microsoft/compose-language-service",
+    "dockerfile-language-server-nodejs"
 )
 
 foreach ($NpmPkg in $NpmDependencies ) {

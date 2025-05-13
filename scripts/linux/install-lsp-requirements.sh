@@ -17,7 +17,13 @@ if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
     # sleep 4
 fi
 
-declare -a NPM_DEPENDENCIES=("azure-pipelines-language-server" "bash-language-server")
+declare -a NPM_DEPENDENCIES=(
+    "azure-pipelines-language-server"
+    "bash-language-server"
+    "css-variables-language-server"
+    "@microsoft/compose-language-service"
+    "dockerfile-language-server-nodejs"
+)
 
 if ! command -v npm --version > /dev/null; then
     echo "NPM is not installed."
