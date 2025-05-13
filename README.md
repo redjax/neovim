@@ -93,6 +93,12 @@ The containers set up an environment to run [`install.sh`](./scripts/linux/insta
 
 To build the container, run the [`build-deb-img.sh`](./scripts/docker/build-deb-img.sh) (for Debian) or [`build-rpm-img.sh`](./scripts/docker/build-rpm-img.sh) (for Fedora) script.
 
+For example, the `build-deb-img.sh` script (note: you should run this script from the root of the repository):
+
+```shell
+./scripts/docker/build-deb-img.sh
+```
+
 You can also manually build the command (note: add `--progress=plain` to the end of the docker build command to see all build output):
 
 ```shell
