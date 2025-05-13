@@ -579,6 +579,7 @@ require('lazy').setup({
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },
+
   -- Signup code signatures https://github.com/Dan7h3x/signup.nvim
   {
     "Dan7h3x/signup.nvim",
@@ -627,6 +628,72 @@ require('lazy').setup({
       require("signup").setup(opts)
     end
   },
+
+  -- LSP signature https://github.com/ray-x/lsp_signature.nvim
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "InsertEnter",
+    opts = {
+      bind = true,
+      handler_opts = {
+        border = "rounded"
+      }
+    },
+  },
+
+  -- GoTo preview https://github.com/rmagatti/goto-preview
+  {
+    "rmagatti/goto-preview",
+    dependencies = { "rmagatti/logger.nvim" },
+    event = "BufEnter",
+    -- necessary as per https://github.com/rmagatti/goto-preview/issues/88
+    config = true,
+    opts = {
+      -- Width of the floating window
+      width = 120,
+      -- Height of the floating window
+      height = 15,
+      -- Border characters of the floating window
+      border = {"↖", "─" ,"┐", "│", "┘", "─", "└", "│"},
+      -- Bind default mappings
+      default_mappings = false,
+      -- Print debug information
+      debug = false,
+      -- 0-100 opacity level of the floating window where 100 is fully transparent.
+      opacity = nil,
+      -- Binds arrow keys to resizing the floating window.
+      resizing_mappings = false,
+      -- A function taking two arguments, a buffer and a window to be ran as a hook.
+      post_open_hook = nil,
+      -- A function taking two arguments, a buffer and a window to be ran as a hook.
+      post_close_hook = nil,
+      -- Configure the telescope UI for slowing the references cycling window.
+      references = {
+        -- telescope, fzf_lua, snacks, mini_pick, default
+        provider = "telescope",
+      },
+      -- These two configs can also be passed down to the goto-preview definition and implementation calls for one off "peak" functionality.
+      -- Focus the floating window when opening it.
+      focus_on_open = true,
+      -- Dismiss the floating window when moving the cursor.
+      dismiss_on_move = false,
+      -- passed into vim.api.nvim_win_close's second argument. See :h nvim_win_close
+      force_close = true,
+      -- the bufhidden option to set on the floating window. See :h bufhidden
+      bufhidden = "wipe",
+      -- Whether to nest floating windows
+      stack_floating_preview_windows = true,
+      -- Whether to open a new floating window for a reference within the current file
+      same_file_float_preview = true,
+      -- Whether to set the preview window title as the filename
+      preview_window_title = { enable = true, position = "left" },
+      -- Starting zindex for the stack of floating windows
+      zindex = 1,
+      -- Whether to override vim.ui.input with a goto-preview floating window
+      vim_ui_input = true,
+    }
+  },
+
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
