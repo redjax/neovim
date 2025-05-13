@@ -694,6 +694,54 @@ require('lazy').setup({
     }
   },
 
+  -- Type hints with virtual text https://github.com/jubnzv/virtual-types.nvim
+  {
+    'jubnzv/virtual-types.nvim',
+    opts = {},
+    config = function()
+      on_attach=require'virtualtypes'.on_attach
+    end,
+  },
+
+  -- Code outline https://github.com/hedyhli/outline.nvim
+  {
+    "hedyhli/outline.nvim",
+    lazy = true,
+    cmd = { "Outline", "OutlineOpen" },
+    keys = {
+      { "<leader>o", "<cmd>Outline<CR>", desc = "Toggle outline" },
+    },
+    opts = {
+      -- Your setup opts here
+    },
+  },
+
+  -- Linting https://github.com/mfussenegger/nvim-lint
+  {
+    "mfussenegger/nvim-lint",
+    opts = {},
+  },
+
+  -- LSP setup aid https://github.com/junnplus/lsp-setup.nvim
+  {
+    'junnplus/lsp-setup.nvim',
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      -- optional
+      'mason-org/mason.nvim',
+      -- optional
+      'mason-org/mason-lspconfig.nvim',
+    },
+    opts = {
+      servers = {
+        pyright = {},
+      },
+      inlay_hints = {
+        enabled = true,
+      },
+    },
+  },
+
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
@@ -915,6 +963,23 @@ require('lazy').setup({
           end,
         },
       }
+
+      -- Azure pipelines LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#azure_pipelines_ls
+      require('lspconfig').azure_pipelines_ls.setup {
+        settings = {
+          yaml = {
+            schemas = {
+              ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json"] = {
+                "/azure-pipeline*.y*l",
+                "/*.azure*",
+                "Azure-Pipelines/**/*.y*l",
+                "Pipelines/*.y*l",
+              },
+            },
+          },
+        },
+      }
+      
     end,
   },
 
