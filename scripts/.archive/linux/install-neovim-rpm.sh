@@ -4,6 +4,8 @@
 CWD=$(pwd)
 # echo "[DEBUG] CWD: ${CWD}"
 
+DOTCONFIG_DIR="${HOME}/.config"
+
 NVIM_CONFIG_SRC="${CWD}/config/nvim"
 # echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
 
@@ -12,8 +14,9 @@ NVIM_CONFIG_DIR="$HOME/.config/nvim"
 # echo "[DEBUG] Neovim config path: ${NVIM_CONFIG_DIR}"
 
 ## Neovim dependency packages installable with apt
-declare -a NVIM_APT_DEPENDENCIES=("build-essential" "ripgrep" "xclip" "git" "fzf" "libssl-dev" "fuse")
-# echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_APT_DEPENDENCIES[@]}"
+declare -a NVIM_DNF_DEPENDENCIES=("ripgrep" "xclip" "git" "fzf" "openssl-dev" "fuse")
+declare -a NVIM_DNF_GROUP_DEPENDENCIES=("Development Tools" "Development Libraries")
+# echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_DNF_DEPENDENCIES[@]}"
 
 function return_to_root() {
     cd $CWD
@@ -78,11 +81,12 @@ function install-dependencies() {
     echo "[ Neovim Setup - Install neovim dependencies ]"
     echo ""
 
-    sudo apt update -y
-    sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
+    sudo dnf update -y
+    sudo dnf install -y "${NVIM_DNF_DEPENDENCIES[@]}"
+    sudo dnf group install -y "${NVIM_DNF_DEPENDENCIES[@]}"
 
     if ! command -v nvm > /dev/null 2>&1; then
-        echo "[WARNING] nvm is not installed. Installing..."
+        echo "[WARNING] nvm is not installed."
 
         ## Download & install nvm
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
@@ -91,14 +95,14 @@ function install-dependencies() {
     fi
 
     if ! command -v npm > /dev/null 2>&1; then
-        echo "[WARNING] node is not installed. Installing..."
+        echo "[WARNING] node is not installed."
 
         nvm install --lts
         nvm alias default lts/*
     fi
 
     if ! command -v tree-sitter --version > /dev/null 2>&1; then
-        echo "[WARNING] tree-sitter is not installed. Installing..."
+        echo "[WARNING] tree-sitter is not installed."
         npm install -g tree-sitter-cli
     fi
 }
@@ -157,10 +161,13 @@ function install-neovim() {
 function symlink-config() {
     ## Create symbolic link from repository's config/nvim path to ~/.config/nvim
 
-    if [[ -d $NVIM_CONFIG_DIR ]]; then
-        echo "Neovim config already exists at $NVIM_CONFIG_DIR"
-
-        if [ -L "${NVIM_CONFIG_DIR}" ]; then
+    if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
+	echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
+	mkdir -pv "${DOTCONFIG_DIR}"
+    else	
+	if [[ -d $NVIM_CONFIG_DIR ]]; then
+            echo "Neovim config already exists at $NVIM_CONFIG_DIR"
+        elif [ -L "${NVIM_CONFIG_DIR}" ]; then
             echo "Neovim path is a symlink. Removing link"
             rm "${NVIM_CONFIG_DIR}"
         else
@@ -179,30 +186,30 @@ function symlink-config() {
 
 ## Check if neovim is installed
 # if ! command -v nvim > /dev/null 2>&1; then
-#     echo "[WARNING] Neovim is not installed. Installing..."
+#     echo "[WARNING] Neovim is not installed."
     
-#     sudo apt update -y && sudo apt install -y neovim
+#     sudo dnf update -y && sudo dnf install -y neovim
 # fi
 
 ## Check if curl is installed
 if ! command -v curl > /dev/null 2>&1; then
-    echo "[WARNING] curl is not installed. Installing..."
+    echo "[WARNING] curl is not installed."
 
-    sudo apt update -y && sudo apt install -y curl
+    sudo dnf update -y && sudo dnf install -y curl
 fi
 
 ## Check if unzip is installed
 if ! command -v unzip > /dev/null 2>&1; then
-    echo "[WARNING] unzip is not installed. Installing..."
+    echo "[WARNING] unzip is not installed."
 
-    sudo apt update -y && sudo apt install -y unzip
+    sudo dnf update -y && sudo dnf install -y unzip
 fi
 
 ## Check if fontconfig is installed
 if ! command -v fc-cache > /dev/null 2>&1; then
-    echo "[WARNING] fontconfig is not installed. Installing..."
+    echo "[WARNING] fontconfig is not installed."
 
-    sudo apt update -y && sudo apt install -y fontconfig
+    sudo dnf update -y && sudo dnf install -y fontconfig
 fi
 
 #########

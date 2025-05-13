@@ -3,16 +3,22 @@
 CWD=$(pwd)
 echo "[DEBUG] CWD: ${CWD}"
 
+DOTCONFIG_DIR="${HOME}/.config"
+echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
+
 NVIM_CONFIG_SRC="${CWD}/config/nvim"
 echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
 
 NVIM_CONFIG_DEST="${HOME}/.config/nvim"
 echo "[DEBUG] Neovim config destination: ${NVIM_CONFIG_DEST}"
 
-if [[ -d $NVIM_CONFIG_DEST ]]; then
-    echo "Neovim config already exists at $NVIM_CONFIG_DEST"
-
-    if [ -L "${NVIM_CONFIG_DEST}" ]; then
+if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
+    echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
+    mkdir -pv "${DOTCONFIG_DIR}"
+else
+    if [[ -d $NVIM_CONFIG_DEST ]]; then
+        echo "Neovim config already exists at $NVIM_CONFIG_DEST"
+    elif [ -L "${NVIM_CONFIG_DEST}" ]; then
         echo "Neovim path is a symlink. Removing link"
         rm "${NVIM_CONFIG_DEST}"
     else
