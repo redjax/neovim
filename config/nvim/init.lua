@@ -324,6 +324,127 @@ require('lazy').setup({
     },
   },
 
+  -- Lualine status line https://github.com/nvim-lualine/lualine.nvim
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('lualine').setup {
+        options = {
+          icons_enabled = true,
+          theme = 'onedark',
+          component_separators = { left = '', right = ''},
+          section_separators = { left = '', right = ''},
+          disabled_filetypes = {
+            statusline = {},
+            winbar = {},
+          },
+          ignore_focus = {},
+          always_divide_middle = true,
+          always_show_tabline = true,
+          globalstatus = false,
+          refresh = {
+            statusline = 100,
+            tabline = 100,
+            winbar = 100,
+          }
+        },
+        sections = {
+          lualine_a = {'mode'},
+          lualine_b = {'branch', 'diff', 'diagnostics'},
+          lualine_c = {'filename'},
+          lualine_x = {'encoding', 'fileformat', 'filetype'},
+          lualine_y = {'progress'},
+          lualine_z = {'location'}
+        },
+        inactive_sections = {
+          lualine_a = {},
+          lualine_b = {},
+          lualine_c = {'filename'},
+          lualine_x = {'location'},
+          lualine_y = {},
+          lualine_z = {}
+        },
+        tabline = {},
+        winbar = {},
+        inactive_winbar = {},
+        extensions = {}
+      }
+    end,
+  },
+
+  -- Conform https://github.com/stevearc/conform.nvim
+  {
+    'stevearc/conform.nvim',
+    opts = {
+      formatters_by_ft = {
+        lua = { "stylua" },
+        -- Conform will run multiple formatters sequentially
+        python = { "ruff", "black" },
+      },
+      format_on_save = {
+        -- These options will be passed to conform.format()
+        timeout_ms = 500,
+        lsp_format = "fallback",
+      },
+    }
+  },
+
+  -- nvim-ts-autotag https://github.com/windwp/nvim-ts-autotag
+  {
+    "windwp/nvim-ts-autotag",
+    opts = {}
+  },
+
+  -- toggleterm https://github.com/akinsho/toggleterm.nvim
+  {
+    'akinsho/toggleterm.nvim',
+    version = "*",
+    opts = {},
+    config = function()
+      require("toggleterm").setup{
+        size = function(term)
+          if term.direction == "horizontal" then
+            return 15
+          elseif term.direction == "vertical" then
+            return vim.o.columns * 0.4
+          end
+        end,
+        open_mapping = [[<c-x>]],
+        on_create = function(t) end,
+        on_open = function(t) end,
+        on_close = function(t) end,
+        on_stdout = function(t, job, data, name) end,
+        on_stderr = function(t, job, data, name) end,
+        on_exit = function(t, job, exit_code, name) end,
+        hide_numbers = true,
+        shade_filetypes = {},
+        autochdir = false,
+        start_in_insert = true,
+        persist_size = true,
+        direction = 'horizontal',
+        close_on_exit = true,
+        clear_env = false,
+        shell = vim.o.shell,
+        auto_scroll = true,
+        winbar = {
+          enabled = false,
+          name_formatter = function(term)
+            return term.name
+          end
+        },
+      }
+    end,
+  },
+
+  -- Luasnip code snippets https://github.com/L3MON4D3/LuaSnip
+  {
+    "L3MON4D3/LuaSnip",
+    version = "v2.*",
+    build = "make install_jsregexp",
+    opts = {}
+  },
+
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -450,8 +571,197 @@ require('lazy').setup({
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },
+
+  -- Signup code signatures https://github.com/Dan7h3x/signup.nvim
   {
-    -- Main LSP Configuration
+    "Dan7h3x/signup.nvim",
+    branch = "main",
+    opts = {
+      silent = true,
+      icons = {
+        parameter = "",
+        method = "󰡱",
+        documentation = "󱪙",
+        type = "󰌗",
+        default = "󰁔",
+      },
+      colors = {
+        parameter = "#86e1fc",
+        method = "#c099ff",
+        documentation = "#4fd6be",
+        default_value = "#a80888",
+        type = "#f6c177",
+      },
+      active_parameter = true,   -- enable/disable active_parameter highlighting
+      active_parameter_colors = {
+        bg = "#86e1fc",
+        fg = "#1a1a1a",
+      },
+      border = "rounded",
+      dock_border = "rounded",
+      winblend = 10,
+      auto_close = true,
+      trigger_chars = { "(", ",", ")" },
+      max_height = 10,
+      max_width = 40,
+      floating_window_above_cur_line = true,
+      debounce_time = 50,
+      dock_toggle_key = "<Leader>sd",
+      dock_mode = {
+        enabled = false,
+        position = "bottom",   -- "bottom", "top", or "middle"
+        height = 4,            -- If > 1: fixed height in lines, if <= 1: percentage of window height (e.g., 0.3 = 30%)
+        padding = 1,           -- Padding from window edges
+        side = "right",        -- "right", "left", or "center"
+        width_percentage = 40, -- Percentage of editor width (10-90%)
+      },
+    },
+    config = function(_,opts)
+      require("signup").setup(opts)
+    end
+  },
+
+  -- LSP signature https://github.com/ray-x/lsp_signature.nvim
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "InsertEnter",
+    opts = {
+      bind = true,
+      handler_opts = {
+        border = "rounded"
+      }
+    },
+  },
+
+  -- GoTo preview https://github.com/rmagatti/goto-preview
+  {
+    "rmagatti/goto-preview",
+    dependencies = { "rmagatti/logger.nvim" },
+    event = "BufEnter",
+    -- necessary as per https://github.com/rmagatti/goto-preview/issues/88
+    config = true,
+    opts = {
+      -- Width of the floating window
+      width = 120,
+      -- Height of the floating window
+      height = 15,
+      -- Border characters of the floating window
+      border = {"↖", "─" ,"┐", "│", "┘", "─", "└", "│"},
+      -- Bind default mappings
+      default_mappings = false,
+      -- Print debug information
+      debug = false,
+      -- 0-100 opacity level of the floating window where 100 is fully transparent.
+      opacity = nil,
+      -- Binds arrow keys to resizing the floating window.
+      resizing_mappings = false,
+      -- A function taking two arguments, a buffer and a window to be ran as a hook.
+      post_open_hook = nil,
+      -- A function taking two arguments, a buffer and a window to be ran as a hook.
+      post_close_hook = nil,
+      -- Configure the telescope UI for slowing the references cycling window.
+      references = {
+        -- telescope, fzf_lua, snacks, mini_pick, default
+        provider = "telescope",
+      },
+      -- These two configs can also be passed down to the goto-preview definition and implementation calls for one off "peak" functionality.
+      -- Focus the floating window when opening it.
+      focus_on_open = true,
+      -- Dismiss the floating window when moving the cursor.
+      dismiss_on_move = false,
+      -- passed into vim.api.nvim_win_close's second argument. See :h nvim_win_close
+      force_close = true,
+      -- the bufhidden option to set on the floating window. See :h bufhidden
+      bufhidden = "wipe",
+      -- Whether to nest floating windows
+      stack_floating_preview_windows = true,
+      -- Whether to open a new floating window for a reference within the current file
+      same_file_float_preview = true,
+      -- Whether to set the preview window title as the filename
+      preview_window_title = { enable = true, position = "left" },
+      -- Starting zindex for the stack of floating windows
+      zindex = 1,
+      -- Whether to override vim.ui.input with a goto-preview floating window
+      vim_ui_input = true,
+    }
+  },
+
+  -- Type hints with virtual text https://github.com/jubnzv/virtual-types.nvim
+  {
+    'jubnzv/virtual-types.nvim',
+    opts = {},
+    config = function()
+      on_attach=require'virtualtypes'.on_attach
+    end,
+  },
+
+  -- Code outline https://github.com/hedyhli/outline.nvim
+  {
+    "hedyhli/outline.nvim",
+    lazy = true,
+    cmd = { "Outline", "OutlineOpen" },
+    keys = {
+      { "<leader>o", "<cmd>Outline<CR>", desc = "Toggle outline" },
+    },
+    opts = {
+      -- Your setup opts here
+    },
+  },
+
+  -- Linting https://github.com/mfussenegger/nvim-lint
+  {
+    "mfussenegger/nvim-lint",
+    opts = {},
+  },
+
+  -- Neovim docs view https://github.com/amrbashir/nvim-docs-view
+  {
+    "amrbashir/nvim-docs-view",
+    lazy = true,
+    cmd = "DocsViewToggle",
+    opts = {
+      position = "right",
+      width = 60
+    }
+  },
+
+  -- Hoversplit https://github.com/roobert/hoversplit.nvim
+  {
+    "roobert/hoversplit.nvim",
+    config = function()
+      require("hoversplit").setup({
+        key_bindings = {
+          split_remain_focused = "<leader>hs",
+          vsplit_remain_focused = "<leader>hv",
+          split = "<leader>hS",
+          vsplit = "<leader>hV",
+        },
+      })
+    end,
+  },
+
+  -- LSP setup aid https://github.com/junnplus/lsp-setup.nvim
+  {
+    'junnplus/lsp-setup.nvim',
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      -- optional
+      'mason-org/mason.nvim',
+      -- optional
+      'mason-org/mason-lspconfig.nvim',
+    },
+    opts = {
+      -- servers = {
+      --   pyright = {},
+      -- },
+      -- inlay_hints = {
+      --   enabled = true,
+      -- },
+    },
+  },
+
+  -- Main LSP Configuration
+  {
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -615,8 +925,256 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
+
+        -- Go
+        -- gopls = {
+        --   cmd = { "gopls" },
+        --   filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        --   root_dir = "./lua/kickstart/custom/plugins/lsp/gopls.lua"
+        -- },
+
+        -- Python
+        pyright = {
+          cmd = { "pyright-langserver", "--stdio" },
+          filetypes = { "python" },
+          on_attach = "./lua/kickstart/custom/plugins/lsp/pyright.lua:22",
+          root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "pyrightconfig.json", ".git" },
+          settings = {
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "openFilesOnly",
+                useLibraryCodeForTypes = true
+              }
+            }
+          }
+        },
+
+        -- Azure pipelines https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#azure_pipelines_ls
+        azure_pipelines_ls = {
+          settings = {
+            yaml = {
+                schemas = {
+                    ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json"] = {
+                        "/azure-pipeline*.y*l",
+                        "/*.azure*",
+                        "Azure-Pipelines/**/*.y*l",
+                        "Pipelines/*.y*l",
+                    },
+                },
+            },
+          },
+        },
+
+        -- Bash https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#bashls
+        bashls = {
+          cmd = { "bash-language-server", "start" },
+          filetypes = { "bash", "sh" },
+          root_markers = { ".git" },
+          settings = {
+            bashIde = {
+              globPattern = "*@(.sh|.inc|.bash|.command)"
+            },
+          },
+        },
+
+        -- CSS https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#css_variables
+        css_variables = {
+          cmd = { "css-variables-language-server", "--stdio" },
+          filetypes = { "css", "scss", "less" },
+          root_markers = { "package.json", ".git" },
+          settings = {
+            cssVariables = {
+              blacklistFolders = { "**/.cache", "**/.DS_Store", "**/.git", "**/.hg", "**/.next", "**/.svn", "**/bower_components", "**/CVS", "**/dist", "**/node_modules", "**/tests", "**/tmp" },
+              lookupFiles = { "**/*.less", "**/*.scss", "**/*.sass", "**/*.css" }
+            }
+          }
+        },
+
+        -- Docker https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#dockerls
+        dockerls = {
+          cmd = { "docker-langserver", "--stdio" },
+          filetypes = { "dockerfile" },
+          root_markers = { "Dockerfile" },
+          settings = {
+            docker = {
+              languageserver = {
+                formatter = {
+                  ignoreMultilineInstructions = true,
+                },
+              },
+            }
+          }
+        },
+
+        -- Docker Compose https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#docker_compose_language_service
+        docker_compose_language_service = {
+          cmd = { "docker-compose-langserver", "--stdio" },
+          filetypes = { "yaml.docker-compose" },
+          root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" }
+        },
+
+        -- Github Actions https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#gh_actions_ls
+        gh_actions_ls = {
+          cmd = { "gh-actions-language-server", "--stdio" },
+          workspace_required = true,
+          capabilities = {
+            workspace = {
+              didChangeWorkspaceFolders = {
+                dynamicRegistration = true
+              }
+            }
+          },
+          filetypes = { "yaml" },
+          root_markers = { ".github/workflows", ".forgejo/workflows", ".gitea/workflows" }
+        },
+
+        -- GraphQL https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#graphql
+        graphql = {
+          cmd = { "graphql-lsp", "server", "-m", "stream" },
+          filetypes = { "graphql", "typescriptreact", "javascriptreact" },
+          root_dir = "./lua/kickstart/custom/plugins/lsp/graphql.lua:15"
+        },
+
+        -- Helm https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#helm_ls
+        helm_ls = {
+          capabilities = {
+            workspace = {
+              didChangeWatchedFiles = {
+                dynamicRegistration = true
+              }
+            }
+          },
+          cmd = { "helm_ls", "server" },
+          filetypes = { "helm" },
+          root_markers = { "Chart.yml" }
+        },
+
+        -- Jinja https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#jinja_lsp
+        -- jinja_lsp = {
+        --   cmd = { "jinja-lsp" },
+        --   filetypes = { "jinja" },
+        --   name = "jinja_lsp",
+        --   root_markers = { ".git" }
+        -- },
+
+        -- Markdown https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#marksman
+        marksman =  {
+          cmd = { "marksman", "server" },
+          filetypes = { "markdown", "markdown.mdx" },
+          root_markers = { ".marksman.toml", ".git" }
+        },
+
+        -- NGINX https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#nginx_language_server
+        -- nginx_language_server = {
+        --   cmd = { "nginx-language-server" },
+        --   filetypes = { "nginx" },
+        --   root_markers = { "nginx.conf", ".git" }
+        -- },
+
+        -- Nomad https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#nomad_lsp
+        -- nomad_lsp = {
+        --   cmd = { "nomad-lsp" },
+        --   filetypes = { "hcl.nomad", "nomad" },
+        --   root_dir = "./lua/kickstart/custom/plugins/lsp/nomad_lsp.lua:26"
+        -- },
+
+        -- Ruff https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff
+        -- ruff = {
+        --   cmd = { "ruff", "server" },
+        --   filetypes = { "python" },
+        --   root_markers = { "pyproject.toml", "ruff.toml", ".ruff.toml", ".git" },
+        --   settings = {}
+        -- },
+
+        -- Ruff LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff_lsp
+        -- ruff_lsp = {
+        --   cmd = { "ruff-lsp" },
+        --   filetypes = { "python" },
+        --   root_markers = { "pyproject.toml", "ruff.toml", ".git" },
+        --   settings = {}
+        -- },
+
+        -- SQL https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#sqruff
+        sqruff = {
+          cmd = { "sqruff", "lsp" },
+          filetypes = { "sql" },
+          root_markers = { ".sqruff", ".git" }
+        },
+
+        -- HTML https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#superhtml
+        superhtml = {
+          cmd = { "superhtml", "lsp" },
+          filetypes = { "superhtml", "html" },
+          root_markers = { ".git" }
+        },
+
+        -- Terraform https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#tflint
+        tflint = {
+          cmd = { "tflint", "--langserver" },
+          filetypes = { "terraform" },
+          root_markers = { ".terraform", ".git", ".tflint.hcl" }
+        },
+
+        -- Vue https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#vuels
+        vuels = {
+          cmd = { "vls" },
+          filetypes = { "vue" },
+          init_options = {
+            config = {
+              css = {},
+              emmet = {},
+              html = {
+                suggest = {}
+              },
+              javascript = {
+                format = {}
+              },
+              stylusSupremacy = {},
+              typescript = {
+                format = {}
+              },
+              vetur = {
+                completion = {
+                  autoImport = false,
+                  tagCasing = "kebab",
+                  useScaffoldSnippets = false
+                },
+                format = {
+                  defaultFormatter = {
+                    js = "none",
+                    ts = "none"
+                  },
+                  defaultFormatterOptions = {},
+                  scriptInitialIndent = false,
+                  styleInitialIndent = false
+                },
+                useWorkspaceDependencies = false,
+                validation = {
+                  script = true,
+                  style = true,
+                  template = true
+                }
+              }
+            }
+          },
+          root_markers = { "package.json", "vue.config.js" }
+        },
+
+        -- YAML https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#yamlls
+        yamlls = {
+          cmd = { "yaml-language-server", "--stdio" },
+          filetypes = { "yaml", "yaml.docker-compose", "yaml.gitlab" },
+          root_markers = { ".git" },
+          settings = {
+            redhat = {
+              telemetry = {
+                enabled = false
+              }
+            }
+          }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -628,9 +1186,10 @@ require('lazy').setup({
         --
 
         lua_ls = {
-          -- cmd = { ... },
-          -- filetypes = { ... },
+          cmd = { "lua-language-server" },
+          filetypes = { "lua" },
           -- capabilities = {},
+          root_markers = { ".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", "selene.toml", "selene.yml", ".git" },
           settings = {
             Lua = {
               completion = {
@@ -671,6 +1230,7 @@ require('lazy').setup({
           end,
         },
       }
+      
     end,
   },
 
@@ -1007,12 +1567,12 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
