@@ -383,6 +383,15 @@ require('lazy').setup({
     }
   },
 
+  -- Nerdy NERD font installer https://github.com/2KAbhishek/nerdy.nvim/
+  {
+    '2kabhishek/nerdy.nvim',
+    dependencies = {
+        'folke/snacks.nvim',
+    },
+    cmd = 'Nerdy',
+  },
+
   -- Lualine status line https://github.com/nvim-lualine/lualine.nvim
   {
     'nvim-lualine/lualine.nvim',
