@@ -330,7 +330,7 @@ require('lazy').setup({
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('lualine').setup {
-        opts = {
+        options = {
           icons_enabled = true,
           theme = 'onedark',
           component_separators = { left = '', right = ''},
@@ -410,7 +410,6 @@ require('lazy').setup({
             return vim.o.columns * 0.4
           end
         end,
-
         open_mapping = [[<c-x>]],
         on_create = function(t) end,
         on_open = function(t) end,
@@ -423,7 +422,6 @@ require('lazy').setup({
         autochdir = false,
         start_in_insert = true,
         persist_size = true,
-        -- Options: vertical, horizontal, tab, float
         direction = 'horizontal',
         close_on_exit = true,
         clear_env = false,
@@ -431,15 +429,9 @@ require('lazy').setup({
         auto_scroll = true,
         winbar = {
           enabled = false,
-          name_formatter = function(term) --  term: Terminal
+          name_formatter = function(term)
             return term.name
           end
-        },
-        responsiveness = {
-          -- breakpoint in terms of `vim.o.columns` at which terminals will start to stack on top of each other
-          -- instead of next to each other
-          -- default = 0 which means the feature is turned off
-          horizontal_breakpoint = 135,
         },
       }
     end,
@@ -733,12 +725,12 @@ require('lazy').setup({
       'mason-org/mason-lspconfig.nvim',
     },
     opts = {
-      servers = {
-        pyright = {},
-      },
-      inlay_hints = {
-        enabled = true,
-      },
+      -- servers = {
+      --   pyright = {},
+      -- },
+      -- inlay_hints = {
+      --   enabled = true,
+      -- },
     },
   },
 
@@ -907,8 +899,77 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
+
+        -- Go
         -- gopls = {},
-        -- pyright = {},
+
+        -- Python
+        pyright = {},
+
+        -- Azure pipelines https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#azure_pipelines_ls
+        azure_pipelines_ls = {
+          settings = {
+            yaml = {
+                schemas = {
+                    ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json"] = {
+                        "/azure-pipeline*.y*l",
+                        "/*.azure*",
+                        "Azure-Pipelines/**/*.y*l",
+                        "Pipelines/*.y*l",
+                    },
+                },
+            },
+          },
+        },
+
+        -- Bash https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#bashls
+        bashls = {
+          cmd = { "bash-language-server", "start" },
+          filetypes = { "bash", "sh" },
+          root_markers = { ".git" },
+          settings = {
+            bashIde = {
+              globPattern = "*@(.sh|.inc|.bash|.command)"
+            },
+          },
+        },
+
+        -- CSS https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#css_variables
+        css_variables = {
+          cmd = { "css-variables-language-server", "--stdio" },
+          filetypes = { "css", "scss", "less" },
+          root_markers = { "package.json", ".git" },
+          settings = {
+            cssVariables = {
+              blacklistFolders = { "**/.cache", "**/.DS_Store", "**/.git", "**/.hg", "**/.next", "**/.svn", "**/bower_components", "**/CVS", "**/dist", "**/node_modules", "**/tests", "**/tmp" },
+              lookupFiles = { "**/*.less", "**/*.scss", "**/*.sass", "**/*.css" }
+            }
+          }
+        },
+
+        -- Docker https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#dockerls
+        dockerls = {
+          cmd = { "docker-langserver", "--stdio" },
+          filetypes = { "dockerfile" },
+          root_markers = { "Dockerfile" },
+          settings = {
+            docker = {
+              languageserver = {
+                formatter = {
+                  ignoreMultilineInstructions = true,
+                },
+              },
+            }
+          }
+        },
+
+        -- Docker Compose https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#docker_compose_language_service
+        docker_compose_language_service = {
+          cmd = { "docker-compose-langserver", "--stdio" },
+          filetypes = { "yaml.docker-compose" },
+          root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -962,70 +1023,6 @@ require('lazy').setup({
             require('lspconfig')[server_name].setup(server)
           end,
         },
-      }
-
-      -- Azure pipelines LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#azure_pipelines_ls
-      require('lspconfig').azure_pipelines_ls.setup {
-        settings = {
-          yaml = {
-            schemas = {
-              ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json"] = {
-                "/azure-pipeline*.y*l",
-                "/*.azure*",
-                "Azure-Pipelines/**/*.y*l",
-                "Pipelines/*.y*l",
-              },
-            },
-          },
-        },
-      }
-
-      -- Bash LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#bashls
-      require('lspconfig').bash_ls.setup {
-        cmd = { "bash-language-server", "start" },
-        filetypes = { "bash", "sh" },
-        root_markers = { ".git" },
-        settings = {
-          bashIde = {
-            globPattern = "*@(.sh|.inc|.bash|.command)"
-          },
-        },
-      }
-
-      -- CSS LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#css_variables
-      require('lspconfig').css_variables.setup {
-        cmd = { "css-variables-language-server", "--stdio" },
-        filetypes = { "css", "scss", "less" },
-        root_markers = { "package.json", ".git" },
-        settings = {
-          cssVariables = {
-            blacklistFolders = { "**/.cache", "**/.DS_Store", "**/.git", "**/.hg", "**/.next", "**/.svn", "**/bower_components", "**/CVS", "**/dist", "**/node_modules", "**/tests", "**/tmp" },
-            lookupFiles = { "**/*.less", "**/*.scss", "**/*.sass", "**/*.css" }
-          }
-        }
-      }
-
-      -- Docker Compose LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#docker_compose_language_service
-      require('lspconfig').docker_compose_language_service.setup {
-        cmd = { "docker-compose-langserver", "--stdio" },
-        filetypes = { "yaml.docker-compose" },
-        root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" }
-      }
-
-      -- Docker LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#dockerls
-      require('lspconfig').dockerls.setup {
-        cmd = { "docker-langserver", "--stdio" },
-        filetypes = { "dockerfile" },
-        root_markers = { "Dockerfile" },
-        settings = {
-          docker = {
-            languageserver = {
-              formatter = {
-                ignoreMultilineInstructions = true,
-              },
-            },
-          }
-        }
       }
       
     end,
