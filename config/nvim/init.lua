@@ -734,8 +734,8 @@ require('lazy').setup({
     },
   },
 
+  -- Main LSP Configuration
   {
-    -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
