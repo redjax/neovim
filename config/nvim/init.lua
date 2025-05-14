@@ -1083,12 +1083,12 @@ require('lazy').setup({
           root_markers = { ".git" }
         },
 
-        -- Terraform 
-        -- terraform_lsp = {
-        --   cmd = { "terraform-lsp" },
-        --   filetypes = { "terraform", "hcl" },
-        --   root_markers = { ".terraform", ".git" }
-        -- },
+        -- Terraform https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#tflint
+        tflint = {
+          cmd = { "tflint", "--langserver" },
+          filetypes = { "terraform" },
+          root_markers = { ".terraform", ".git", ".tflint.hcl" }
+        },
 
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
