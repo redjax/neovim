@@ -476,6 +476,48 @@ require('lazy').setup({
     end,
   },
 
+  -- YAML https://github.com/cuducos/yaml.nvim
+  {
+    "cuducos/yaml.nvim",
+    ft = { "yaml" }, -- optional
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "folke/snacks.nvim", -- optional
+      "nvim-telescope/telescope.nvim", -- optional
+      "ibhagwan/fzf-lua" -- optional
+    },
+  },
+
+  -- YAML companion https://github.com/someone-stole-my-name/yaml-companion.nvim
+  {
+    "someone-stole-my-name/yaml-companion.nvim",
+    requires = {
+        { "neovim/nvim-lspconfig" },
+        { "nvim-lua/plenary.nvim" },
+        { "nvim-telescope/telescope.nvim" },
+    },
+    config = function()
+      require("telescope").load_extension("yaml_schema")
+    end,
+  },
+
+  -- Markdown TOC https://github.com/ChuufMaster/markdown-toc
+  {
+    'ChuufMaster/markdown-toc',
+    opts = {
+
+      -- The heading level to match (i.e the number of "#"s to match to) max 6
+      heading_level_to_match = -1,
+
+      -- Set to True display a dropdown to allow you to select the heading level
+      ask_for_heading_level = false,
+
+      -- TOC default string
+      -- WARN
+      toc_format = '%s- [%s](<%s#%s>)',
+    }
+  },
+
   -- Luasnip code snippets https://github.com/L3MON4D3/LuaSnip
   {
     "L3MON4D3/LuaSnip",
