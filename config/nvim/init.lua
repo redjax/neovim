@@ -1032,6 +1032,13 @@ require('lazy').setup({
         --   root_markers = { "nginx.conf", ".git" }
         -- },
 
+        -- Nomad https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#nomad_lsp
+        -- nomad_lsp = {
+        --   cmd = { "nomad-lsp" },
+        --   filetypes = { "hcl.nomad", "nomad" },
+        --   root_dir = "./lua/kickstart/custom/plugins/lsp/nomad_lsp.lua:26"
+        -- },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
