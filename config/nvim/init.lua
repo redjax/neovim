@@ -392,6 +392,72 @@ require('lazy').setup({
     cmd = 'Nerdy',
   },
 
+  -- coc https://github.com/neoclide/coc.nvim
+  -- {
+  --   "neoclide/coc.nvim",
+  --   -- Use the stable release branch
+  --   branch = "release",
+  --   -- Installs Node.js dependencies
+  --   build = "npm ci",
+  --   init = function()
+  --     -- Optional: any global config before loading coc.nvim
+  --   end,
+  --   config = function()
+  --     -- Optional: your custom coc.nvim config (see below)
+  --   end,
+  -- },
+
+  -- Auto mkdir on save https://github.com/mateuszwieloch/automkdir.nvim
+  {
+    "mateuszwieloch/automkdir.nvim",
+    opts = {},
+  },
+
+  -- reach https://github.com/toppair/reach.nvim
+  {
+    'toppair/reach.nvim',
+    opts = {
+      notifications = true,
+      -- 'bufnr' or 'dynamic' or 'auto'
+      handle = 'auto',
+      show_icons = true,
+      -- Include current buffer in the list
+      show_current = false,
+      -- Show buffer modified indicator
+      show_modified = true,
+      -- Character to use as modified indicator
+      modified_icon = '[*]',
+      -- Whether to gray out current buffer entry
+      grayout_current = true,
+      -- Character to use for terminal buffer handles when options.handle is 'dynamic
+      terminal_char = '\\',
+      -- Gray out non matching entries
+      grayout = true,
+      previous = {
+        -- Mark last used buffers with specified chars and colors
+        enable = true,
+        -- Maximum number of buffers to mark
+        depth = 2,
+        -- Characters to use as markers, last one is used when depth > #chars
+        chars = { '•' },
+        -- Highlight groups for markers,
+        groups = {
+          -- last one is used when depth > #groups
+          'String',
+          'Comment',
+        },
+      },
+      -- A map of action to key that should be used to invoke it
+      actions = {
+        split = '-',
+        vertsplit = '|',
+        tabsplit = ']',
+        delete = '<Space>',
+        priority = '=',
+      },
+    }
+  },
+
   -- Lualine status line https://github.com/nvim-lualine/lualine.nvim
   {
     'nvim-lualine/lualine.nvim',
