@@ -714,6 +714,32 @@ require('lazy').setup({
     opts = {},
   },
 
+  -- Neovim docs view https://github.com/amrbashir/nvim-docs-view
+  {
+    "amrbashir/nvim-docs-view",
+    lazy = true,
+    cmd = "DocsViewToggle",
+    opts = {
+      position = "right",
+      width = 60
+    }
+  },
+
+  -- Hoversplit https://github.com/roobert/hoversplit.nvim
+  {
+    "roobert/hoversplit.nvim",
+    config = function()
+      require("hoversplit").setup({
+        key_bindings = {
+          split_remain_focused = "<leader>hs",
+          vsplit_remain_focused = "<leader>hv",
+          split = "<leader>hS",
+          vsplit = "<leader>hV",
+        },
+      })
+    end,
+  },
+
   -- LSP setup aid https://github.com/junnplus/lsp-setup.nvim
   {
     'junnplus/lsp-setup.nvim',
