@@ -1412,19 +1412,19 @@ require('lazy').setup({
         },
 
         -- Github Actions https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#gh_actions_ls
-        gh_actions_ls = {
-          cmd = { "gh-actions-language-server", "--stdio" },
-          workspace_required = true,
-          capabilities = {
-            workspace = {
-              didChangeWorkspaceFolders = {
-                dynamicRegistration = true
-              }
-            }
-          },
-          filetypes = { "yaml" },
-          root_markers = { ".github/workflows", ".forgejo/workflows", ".gitea/workflows" }
-        },
+        -- gh_actions_ls = {
+        --   cmd = { "gh-actions-language-server", "--stdio" },
+        --   workspace_required = true,
+        --   capabilities = {
+        --     workspace = {
+        --       didChangeWorkspaceFolders = {
+        --         dynamicRegistration = true
+        --       }
+        --     }
+        --   },
+        --   filetypes = { "yaml.github" },
+        --   root_markers = { ".github/workflows", ".forgejo/workflows", ".gitea/workflows" }
+        -- },
 
         -- GraphQL https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#graphql
         graphql = {
