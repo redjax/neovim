@@ -193,6 +193,14 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
+-- https://github.com/Yu-Leo/cmp-go-pkgs
+vim.api.nvim_create_autocmd({ "LspAttach" }, {
+  pattern = { "*.go" },
+  callback = function(args)
+    require("cmp_go_pkgs").init_items(args)
+  end,
+})
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.highlight.on_yank()`
@@ -324,6 +332,209 @@ require('lazy').setup({
     },
   },
 
+  -- Workspaces https://github.com/natecraddock/workspaces.nvim
+  {
+    "natecraddock/workspaces.nvim",
+    opts = {
+      -- path to a file to store workspaces data in
+      -- on a unix system this would be ~/.local/share/nvim/workspaces
+      path = vim.fn.stdpath("data") .. "/workspaces",
+  
+      -- to change directory for nvim (:cd), or only for window (:lcd)
+      -- deprecated, use cd_type instead
+      -- global_cd = true,
+  
+      -- controls how the directory is changed. valid options are "global", "local", and "tab"
+      --   "global" changes directory for the neovim process. same as the :cd command
+      --   "local" changes directory for the current window. same as the :lcd command
+      --   "tab" changes directory for the current tab. same as the :tcd command
+      --
+      -- if set, overrides the value of global_cd
+      cd_type = "global",
+  
+      -- sort the list of workspaces by name after loading from the workspaces path.
+      sort = true,
+  
+      -- sort by recent use rather than by name. requires sort to be true
+      mru_sort = true,
+  
+      -- option to automatically activate workspace when opening neovim in a workspace directory
+      auto_open = false,
+  
+      -- option to automatically activate workspace when changing directory not via this plugin
+      -- set to "autochdir" to enable auto_dir when using :e and vim.opt.autochdir
+      -- valid options are false, true, and "autochdir"
+      auto_dir = false,
+  
+      -- enable info-level notifications after adding or removing a workspace
+      notify_info = true,
+  
+      -- lists of hooks to run after specific actions
+      -- hooks can be a lua function or a vim command (string)
+      -- lua hooks take a name, a path, and an optional state table
+      -- if only one hook is needed, the list may be omitted
+      hooks = {
+          add = {},
+          remove = {},
+          rename = {},
+          open_pre = {},
+          open = {},
+      },
+    }
+  },
+
+  -- Nerdy NERD font installer https://github.com/2KAbhishek/nerdy.nvim/
+  {
+    '2kabhishek/nerdy.nvim',
+    dependencies = {
+        'folke/snacks.nvim',
+    },
+    cmd = 'Nerdy',
+  },
+
+  -- coc https://github.com/neoclide/coc.nvim
+  -- {
+  --   "neoclide/coc.nvim",
+  --   -- Use the stable release branch
+  --   branch = "release",
+  --   -- Installs Node.js dependencies
+  --   build = "npm ci",
+  --   init = function()
+  --     -- Optional: any global config before loading coc.nvim
+  --   end,
+  --   config = function()
+  --     -- Optional: your custom coc.nvim config (see below)
+  --   end,
+  -- },
+
+  -- cosmic UI https://github.com/CosmicNvim/cosmic-ui
+  {
+    'CosmicNvim/cosmic-ui',
+    requires = { 'MunifTanjim/nui.nvim', 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('cosmic-ui').setup()
+    end,
+    opts = {
+      -- default border to use
+      -- 'single', 'double', 'rounded', 'solid', 'shadow'
+      border_style = 'single',
+    
+      -- rename popup settings
+      rename = {
+        border = {
+          highlight = 'FloatBorder',
+          style = 'single',
+          title = ' Rename ',
+          title_align = 'left',
+          title_hl = 'FloatBorder',
+        },
+        prompt = '> ',
+        prompt_hl = 'Comment',
+      },
+    
+      code_actions = {
+        min_width = nil,
+        border = {
+          bottom_hl = 'FloatBorder',
+          highlight = 'FloatBorder',
+          style = 'single',
+          title = 'Code Actions',
+          title_align = 'center',
+          title_hl = 'FloatBorder',
+        },
+      }
+    }
+  },
+
+  -- neodim 
+  {
+    "zbirenbaum/neodim",
+    event = "LspAttach",
+    config = function()
+      require("neodim").setup()
+    end,
+    opts = {
+      alpha = 0.75,
+      blend_color = nil,
+      hide = {
+        underline = true,
+        virtual_text = true,
+        signs = true,
+      },
+      regex = {
+        "[uU]nused",
+        "[nN]ever [rR]ead",
+        "[nN]ot [rR]ead",
+      },
+      priority = 128,
+      disable = {},
+    }
+  },
+
+  -- Telescope tabs https://github.com/LukasPietzschmann/telescope-tabs
+  {
+    'LukasPietzschmann/telescope-tabs',
+    config = function()
+      require('telescope').load_extension 'telescope-tabs'
+      require('telescope-tabs').setup {
+        -- Configs wiki: https://github.com/LukasPietzschmann/telescope-tabs/wiki/Configs#configs
+        -- Your custom config here
+      }
+    end,
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+  },
+
+  -- Auto mkdir on save https://github.com/mateuszwieloch/automkdir.nvim
+  {
+    "mateuszwieloch/automkdir.nvim",
+    opts = {},
+  },
+
+  -- reach https://github.com/toppair/reach.nvim
+  {
+    'toppair/reach.nvim',
+    opts = {
+      notifications = true,
+      -- 'bufnr' or 'dynamic' or 'auto'
+      handle = 'auto',
+      show_icons = true,
+      -- Include current buffer in the list
+      show_current = false,
+      -- Show buffer modified indicator
+      show_modified = true,
+      -- Character to use as modified indicator
+      modified_icon = '[*]',
+      -- Whether to gray out current buffer entry
+      grayout_current = true,
+      -- Character to use for terminal buffer handles when options.handle is 'dynamic
+      terminal_char = '\\',
+      -- Gray out non matching entries
+      grayout = true,
+      previous = {
+        -- Mark last used buffers with specified chars and colors
+        enable = true,
+        -- Maximum number of buffers to mark
+        depth = 2,
+        -- Characters to use as markers, last one is used when depth > #chars
+        chars = { '•' },
+        -- Highlight groups for markers,
+        groups = {
+          -- last one is used when depth > #groups
+          'String',
+          'Comment',
+        },
+      },
+      -- A map of action to key that should be used to invoke it
+      actions = {
+        split = '-',
+        vertsplit = '|',
+        tabsplit = ']',
+        delete = '<Space>',
+        priority = '=',
+      },
+    }
+  },
+
   -- Lualine status line https://github.com/nvim-lualine/lualine.nvim
   {
     'nvim-lualine/lualine.nvim',
@@ -373,6 +584,37 @@ require('lazy').setup({
     end,
   },
 
+  -- Go https://github.com/ray-x/go.nvim
+  {
+    "ray-x/go.nvim",
+    -- optional packages
+    dependencies = {
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("go").setup()
+    end,
+    event = {"CmdlineEnter"},
+    ft = {"go", 'gomod'},
+    -- if you need to install/update all binaries
+    build = ':lua require("go.install").update_all_sync()'
+  },
+
+  -- Gopher https://github.com/olexsmir/gopher.nvim/
+  {
+    "olexsmir/gopher.nvim",
+    ft = "go",
+    -- branch = "develop"
+    -- (optional) will update plugin's deps on every update
+    build = function()
+      vim.cmd.GoInstallDeps()
+    end,
+    ---@type gopher.Config
+    opts = {},
+  },
+
   -- Conform https://github.com/stevearc/conform.nvim
   {
     'stevearc/conform.nvim',
@@ -394,6 +636,39 @@ require('lazy').setup({
   {
     "windwp/nvim-ts-autotag",
     opts = {}
+  },
+
+  -- neo-tree https://github.com/nvim-neo-tree/neo-tree.nvim
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+      -- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+    lazy = false, -- neo-tree will lazily load itself
+    ---@module "neo-tree"
+    ---@type neotree.Config?
+    opts = {
+      -- fill any relevant options here
+    },
+  },
+
+  -- HTTP client https://github.com/mistweaverco/kulala.nvim
+  {
+    "mistweaverco/kulala.nvim",
+    keys = {
+      { "<leader>Rs", desc = "Send request" },
+      { "<leader>Ra", desc = "Send all requests" },
+      { "<leader>Rb", desc = "Open scratchpad" },
+    },
+    ft = {"http", "rest"},
+    opts = {
+      -- your configuration comes here
+      global_keymaps = false,
+    },
   },
 
   -- toggleterm https://github.com/akinsho/toggleterm.nvim
@@ -434,6 +709,125 @@ require('lazy').setup({
           end
         },
       }
+    end,
+  },
+
+  -- YAML https://github.com/cuducos/yaml.nvim
+  {
+    "cuducos/yaml.nvim",
+    ft = { "yaml" }, -- optional
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "folke/snacks.nvim", -- optional
+      "nvim-telescope/telescope.nvim", -- optional
+      "ibhagwan/fzf-lua" -- optional
+    },
+  },
+
+  -- YAML companion https://github.com/someone-stole-my-name/yaml-companion.nvim
+  {
+    "someone-stole-my-name/yaml-companion.nvim",
+    requires = {
+        { "neovim/nvim-lspconfig" },
+        { "nvim-lua/plenary.nvim" },
+        { "nvim-telescope/telescope.nvim" },
+    },
+    config = function()
+      require("telescope").load_extension("yaml_schema")
+    end,
+  },
+
+  -- Markdown TOC https://github.com/ChuufMaster/markdown-toc
+  -- {
+  --   'ChuufMaster/markdown-toc',
+  --   opts = {
+
+  --     -- The heading level to match (i.e the number of "#"s to match to) max 6
+  --     heading_level_to_match = -1,
+
+  --     -- Set to True display a dropdown to allow you to select the heading level
+  --     ask_for_heading_level = false,
+
+  --     -- TOC default string
+  --     -- WARN
+  --     toc_format = '%s- [%s](<%s#%s>)',
+  --   }
+  -- },
+
+  -- https://github.com/tadmccorkle/markdown.nvim
+  {
+    "tadmccorkle/markdown.nvim",
+    config = function()
+      require("markdown").setup({
+          -- Disable all keymaps by setting mappings field to 'false'.
+          -- Selectively disable keymaps by setting corresponding field to 'false'.
+          mappings = {
+            inline_surround_toggle = "gs", -- (string|boolean) toggle inline style
+            inline_surround_toggle_line = "gss", -- (string|boolean) line-wise toggle inline style
+            inline_surround_delete = "ds", -- (string|boolean) delete emphasis surrounding cursor
+            inline_surround_change = "cs", -- (string|boolean) change emphasis surrounding cursor
+            link_add = "gl", -- (string|boolean) add link
+            link_follow = "gx", -- (string|boolean) follow link
+            go_curr_heading = "]c", -- (string|boolean) set cursor to current section heading
+            go_parent_heading = "]p", -- (string|boolean) set cursor to parent section heading
+            go_next_heading = "]]", -- (string|boolean) set cursor to next section heading
+            go_prev_heading = "[[", -- (string|boolean) set cursor to previous section heading
+          },
+          inline_surround = {
+            -- For the emphasis, strong, strikethrough, and code fields:
+            -- * 'key': used to specify an inline style in toggle, delete, and change operations
+            -- * 'txt': text inserted when toggling or changing to the corresponding inline style
+            emphasis = {
+              key = "i",
+              txt = "*",
+            },
+            strong = {
+              key = "b",
+              txt = "**",
+            },
+            strikethrough = {
+              key = "s",
+              txt = "~~",
+            },
+            code = {
+              key = "c",
+              txt = "`",
+            },
+          },
+          link = {
+            paste = {
+              enable = true, -- whether to convert URLs to links on paste
+            },
+          },
+          toc = {
+            -- Comment text to flag headings/sections for omission in table of contents.
+            omit_heading = "toc omit heading",
+            omit_section = "toc omit section",
+            -- Cycling list markers to use in table of contents.
+            -- Use '.' and ')' for ordered lists.
+            markers = { "-" },
+          },
+          -- Hook functions allow for overriding or extending default behavior.
+          -- Called with a table of options and a fallback function with default behavior.
+          -- Signature: fun(opts: table, fallback: fun())
+          hooks = {
+            -- Called when following links. Provided the following options:
+            -- * 'dest' (string): the link destination
+            -- * 'use_default_app' (boolean|nil): whether to open the destination with default application
+            --   (refer to documentation on <Plug> mappings for explanation of when this option is used)
+            follow_link = nil,
+          },
+          -- on_attach = nil, -- (fun(bufnr: integer)) callback when plugin attaches to a buffer
+          on_attach = function(bufnr)
+            local function toggle(key)
+              return "<Esc>gv<Cmd>lua require'markdown.inline'"
+                .. ".toggle_emphasis_visual'" .. key .. "'<CR>"
+            end
+          
+            vim.keymap.set("x", "<C-b>", toggle("b"), { buffer = bufnr })
+            vim.keymap.set("x", "<C-i>", toggle("i"), { buffer = bufnr })
+          end,
+      })
     end,
   },
 
@@ -862,7 +1256,7 @@ require('lazy').setup({
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -889,7 +1283,7 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -1312,6 +1706,10 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      -- https://github.com/Snikimonkd/cmp-go-pkgs
+      "Snikimonkd/cmp-go-pkgs",
+      -- https://github.com/Yu-Leo/cmp-go-pkgs
+      "Yu-Leo/cmp-go-pkgs",
     },
     config = function()
       -- See `:help cmp`
@@ -1320,6 +1718,9 @@ require('lazy').setup({
       luasnip.config.setup {}
 
       cmp.setup {
+        -- https://github.com/Snikimonkd/cmp-go-pkgs
+        matching = { disallow_symbol_nonprefix_matching = false },
+
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -1388,6 +1789,8 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          -- https://github.com/Snikimonkd/cmp-go-pkgs
+          { name = "go_pkgs" },
         },
       }
     end,
