@@ -1069,6 +1069,13 @@ require('lazy').setup({
         --   settings = {}
         -- },
 
+        -- SQL https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#sqruff
+        sqruff = {
+          cmd = { "sqruff", "lsp" },
+          filetypes = { "sql" },
+          root_markers = { ".sqruff", ".git" }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
