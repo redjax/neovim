@@ -1010,6 +1010,21 @@ require('lazy').setup({
           root_markers = { "Chart.yml" }
         },
 
+        -- Jinja https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#jinja_lsp
+        -- jinja_lsp = {
+        --   cmd = { "jinja-lsp" },
+        --   filetypes = { "jinja" },
+        --   name = "jinja_lsp",
+        --   root_markers = { ".git" }
+        -- },
+
+        -- Markdown https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#marksman
+        marksman =  {
+          cmd = { "marksman", "server" },
+          filetypes = { "markdown", "markdown.mdx" },
+          root_markers = { ".marksman.toml", ".git" }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
