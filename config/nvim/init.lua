@@ -996,6 +996,20 @@ require('lazy').setup({
           root_dir = "./lua/kickstart/custom/plugins/lsp/graphql.lua:15"
         },
 
+        -- Helm https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#helm_ls
+        helm_ls = {
+          capabilities = {
+            workspace = {
+              didChangeWatchedFiles = {
+                dynamicRegistration = true
+              }
+            }
+          },
+          cmd = { "helm_ls", "server" },
+          filetypes = { "helm" },
+          root_markers = { "Chart.yml" }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
