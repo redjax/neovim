@@ -1327,14 +1327,14 @@ require('lazy').setup({
         -- gopls = {
         --   cmd = { "gopls" },
         --   filetypes = { "go", "gomod", "gowork", "gotmpl" },
-        --   root_dir = "./lua/kickstart/custom/plugins/lsp/gopls.lua"
+        --   root_dir = "./lua/lsp/gopls.lua"
         -- },
 
         -- Python
         pyright = {
           cmd = { "pyright-langserver", "--stdio" },
           filetypes = { "python" },
-          on_attach = "./lua/kickstart/custom/plugins/lsp/pyright.lua:22",
+          on_attach = "./lua/lsp/pyright.lua:22",
           root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "pyrightconfig.json", ".git" },
           settings = {
             python = {
@@ -1430,7 +1430,7 @@ require('lazy').setup({
         graphql = {
           cmd = { "graphql-lsp", "server", "-m", "stream" },
           filetypes = { "graphql", "typescriptreact", "javascriptreact" },
-          root_dir = "./lua/kickstart/custom/plugins/lsp/graphql.lua:15"
+          root_dir = "./lua/lsp/graphql.lua:15"
         },
 
         -- Helm https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#helm_ls
@@ -1473,7 +1473,7 @@ require('lazy').setup({
         -- nomad_lsp = {
         --   cmd = { "nomad-lsp" },
         --   filetypes = { "hcl.nomad", "nomad" },
-        --   root_dir = "./lua/kickstart/custom/plugins/lsp/nomad_lsp.lua:26"
+        --   root_dir = "./lua/lsp/nomad_lsp.lua:26"
         -- },
 
         -- Ruff https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff
