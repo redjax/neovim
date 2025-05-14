@@ -1135,6 +1135,20 @@ require('lazy').setup({
           root_markers = { "package.json", "vue.config.js" }
         },
 
+        -- YAML https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#yamlls
+        yamlls = {
+          cmd = { "yaml-language-server", "--stdio" },
+          filetypes = { "yaml", "yaml.docker-compose", "yaml.gitlab" },
+          root_markers = { ".git" },
+          settings = {
+            redhat = {
+              telemetry = {
+                enabled = false
+              }
+            }
+          }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
