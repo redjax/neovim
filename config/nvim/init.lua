@@ -908,7 +908,21 @@ require('lazy').setup({
         -- },
 
         -- Python
-        pyright = {},
+        pyright = {
+          cmd = { "pyright-langserver", "--stdio" },
+          filetypes = { "python" },
+          on_attach = "./lua/kickstart/custom/plugins/lsp/pyright.lua:22",
+          root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "pyrightconfig.json", ".git" },
+          settings = {
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "openFilesOnly",
+                useLibraryCodeForTypes = true
+              }
+            }
+          }
+        },
 
         -- Azure pipelines https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#azure_pipelines_ls
         azure_pipelines_ls = {
@@ -1038,6 +1052,8 @@ require('lazy').setup({
         --   filetypes = { "hcl.nomad", "nomad" },
         --   root_dir = "./lua/kickstart/custom/plugins/lsp/nomad_lsp.lua:26"
         -- },
+
+        
 
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
