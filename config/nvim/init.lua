@@ -581,9 +581,17 @@ require('lazy').setup({
             --   (refer to documentation on <Plug> mappings for explanation of when this option is used)
             follow_link = nil,
           },
-          on_attach = nil, -- (fun(bufnr: integer)) callback when plugin attaches to a buffer
-        }
-      )
+          -- on_attach = nil, -- (fun(bufnr: integer)) callback when plugin attaches to a buffer
+          on_attach = function(bufnr)
+            local function toggle(key)
+              return "<Esc>gv<Cmd>lua require'markdown.inline'"
+                .. ".toggle_emphasis_visual'" .. key .. "'<CR>"
+            end
+          
+            vim.keymap.set("x", "<C-b>", toggle("b"), { buffer = bufnr })
+            vim.keymap.set("x", "<C-i>", toggle("i"), { buffer = bufnr })
+          end,
+      })
     end,
   },
 
