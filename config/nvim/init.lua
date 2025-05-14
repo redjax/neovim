@@ -193,6 +193,14 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
+-- https://github.com/Yu-Leo/cmp-go-pkgs
+vim.api.nvim_create_autocmd({ "LspAttach" }, {
+  pattern = { "*.go" },
+  callback = function(args)
+    require("cmp_go_pkgs").init_items(args)
+  end,
+})
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.highlight.on_yank()`
@@ -371,6 +379,37 @@ require('lazy').setup({
         extensions = {}
       }
     end,
+  },
+
+  -- Go https://github.com/ray-x/go.nvim
+  {
+    "ray-x/go.nvim",
+    -- optional packages
+    dependencies = {
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("go").setup()
+    end,
+    event = {"CmdlineEnter"},
+    ft = {"go", 'gomod'},
+    -- if you need to install/update all binaries
+    build = ':lua require("go.install").update_all_sync()'
+  },
+
+  -- Gopher https://github.com/olexsmir/gopher.nvim/
+  {
+    "olexsmir/gopher.nvim",
+    ft = "go",
+    -- branch = "develop"
+    -- (optional) will update plugin's deps on every update
+    build = function()
+      vim.cmd.GoInstallDeps()
+    end,
+    ---@type gopher.Config
+    opts = {},
   },
 
   -- Conform https://github.com/stevearc/conform.nvim
@@ -1312,6 +1351,10 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      -- https://github.com/Snikimonkd/cmp-go-pkgs
+      "Snikimonkd/cmp-go-pkgs",
+      -- https://github.com/Yu-Leo/cmp-go-pkgs
+      "Yu-Leo/cmp-go-pkgs",
     },
     config = function()
       -- See `:help cmp`
@@ -1320,6 +1363,9 @@ require('lazy').setup({
       luasnip.config.setup {}
 
       cmp.setup {
+        -- https://github.com/Snikimonkd/cmp-go-pkgs
+        matching = { disallow_symbol_nonprefix_matching = false },
+
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -1388,6 +1434,8 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          -- https://github.com/Snikimonkd/cmp-go-pkgs
+          { name = "go_pkgs" },
         },
       }
     end,
