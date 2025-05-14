@@ -901,7 +901,11 @@ require('lazy').setup({
         -- clangd = {},
 
         -- Go
-        -- gopls = {},
+        -- gopls = {
+        --   cmd = { "gopls" },
+        --   filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        --   root_dir = "./lua/kickstart/custom/plugins/lsp/gopls.lua"
+        -- },
 
         -- Python
         pyright = {},
@@ -983,6 +987,13 @@ require('lazy').setup({
           },
           filetypes = { "yaml" },
           root_markers = { ".github/workflows", ".forgejo/workflows", ".gitea/workflows" }
+        },
+
+        -- GraphQL https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#graphql
+        graphql = {
+          cmd = { "graphql-lsp", "server", "-m", "stream" },
+          filetypes = { "graphql", "typescriptreact", "javascriptreact" },
+          root_dir = "./lua/kickstart/custom/plugins/lsp/graphql.lua:15"
         },
 
         -- rust_analyzer = {},
