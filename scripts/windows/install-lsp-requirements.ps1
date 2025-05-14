@@ -1,4 +1,5 @@
 $NpmDependencies = @(
+    "neovim",
     "gh-actions-language-server",
     "azure-pipelines-language-server",
     "bash-language-server",

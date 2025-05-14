@@ -484,6 +484,18 @@ require('lazy').setup({
     dependencies = { 'nvim-telescope/telescope.nvim' },
   },
 
+  -- Devicons https://github.com/nvim-tree/nvim-web-devicons
+  {
+    'nvim-tree/nvim-web-devicons',
+    opts = {}
+  },
+
+  -- DAP virtual text https://github.com/theHamsta/nvim-dap-virtual-text
+  {
+    "theHamsta/nvim-dap-virtual-text",
+    opts = {}
+  },
+
   -- Auto mkdir on save https://github.com/mateuszwieloch/automkdir.nvim
   {
     "mateuszwieloch/automkdir.nvim",
@@ -1327,14 +1339,14 @@ require('lazy').setup({
         -- gopls = {
         --   cmd = { "gopls" },
         --   filetypes = { "go", "gomod", "gowork", "gotmpl" },
-        --   root_dir = "./lua/kickstart/custom/plugins/lsp/gopls.lua"
+        --   root_dir = "./lua/lsp/gopls.lua"
         -- },
 
         -- Python
         pyright = {
           cmd = { "pyright-langserver", "--stdio" },
           filetypes = { "python" },
-          on_attach = "./lua/kickstart/custom/plugins/lsp/pyright.lua:22",
+          on_attach = "./lua/lsp/pyright.lua:22",
           root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "pyrightconfig.json", ".git" },
           settings = {
             python = {
@@ -1412,25 +1424,25 @@ require('lazy').setup({
         },
 
         -- Github Actions https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#gh_actions_ls
-        gh_actions_ls = {
-          cmd = { "gh-actions-language-server", "--stdio" },
-          workspace_required = true,
-          capabilities = {
-            workspace = {
-              didChangeWorkspaceFolders = {
-                dynamicRegistration = true
-              }
-            }
-          },
-          filetypes = { "yaml" },
-          root_markers = { ".github/workflows", ".forgejo/workflows", ".gitea/workflows" }
-        },
+        -- gh_actions_ls = {
+        --   cmd = { "gh-actions-language-server", "--stdio" },
+        --   workspace_required = true,
+        --   capabilities = {
+        --     workspace = {
+        --       didChangeWorkspaceFolders = {
+        --         dynamicRegistration = true
+        --       }
+        --     }
+        --   },
+        --   filetypes = { "yaml.github" },
+        --   root_markers = { ".github/workflows", ".forgejo/workflows", ".gitea/workflows" }
+        -- },
 
         -- GraphQL https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#graphql
         graphql = {
           cmd = { "graphql-lsp", "server", "-m", "stream" },
           filetypes = { "graphql", "typescriptreact", "javascriptreact" },
-          root_dir = "./lua/kickstart/custom/plugins/lsp/graphql.lua:15"
+          root_dir = "./lua/lsp/graphql.lua:15"
         },
 
         -- Helm https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#helm_ls
@@ -1473,7 +1485,7 @@ require('lazy').setup({
         -- nomad_lsp = {
         --   cmd = { "nomad-lsp" },
         --   filetypes = { "hcl.nomad", "nomad" },
-        --   root_dir = "./lua/kickstart/custom/plugins/lsp/nomad_lsp.lua:26"
+        --   root_dir = "./lua/lsp/nomad_lsp.lua:26"
         -- },
 
         -- Ruff https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff
