@@ -1053,7 +1053,13 @@ require('lazy').setup({
         --   root_dir = "./lua/kickstart/custom/plugins/lsp/nomad_lsp.lua:26"
         -- },
 
-        
+        -- Ruff https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff
+        -- ruff = {
+        --   cmd = { "ruff", "server" },
+        --   filetypes = { "python" },
+        --   root_markers = { "pyproject.toml", "ruff.toml", ".ruff.toml", ".git" },
+        --   settings = {}
+        -- },
 
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
