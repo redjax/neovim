@@ -1090,6 +1090,51 @@ require('lazy').setup({
           root_markers = { ".terraform", ".git", ".tflint.hcl" }
         },
 
+        -- Vue https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#vuels
+        vuels = {
+          cmd = { "vls" },
+          filetypes = { "vue" },
+          init_options = {
+            config = {
+              css = {},
+              emmet = {},
+              html = {
+                suggest = {}
+              },
+              javascript = {
+                format = {}
+              },
+              stylusSupremacy = {},
+              typescript = {
+                format = {}
+              },
+              vetur = {
+                completion = {
+                  autoImport = false,
+                  tagCasing = "kebab",
+                  useScaffoldSnippets = false
+                },
+                format = {
+                  defaultFormatter = {
+                    js = "none",
+                    ts = "none"
+                  },
+                  defaultFormatterOptions = {},
+                  scriptInitialIndent = false,
+                  styleInitialIndent = false
+                },
+                useWorkspaceDependencies = false,
+                validation = {
+                  script = true,
+                  style = true,
+                  template = true
+                }
+              }
+            }
+          },
+          root_markers = { "package.json", "vue.config.js" }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
