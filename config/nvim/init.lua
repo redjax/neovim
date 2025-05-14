@@ -970,6 +970,21 @@ require('lazy').setup({
           root_markers = { "docker-compose.yaml", "docker-compose.yml", "compose.yaml", "compose.yml" }
         },
 
+        -- Github Actions https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#gh_actions_ls
+        gh_actions_ls = {
+          cmd = { "gh-actions-language-server", "--stdio" },
+          workspace_required = true,
+          capabilities = {
+            workspace = {
+              didChangeWorkspaceFolders = {
+                dynamicRegistration = true
+              }
+            }
+          },
+          filetypes = { "yaml" },
+          root_markers = { ".github/workflows", ".forgejo/workflows", ".gitea/workflows" }
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
