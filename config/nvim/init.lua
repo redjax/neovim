@@ -1061,6 +1061,14 @@ require('lazy').setup({
         --   settings = {}
         -- },
 
+        -- Ruff LSP https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff_lsp
+        -- ruff_lsp = {
+        --   cmd = { "ruff-lsp" },
+        --   filetypes = { "python" },
+        --   root_markers = { "pyproject.toml", "ruff.toml", ".git" },
+        --   settings = {}
+        -- },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
