@@ -29,6 +29,7 @@ I am developing my Neovim configuration based on the Kickstart.nvim template, bu
     - [Build the container](#build-the-container)
     - [Run the container](#run-the-container)
 - [Notes](#notes)
+  - [Configure LSP (Language Server)](#configure-lsp-language-server)
 - [Links](#links)
 
 ## Requirements
@@ -122,8 +123,40 @@ Once you're in the container, open neovim with `nvim`. The `Lazy` installer shou
 - Press `<Space>` to open an interactive menu
 - Run `:Lazy` to open the package manager
 
+### Configure LSP (Language Server)
+
+Configuring a language server (LSP) with Lazy and Mason is pretty simple. [Find a language server here](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md), for example the [`marksman` Markdown LSP](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#marksman).
+
+In your [`init.lua`](./config/nvim/init.lua), find the line that begins with `require('lazy').setup({`. Within that function, find the section that begins with the comment `-- Main LSP Configuration`. In that section, in the `config = function()` function, find the variable `local servers = {`.
+
+Configure your LSPs Within the `local servers = {}` mapping, referencing existing LSPs for setup. After finding an LSP from the list, find the setup instructions and the `Default config:` section.
+
+For example, the `marksman` default config looks like:
+
+* `cmd` :
+> `{ "marksman", "server" }`
+* `filetypes` :
+> `{ "markdown", "markdown.mdx" }`
+* `root_markers` :
+> `{ ".marksman.toml", ".git" }`
+
+To configure a new LSP with Mason, you just need to add some setup instructions:
+
+```lua
+-- Markdown https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#marksman
+marksman =  {
+  cmd = { "marksman", "server" },
+  filetypes = { "markdown", "markdown.mdx" },
+  root_markers = { ".marksman.toml", ".git" }
+},
+```
+
+Next time you run `nvim`, Mason will install the LSP and `neovim` will use it when an appropriate file is opened.
+
 ## Links
 
 - [Github: kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
 - [Github: lazy.nvim](https://github.com/folke/lazy.nvim)
 - [LazyVim Docs](https://lazy.folke.io)
+- [Github: Awesome Neovim](https://github.com/rockerBOO/awesome-neovim)
+  
