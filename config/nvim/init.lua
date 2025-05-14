@@ -1169,6 +1169,9 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
+
+      -- Github Actions language server
+      'lttb/gh-actions-language-server'
     },
     config = function()
       -- Brief aside: **What is LSP?**

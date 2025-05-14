@@ -9,6 +9,7 @@
   "cosmic-ui": { "branch": "main", "commit": "ab7de388576eaac02ce7bc2389e55b8e207aad12" },
   "fidget.nvim": { "branch": "main", "commit": "d9ba6b7bfe29b3119a610892af67602641da778e" },
   "fzf-lua": { "branch": "main", "commit": "5af306b30f699513669efdf51cf50a6deab53968" },
+  "gh-actions-language-server": { "branch": "main", "commit": "0287d3081d7b74fef88824ca3bd6e9a44323a54d" },
   "gitsigns.nvim": { "branch": "main", "commit": "43b0c856ae5f32a195d83f4a27fe21d63e6c966c" },
   "go.nvim": { "branch": "master", "commit": "37ec4d9be3edef64b725bfe29684e1fe019873bc" },
   "gopher.nvim": { "branch": "main", "commit": "9db5931af1293ae52500921d92c02145d86df02c" },
