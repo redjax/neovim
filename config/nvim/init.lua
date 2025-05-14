@@ -484,6 +484,18 @@ require('lazy').setup({
     dependencies = { 'nvim-telescope/telescope.nvim' },
   },
 
+  -- Devicons https://github.com/nvim-tree/nvim-web-devicons
+  {
+    'nvim-tree/nvim-web-devicons',
+    opts = {}
+  },
+
+  -- DAP virtual text https://github.com/theHamsta/nvim-dap-virtual-text
+  {
+    "theHamsta/nvim-dap-virtual-text",
+    opts = {}
+  },
+
   -- Auto mkdir on save https://github.com/mateuszwieloch/automkdir.nvim
   {
     "mateuszwieloch/automkdir.nvim",

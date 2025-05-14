@@ -40,7 +40,14 @@ $NeovimDependencies = @(
     "luarocks",
     "python",
     "curl",
-    "unzip"
+    "unzip",
+    "luarocks",
+    "lua-for-windows",
+    "make",
+    "wget",
+    "gzip",
+    "fd",
+    "sed"
 )
 
 function Test-IsAdmin {
