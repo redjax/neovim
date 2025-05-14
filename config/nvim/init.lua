@@ -1076,6 +1076,20 @@ require('lazy').setup({
           root_markers = { ".sqruff", ".git" }
         },
 
+        -- HTML https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#superhtml
+        superhtml = {
+          cmd = { "superhtml", "lsp" },
+          filetypes = { "superhtml", "html" },
+          root_markers = { ".git" }
+        },
+
+        -- Terraform 
+        -- terraform_lsp = {
+        --   cmd = { "terraform-lsp" },
+        --   filetypes = { "terraform", "hcl" },
+        --   root_markers = { ".terraform", ".git" }
+        -- },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
