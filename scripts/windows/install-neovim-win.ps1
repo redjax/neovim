@@ -37,7 +37,10 @@ $NeovimDependencies = @(
     "cmake"
     "gcc"
     "lua"
-    "luarocks"
+    "luarocks",
+    "python",
+    "curl",
+    "unzip"
 )
 
 function Test-IsAdmin {
