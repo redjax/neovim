@@ -446,6 +446,44 @@ require('lazy').setup({
     }
   },
 
+  -- neodim 
+  {
+    "zbirenbaum/neodim",
+    event = "LspAttach",
+    config = function()
+      require("neodim").setup()
+    end,
+    opts = {
+      alpha = 0.75,
+      blend_color = nil,
+      hide = {
+        underline = true,
+        virtual_text = true,
+        signs = true,
+      },
+      regex = {
+        "[uU]nused",
+        "[nN]ever [rR]ead",
+        "[nN]ot [rR]ead",
+      },
+      priority = 128,
+      disable = {},
+    }
+  },
+
+  -- Telescope tabs https://github.com/LukasPietzschmann/telescope-tabs
+  {
+    'LukasPietzschmann/telescope-tabs',
+    config = function()
+      require('telescope').load_extension 'telescope-tabs'
+      require('telescope-tabs').setup {
+        -- Configs wiki: https://github.com/LukasPietzschmann/telescope-tabs/wiki/Configs#configs
+        -- Your custom config here
+      }
+    end,
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+  },
+
   -- Auto mkdir on save https://github.com/mateuszwieloch/automkdir.nvim
   {
     "mateuszwieloch/automkdir.nvim",
