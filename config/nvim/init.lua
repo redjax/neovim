@@ -1025,6 +1025,13 @@ require('lazy').setup({
           root_markers = { ".marksman.toml", ".git" }
         },
 
+        -- NGINX https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#nginx_language_server
+        -- nginx_language_server = {
+        --   cmd = { "nginx-language-server" },
+        --   filetypes = { "nginx" },
+        --   root_markers = { "nginx.conf", ".git" }
+        -- },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
