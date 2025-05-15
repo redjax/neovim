@@ -9,3 +9,5 @@ require("config.autocmds")
 require("plugins")
 -- Import LSPs
 require("lsp")
+-- Import health module
+require("health")
