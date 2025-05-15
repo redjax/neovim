@@ -1,13 +1,11 @@
 -- Import options module
-require("config.options")
+require("neovim.config.options")
 -- Import keymaps module
-require("config.mappings")
+require("neovim.config.mappings")
 -- Import autocmds module
-require("config.autocmds")
+require("neovim.config.autocmds")
 
 -- Import plugin modules
-require("plugins")
--- Import LSPs
-require("lsp")
+require("neovim.plugins")
 -- Import health module
-require("health")
+require("neovim.health")

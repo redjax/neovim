@@ -1,11 +1,13 @@
+-- Load Lazy package manager
+require("neovim.plugins.pkg_mgr.lazy_init") 
+
 -- Define plugins to import
   -- Easily swap plugins in/out
 local enabled_plugins = {
-    "plugins.gitsigns",
-    "plugins.autopairs",
-    "plugins.neo-tree",
-    "plugins.lint",
-    "plugins.indent_line"
+    "neovim.plugins.gitsigns",
+    "neovim.plugins.autopairs",
+    "neovim.plugins.lint",
+    "neovim.plugins.indent_line",
     -- "plugins.mason"
 }
 

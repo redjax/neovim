@@ -1,0 +1,1 @@
+require("nneovim.plugins.pkg_mgrs.lazy_init")
