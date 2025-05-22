@@ -8,6 +8,7 @@ local theme_menu_itmes = {
     "ef-owl",
     "ef-winter",
     "everforest",
+    "monkai",
     "nightfly",
     "onedark",
     -- "onedarkpro",
