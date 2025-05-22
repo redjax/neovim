@@ -28,7 +28,7 @@ return {
                 null_ls.builtins.formatting.stylelint,
 
                 -- Code actions
-                null_ls.builtins.code_actions.gitsigns,
+                -- null_ls.builtins.code_actions.gitsigns,
 
                 -- Treesitter
                 -- null_ls.builtins.code_actions.ts_node_action,
