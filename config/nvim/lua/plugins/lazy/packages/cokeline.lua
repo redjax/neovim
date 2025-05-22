@@ -1,4 +1,4 @@
--- Cokeline https://github.com/
+-- Cokeline https://github.com/willothy/nvim-cokeline
 
 return {
     enabled = true,
