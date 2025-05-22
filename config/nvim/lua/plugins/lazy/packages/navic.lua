@@ -1,4 +1,4 @@
--- Navic https://github.com/
+-- Navic https://github.com/SmiteshP/nvim-navic
 
 return {
     enabled = true,
