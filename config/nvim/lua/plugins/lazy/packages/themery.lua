@@ -1,0 +1,28 @@
+-- Themery https://github.com/zaldih/themery.nvim
+
+local theme_menu_itmes = {
+    "catppuccin-frappe",
+    "catppuccin-macchiato",
+    "catppuccin-mocha",
+    "ef-owl",
+    "ef-winter",
+    "everforest",
+    "nightfly",
+    "onedark",
+    -- "onedarkpro",
+    "PaperColor",
+    "tokyonight-moon",
+    "tokyonight-night",
+    "zenburn"
+}
+
+return {
+    enabled = true,
+    "zaldih/themery.nvim",
+    config = function()
+        require("themery").setup({
+            themes = theme_menu_itmes,
+            livePreview = true,
+        })
+    end,
+}
