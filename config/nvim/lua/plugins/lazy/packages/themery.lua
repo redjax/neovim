@@ -7,11 +7,13 @@ local theme_menu_itmes = {
     "ef-owl",
     "ef-winter",
     "everforest",
+    "nightfly",
     "onedark",
     -- "onedarkpro",
     "PaperColor",
     "tokyonight-moon",
-    "tokyonight-night"
+    "tokyonight-night",
+    "zenburn"
 }
 
 return {
