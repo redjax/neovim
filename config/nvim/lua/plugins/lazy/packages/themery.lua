@@ -20,6 +20,7 @@ local theme_menu_items = {
     "nordic",
     "onedark",
     -- "onedarkpro",
+    "oxocarbon",
     "PaperColor",
     "palenightfall",
     "penumbra",
