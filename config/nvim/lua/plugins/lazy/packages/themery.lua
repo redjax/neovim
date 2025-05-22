@@ -1,9 +1,10 @@
 -- Themery https://github.com/zaldih/themery.nvim
 
-local theme_menu_itmes = {
+local theme_menu_items = {
     "catppuccin-frappe",
     "catppuccin-macchiato",
     "catppuccin-mocha",
+    "dracula",
     "edge",
     "ef-owl",
     "ef-winter",
@@ -28,7 +29,7 @@ return {
     "zaldih/themery.nvim",
     config = function()
         require("themery").setup({
-            themes = theme_menu_itmes,
+            themes = theme_menu_items,
             livePreview = true,
         })
     end,
