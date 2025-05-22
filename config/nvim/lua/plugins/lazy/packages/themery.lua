@@ -4,6 +4,7 @@ local theme_menu_itmes = {
     "catppuccin-frappe",
     "catppuccin-macchiato",
     "catppuccin-mocha",
+    "edge",
     "ef-owl",
     "ef-winter",
     "everforest",
