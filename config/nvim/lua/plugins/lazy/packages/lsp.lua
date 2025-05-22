@@ -73,7 +73,7 @@ return {
 
         -- LSPs requiring dotnet
         if vim.fn.executable("dotnet") == 1 then
-            table.insert(ensure_installed, "csharp_ls")
+            -- table.insert(ensure_installed, "csharp_ls")
             table.insert(ensure_installed, "bicep")
         end
 
@@ -109,10 +109,10 @@ return {
         if vim.fn.executable("go") == 1 then
             table.insert(ensure_installed, "golangci_lint_ls")
             table.insert(ensure_installed, "gopls")
-            table.insert(ensure_installed, "nomad_lsp")
+            -- table.insert(ensure_installed, "nomad_lsp")
             table.insert(ensure_installed, "sqls")
-            table.insert(ensure_installed, "terraform_ls")
-            table.insert(ensure_installed, "terraform_lsp")
+            -- table.insert(ensure_installed, "terraform_ls")
+            -- table.insert(ensure_installed, "terraform_lsp")
         end
 
         -- LSPs requiring Python/pip
@@ -120,7 +120,7 @@ return {
             table.insert(ensure_installed, "nginx_language_server")
             table.insert(ensure_installed, "ruff")
             -- table.insert(ensure_installed, "ruff-lsp")
-            table.insert(ensure_installed, "salt_ls")
+            -- table.insert(ensure_installed, "salt_ls")
             -- table.insert(ensure_installed, "sqruff")
             table.insert(ensure_installed, "cmake")
         end
