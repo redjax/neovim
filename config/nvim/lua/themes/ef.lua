@@ -6,6 +6,8 @@ return {
     enabled = true,
     "oonamo/ef-themes.nvim",
     name = "ef",
+    lazy = false,
+    priority = 1000,
     config = function()
         require("ef-themes").setup({
         light = "ef-spring",
