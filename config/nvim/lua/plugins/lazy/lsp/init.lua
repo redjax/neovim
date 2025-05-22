@@ -122,7 +122,7 @@ return {
             -- table.insert(ensure_installed, "ruff-lsp")
             -- table.insert(ensure_installed, "salt_ls")
             -- table.insert(ensure_installed, "sqruff")
-            table.insert(ensure_installed, "cmake")
+            -- table.insert(ensure_installed, "cmake")
         end
         
         require("mason-lspconfig").setup({
