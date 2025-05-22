@@ -15,6 +15,7 @@ local theme_menu_itmes = {
     "onedark",
     -- "onedarkpro",
     "PaperColor",
+    "palenightfall",
     "penumbra",
     "tokyonight-moon",
     "tokyonight-night",
