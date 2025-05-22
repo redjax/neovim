@@ -111,5 +111,8 @@ return {
         -- vim.keymap.set('n', '<leader>sw', MiniSessions.write, { desc = 'Write session' })
         -- vim.keymap.set('n', '<leader>sr', MiniSessions.read,  { desc = 'Read session' })
         -- vim.keymap.set('n', '<leader>sd', MiniSessions.delete, { desc = 'Delete session' })
+
+        -- Track filesystem visits
+        require('mini.visits').setup()
     end,
 }
