@@ -92,5 +92,17 @@ return {
                 delay = 500, -- Show clue window after 500ms (default is 1000ms)
             },
         })
+
+        -- Mini file explorer
+        -- require('mini.files').setup()
+
+        -- vim.keymap.set("n", "-", function()
+        --     require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
+        -- end, { desc = "Open mini.files (current file's directory)" })
+
+        -- -- Comment out above line and uncomment below to always open current file's directory
+        -- -- vim.keymap.set("n", "-", function()
+        -- --     require("mini.files").open(nil, true)
+        -- -- end, { desc = "Open mini.files (cwd)" })
     end,
 }
