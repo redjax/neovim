@@ -7,13 +7,18 @@ Over time, I may add other configurations here, i.e. a "work" configuration, or 
 ## Table of Contents <!-- omit in toc -->
 
 - [nvim (default)](#nvim-default)
+- [Kickstart](#kickstart)
   - [Requirements](#requirements)
 
 ## Configurations <!-- omit in toc -->
 
 ### nvim (default)
 
-My 'default' configuration, built from the [Kickstart.nvim repository](https://github.com/nvim-lua/kickstart.nvim).
+My 'default' configuration, custom-built by referencing configurations from all over the place.
+
+### Kickstart
+
+Built from the [Kickstart.nvim repository](https://github.com/nvim-lua/kickstart.nvim).
 
 #### Requirements
 
