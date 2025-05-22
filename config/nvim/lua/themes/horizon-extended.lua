@@ -4,6 +4,8 @@ return {
     enabled = true,
     "lancewilhelm/horizon-extended.nvim",
     name = "horizon-extended",
+    lazy = false,
+    priority = 1000,
     init = function()
         -- Options: 'neo', 'beam', 'ray'
         vim.g.horizon_style = 'neo'

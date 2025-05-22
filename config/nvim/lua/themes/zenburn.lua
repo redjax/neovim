@@ -4,4 +4,6 @@ return {
     enabled = true,
     "jnurmine/Zenburn",
     name = "zenburn",
+    lazy = false,
+    priority = 1000,
 }

@@ -4,4 +4,6 @@ return {
     enabled = true,
     "tanvirtin/monokai.nvim",
     name = "monokai",
+    lazy = false,
+    priority = 1000,
 }

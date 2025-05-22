@@ -4,8 +4,8 @@ return {
     enabled = true,
     "bluz71/vim-nightfly-colors",
     name = "nightfly",
-    lazy = false,         -- load on startup
-    priority = 1000,      -- load before all other plugins
+    lazy = false,
+    priority = 1000,
     config = function()
         -- Optional: set nightfly options here
         -- vim.g.nightflyItalics = false

@@ -3,5 +3,7 @@
 return {
     enabled = true,
     'AlexvZyl/nordic.nvim',
-    name = "nordic"
+    name = "nordic",
+    lazy = false,
+    priority = 1000,
 }
