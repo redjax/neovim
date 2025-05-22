@@ -117,7 +117,7 @@ return {
 
         -- LSPs requiring Python/pip
         if vim.fn.executable("pip") == 1 then
-            table.insert(ensure_installed, "nginx_language_server")
+            -- table.insert(ensure_installed, "nginx_language_server")
             table.insert(ensure_installed, "ruff")
             -- table.insert(ensure_installed, "ruff-lsp")
             -- table.insert(ensure_installed, "salt_ls")
