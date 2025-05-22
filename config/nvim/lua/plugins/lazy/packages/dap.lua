@@ -31,10 +31,18 @@ return {
         },
         -- Virtual text for inline variable values
         {
-        "theHamsta/nvim-dap-virtual-text",
-        config = function()
-            require("nvim-dap-virtual-text").setup()
-        end,
+            "theHamsta/nvim-dap-virtual-text",
+            config = function()
+                require("nvim-dap-virtual-text").setup({
+                    enabled = true,
+                    enabled_commands = true, -- Enable :DapVirtualText* commands
+                    highlight_changed_variables = true,
+                    highlight_new_as_changed = false,
+                    show_stop_reason = true,
+                    commented = false, -- Set to true to prefix virtual text with comment string
+                    virt_text_pos = 'eol', -- 'eol' or 'inline' (inline requires Neovim 0.10+)
+                })
+            end,
         },
     },
     config = function()
