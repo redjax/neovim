@@ -1,6 +1,7 @@
 -- LSP Signature https://github.com/ray-x/lsp_signature.nvim
 
 return {
+    enabled = true,
     "ray-x/lsp_signature.nvim",
     event = "InsertEnter", -- Loads when you enter insert mode
     opts = {
