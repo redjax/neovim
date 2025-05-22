@@ -2,4 +2,4 @@
 local platform = require("config.platform")
 
 require("config")
-require("plugins.lazy.manager")
+require("plugins.manager")
