@@ -16,6 +16,7 @@ local theme_menu_items = {
     "everforest",
     "horizon-extended",
     "monokai",
+    "moonfly",
     "nightfly",
     "nordic",
     "onedark",
