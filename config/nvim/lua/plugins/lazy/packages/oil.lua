@@ -1,7 +1,7 @@
 -- Oil https://github.com/stevearc/oil.nvim
 
 return {
-    enabled = false,
+    enabled = true,
     "stevearc/oil.nvim",
     lazy = false, -- Recommended: load on startup for best integration
     dependencies = {
