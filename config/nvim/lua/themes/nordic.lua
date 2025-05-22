@@ -3,8 +3,5 @@
 return {
     enabled = true,
     'AlexvZyl/nordic.nvim',
-    name = "nordic",
-    config = function()
-        require('nordic').load()
-    end
+    name = "nordic"
 }

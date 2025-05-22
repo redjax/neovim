@@ -17,6 +17,7 @@ local theme_menu_itmes = {
     "PaperColor",
     "tokyonight-moon",
     "tokyonight-night",
+    "vscode_modern",
     "zenburn"
 }
 
