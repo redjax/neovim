@@ -1,6 +1,7 @@
 -- Cokeline https://github.com/
 
 return {
+    enabled = true,
     "willothy/nvim-cokeline",
     dependencies = {
         "nvim-lua/plenary.nvim",
