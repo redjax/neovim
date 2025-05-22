@@ -10,6 +10,7 @@ local theme_menu_itmes = {
     "everforest",
     "monkai",
     "nightfly",
+    "nordic",
     "onedark",
     -- "onedarkpro",
     "PaperColor",
