@@ -1,6 +1,8 @@
 Param(
     [switch]$Debug,
-    [switch]$DryRun
+    [switch]$DryRun,
+    [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory")]
+    [string]$ConfigName = "nvim"
 )
 
 ## Set path script was launched from as a variable
@@ -9,11 +11,11 @@ Param(
 $CWD = $PWD.Path
 
 ## Path to neovim configuration
-$NVIM_CONFIG_SRC = "$($CWD)\config\nvim"
+$NVIM_CONFIG_SRC = "$($CWD)\config\$($ConfigName)"
 
 ## Path where neovim configuration will be symlinked to
-# $NVIM_CONFIG_DIR = "$($env:USERPROFILE)\.config\nvim"
-$NVIM_CONFIG_DIR = "$($env:LOCALAPPDATA)\nvim"
+# $NVIM_CONFIG_DIR = "$($env:USERPROFILE)\.config\$($ConfigName)"
+$NVIM_CONFIG_DIR = "$($env:LOCALAPPDATA)\$($ConfigName)"
 
 If ( $Debug ) {
     ## enable powershell logging

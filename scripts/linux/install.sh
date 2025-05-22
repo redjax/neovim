@@ -11,6 +11,12 @@ OS_TYPE=$(uname -s)
 #  Set CONTAINER_ENV=1 to enable
 CONTAINER_ENV=${CONTAINER_ENV:-0}
 
+## Specify name of configuration
+CONFIG_NAME=$1
+if [[ -z $CONFIG_NAME ]]; then
+    CONFIG_NAME="nvim"
+fi
+
 if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
     echo "[DEBUG] Container environment: ${CONTAINER_ENV}"
 
@@ -187,7 +193,7 @@ fi
 ## Path for .config directory
 DOTCONFIG_DIR="${HOME}/.config"
 ## Path to neovim configuration directory src in this repository
-NVIM_CONFIG_SRC="${CWD}/config/nvim"
+NVIM_CONFIG_SRC="${CWD}/config/$CONFIG_NAME"
 # echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
 
 ## Path to neovim configuration
