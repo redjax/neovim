@@ -1,6 +1,10 @@
 -- Themery https://github.com/zaldih/themery.nvim
 
 local theme_menu_items = {
+    "aura-dark",
+    "aura-dark-soft-text",
+    "aura-soft-dark",
+    "aura-soft-dark-soft-text",
     "ayu",
     "catppuccin-frappe",
     "catppuccin-macchiato",
