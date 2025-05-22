@@ -1,6 +1,7 @@
 -- Themery https://github.com/zaldih/themery.nvim
 
 local theme_menu_items = {
+    "ayu",
     "catppuccin-frappe",
     "catppuccin-macchiato",
     "catppuccin-mocha",
