@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "..",
+			"name": "Git Root"
+		},
+		{
+			"path": "../scripts",
+			"name": "Scripts"
+		},
+		{
+			"path": "../containers",
+			"name": "Docker Containers"
+		},
+		{
+			"path": "../config/kickstart",
+			"name": "Kickstart Config"
+		},
+		{
+			"path": "../config/nvim",
+			"name": "Default Config"
+		}
+	],
+	"settings": {}
+}
