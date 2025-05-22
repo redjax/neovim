@@ -12,7 +12,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    spec = { import = "plugins.lazy.packages" },
+    spec = { import = "plugins.lazy" },
     change_detection = { notify = false },
     
     -- Automatically check for updates
