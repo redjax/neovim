@@ -3,10 +3,16 @@
 CWD=$(pwd)
 echo "[DEBUG] CWD: ${CWD}"
 
+## Specify name of configuration
+CONFIG_NAME=$1
+if [[ -z $CONFIG_NAME ]]; then
+    CONFIG_NAME="nvim"
+fi
+
 DOTCONFIG_DIR="${HOME}/.config"
 echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
 
-NVIM_CONFIG_SRC="${CWD}/config/nvim"
+NVIM_CONFIG_SRC="${CWD}/config/$CONFIG_NAME"
 echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
 
 NVIM_CONFIG_DEST="${HOME}/.config/nvim"
