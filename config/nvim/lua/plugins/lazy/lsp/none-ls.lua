@@ -31,7 +31,7 @@ return {
                 null_ls.builtins.code_actions.gitsigns,
 
                 -- Treesitter
-                null_ls.builtins.code_actions.ts_node_action,
+                -- null_ls.builtins.code_actions.ts_node_action,
 
                 -- Luasnip
                 null_ls.builtins.completion.luasnip,
@@ -41,7 +41,7 @@ return {
 
                 -- Spelling suggestions
                 null_ls.builtins.completion.spell,
-                null_ls.builtins.diagnostics.codespell,
+                -- null_ls.builtins.diagnostics.codespell,
 
                 -- Github Actions checks
                 null_ls.builtins.diagnostics.actionlint,
@@ -79,11 +79,11 @@ return {
                 null_ls.builtins.formatting.golines,
 
                 -- Python
-                null_ls.builtins.diagnostics.pylint.with({
-                    diagnostics_postprocess = function(diagnostic)
-                        diagnostic.code = diagnostic.message_id
-                    end,
-                }),
+                -- null_ls.builtins.diagnostics.pylint.with({
+                --     diagnostics_postprocess = function(diagnostic)
+                --         diagnostic.code = diagnostic.message_id
+                --     end,
+                -- }),
                 null_ls.builtins.formatting.isort,
                 null_ls.builtins.formatting.black,
                 -- null_ls.builtins.formatting.blackd,
