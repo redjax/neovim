@@ -15,8 +15,8 @@ return {
     config = function(_, opts)
         require("terminal").setup(opts)
         local term_map = require("terminal.mappings")
-        vim.keymap.set("n", "<leader>to", term_map.toggle)
-        vim.keymap.set("n", "<leader>tr", term_map.run)
+        vim.keymap.set("n", "<leader>tt", term_map.toggle, { noremap = true, silent = true, desc = "Toggle Terminal" })
+        vim.keymap.set("n", "<leader>tr", term_map.run, { noremap = true, silent = true, desc = "Run in Terminal" })
         -- Add more keymaps as desired
     end,
 }
