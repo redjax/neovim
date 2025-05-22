@@ -24,7 +24,7 @@ return {
                 null_ls.builtins.formatting.treefmt,
 
                 -- Linters
-                null_ls.builtins.diagnostics.eslint,
+                -- null_ls.builtins.diagnostics.eslint,
                 null_ls.builtins.formatting.stylelint,
 
                 -- Code actions
