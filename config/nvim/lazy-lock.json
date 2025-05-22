@@ -42,6 +42,7 @@
   "onedark": { "branch": "master", "commit": "11de4da47f3e69cb70c3ae9816bd8af166cbe121" },
   "onedarkpro": { "branch": "main", "commit": "712fa832aae9237efb6f419317e61a343a84dbc0" },
   "papercolor": { "branch": "master", "commit": "0cfe64ffb24c21a6101b5f994ca342a74c977aef" },
+  "penumbra.nvim": { "branch": "main", "commit": "11cd9994a42fd4d079793727ff11f6e19ef18942" },
   "plenary.nvim": { "branch": "master", "commit": "857c5ac632080dba10aae49dba902ce3abf91b35" },
   "pretty-fold.nvim": { "branch": "master", "commit": "a7d8b424abe0eedf50116c460fbe6dfd5783b1d5" },
   "resession.nvim": { "branch": "master", "commit": "fd08e476c4e2f826905c384a3a301a821758764b" },
