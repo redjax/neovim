@@ -104,5 +104,12 @@ return {
         -- -- vim.keymap.set("n", "-", function()
         -- --     require("mini.files").open(nil, true)
         -- -- end, { desc = "Open mini.files (cwd)" })
+
+        -- Session manager
+        -- require('mini.sessions').setup()
+        -- -- Session manager keybinds
+        -- vim.keymap.set('n', '<leader>sw', MiniSessions.write, { desc = 'Write session' })
+        -- vim.keymap.set('n', '<leader>sr', MiniSessions.read,  { desc = 'Read session' })
+        -- vim.keymap.set('n', '<leader>sd', MiniSessions.delete, { desc = 'Delete session' })
     end,
 }
