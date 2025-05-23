@@ -12,6 +12,7 @@ NPM_DEPENDENCIES=(
     "graphql-language-service-cli"
     "pyright"
     "@stoplight/spectral-cli"
+    "yaml-language-server"
     # "@ansible/ansible-language-server"
     # "css-language-server"
     # "cssmodules-language-server"
@@ -24,7 +25,6 @@ NPM_DEPENDENCIES=(
 
 ## Define Python dependencies
 PYTHON_DEPENDENCIES=(
-    "yamlls"
     "nginx-language-server"
     "ruff"
     "ruff-lsp"
@@ -43,14 +43,14 @@ else
 fi
 
 ## Install NPM dependencies
-for pkg in "${NPM_DEPENDENCIES[@]}"; do
-    ## Skip commented dependencies
-    [[ "$pkg" =~ ^# ]] && continue
-    echo "Installing NPM package: $pkg"
-    if ! npm install -g "$pkg"; then
-        echo "Error installing NPM dependency '$pkg'" >&2
-    fi
-done
+# for pkg in "${NPM_DEPENDENCIES[@]}"; do
+#     ## Skip commented dependencies
+#     [[ "$pkg" =~ ^# ]] && continue
+#     echo "Installing NPM package: $pkg"
+#     if ! npm install -g "$pkg"; then
+#         echo "Error installing NPM dependency '$pkg'" >&2
+#     fi
+# done
 
 ## Install Python dependencies
 for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
@@ -62,7 +62,7 @@ for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
             echo "Error installing Python dependency '$pkg'" >&2
         fi
     else
-        if ! python -m pip install "$pkg"; then
+        if ! pip install "$pkg"; then
             echo "Error installing Python dependency '$pkg'" >&2
         fi
     fi
