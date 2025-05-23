@@ -43,14 +43,14 @@ else
 fi
 
 ## Install NPM dependencies
-# for pkg in "${NPM_DEPENDENCIES[@]}"; do
-#     ## Skip commented dependencies
-#     [[ "$pkg" =~ ^# ]] && continue
-#     echo "Installing NPM package: $pkg"
-#     if ! npm install -g "$pkg"; then
-#         echo "Error installing NPM dependency '$pkg'" >&2
-#     fi
-# done
+for pkg in "${NPM_DEPENDENCIES[@]}"; do
+    ## Skip commented dependencies
+    [[ "$pkg" =~ ^# ]] && continue
+    echo "Installing NPM package: $pkg"
+    if ! npm install -g "$pkg"; then
+        echo "Error installing NPM dependency '$pkg'" >&2
+    fi
+done
 
 ## Install Python dependencies
 for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
