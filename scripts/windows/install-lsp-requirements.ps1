@@ -7,7 +7,8 @@ $NpmDependencies = @(
     "@microsoft/compose-language-service",
     "dockerfile-language-server-nodejs",
     "graphql-language-service-cli",
-    "pyright"
+    "pyright",
+    "@stoplight/spectral-cli"
 )
 
 foreach ($NpmPkg in $NpmDependencies ) {
