@@ -9,7 +9,7 @@ $NpmDependencies = @(
     "graphql-language-service-cli",
     "pyright",
     "@stoplight/spectral-cli",
-    "yaml-language-server",
+    "yaml-language-server"
     # "@ansible/ansible-language-server",
     # "css-language-server",
     # "cssmodules-language-server",
