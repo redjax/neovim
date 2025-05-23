@@ -22,6 +22,8 @@ I am developing my Neovim configuration based on the Kickstart.nvim template, bu
 ## Table of Contents <!-- omit in toc -->
 
 - [Requirements](#requirements)
+  - [Neovim version](#neovim-version)
+  - [Dependencies](#dependencies)
 - [Instructions](#instructions)
   - [Linux](#linux)
   - [Windows](#windows)
@@ -30,12 +32,22 @@ I am developing my Neovim configuration based on the Kickstart.nvim template, bu
     - [Run the container](#run-the-container)
 - [Notes](#notes)
   - [Configure LSP (Language Server)](#configure-lsp-language-server)
+- [Fix Github rate limit with Lazy](#fix-github-rate-limit-with-lazy)
+  - [Personal Access Token (PAT)](#personal-access-token-pat)
+  - [.netrc file](#netrc-file)
 - [Links](#links)
 
 ## Requirements
 
-```warning
+### Neovim version
 
+Minimum: `v0.11.0`
+
+*check with `nvim --version`*
+
+### Dependencies
+
+```warning
 WARNING
 -------
 
@@ -60,6 +72,11 @@ Otherwise, requirements for this configuration are:
     - The setup scripts install `FiraCode` Nerd Fonts
 - `nodejs`/`npm`
   - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
+- Languages for Neovim LSP (all optional, except Node)
+  - Python
+  - Go
+  - Node
+  - Lua / Luarocks
 
 ## Instructions
 
@@ -152,6 +169,51 @@ marksman =  {
 ```
 
 Next time you run `nvim`, Mason will install the LSP and `neovim` will use it when an appropriate file is opened.
+
+## Fix Github rate limit with Lazy
+
+Github [rate limits unauthenticated requests at 60/hour](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28). If you hit this rate limit, Lazy will fail to install/update packages with an error like:
+
+```shell
+clone failed
+Cloning into 'C:/Users/jack/AppData/Local/nvim-data/lazy/mason'...
+remote: Repository not found.
+fatal: repository 'https://github.com/mason-org/mason.git/' not found
+```
+
+To fix this, you can configure a [Github Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and set it in your environment or a `.netrc` file in your home directory.
+
+### Personal Access Token (PAT)
+
+Set an environment variable `GITHUB_TOKEN` in your environment. You can run one of the commands below to set your token for the current terminal session, but when you close that session the variable will be reset. Add it to your `~/.bashrc` on Linux, or your Windows user's environment.
+
+Temporarily set a token on Linux:
+
+```bash
+export GITHUB_TOKEN=ghp_your_personal_access_token
+```
+
+Temporarily set a token on Windows:
+
+```powershell
+$env:GITHUB_TOKEN = "ghp_your_personal_access_token"
+```
+
+To set the environment variable permanently on Windows, you can run:
+
+```powershell
+[System.Environment]::SetEnvironmentVariable("GITHUB_TOKEN", "ghp_your_token", "User")
+```
+
+### .netrc file
+
+You can also create a `~/.netrc` file with the following contents:
+
+```plaintext
+machine github.com
+login your_github_username
+password ghp_your_personal_access_token
+```
 
 ## Links
 
