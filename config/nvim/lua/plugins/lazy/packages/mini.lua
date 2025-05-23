@@ -53,11 +53,11 @@ return {
             },
             open = {
                 enable = true,
-                timing = require('mini.animate').gen_timing.linear({ duration = 100, unit = "total" }),
+                timing = require('mini.animate').gen_timing.linear({ duration = 10, unit = "total" }),
             },
             close = {
                 enable = true,
-                timing = require('mini.animate').gen_timing.linear({ duration = 100, unit = "total" }),
+                timing = require('mini.animate').gen_timing.linear({ duration = 10, unit = "total" }),
             },
         })
 
