@@ -18,24 +18,15 @@ return {
     },
 
     opts = {
-        servers = {
-            csharp_ls = {
-                -- Enable only if dotnet is installed
-                enabled = vim.fn.executable("dotnet") == 1
-            },
-            dagger = {
-                -- Enable only if dagger is installed
-                enabled = vim.fn.executable("dagger") == 1
-            },
-            golangci_lint_ls = {
-                -- Enable only if go is installed
-                enabled = vim.fn.executable("go") == 1,
-            },
-            gopls = {
-                -- Enable only if go is installed
-                enabled = vim.fn.executable("go") == 1,
-            },
-        }
+        -- options for vim.diagnostic.config()
+        diagnostics = {
+            underline = true,
+            update_in_insert = false,
+            virtual_text = { spacing = 4, prefix = "●" },
+            severity_sort = true,
+        },
+        -- Enable this to enable the builtin LSP in the statusline
+        status_diagnostics = true,
     },
 
     config = function()
@@ -130,48 +121,6 @@ return {
             -- Install language servers
             -- Available configs: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
             ensure_installed = ensure_installed,
-            -- ensure_installed = {
-                -- "ansiblels",
-                -- "azure_pipelines_ls",
-                -- "bashls",
-                -- "bicep",
-                -- "cmake",
-                -- "css_variables",
-                -- "cssmodules_ls",
-                -- "cssls",
-                -- "docker_compose_language_service",
-                -- "dockerls",
-                -- "eslint",
-                -- "gh_actions_ls",
-                -- "gitlab_ci_ls",
-                -- "golangci_lint_ls",
-                -- "gopls",
-                -- "html",
-                -- "jedi_language_server",
-                -- "jinja_lsp",
-                -- "jsonls",
-                -- "lua_ls",
-                -- "markdown_oxide",
-                -- "marksman",
-                -- "nginx_language_server",
-                -- "nomad_lsp",
-                -- "postgres_lsp",
-                -- "powershell_es",
-                -- "pyright",
-                -- "ruff",
-                -- "ruff_lsp",
-                -- "salt_ls",
-                -- "sqlls",
-                -- "sqruff",
-                -- "sqls",
-                -- "superhtml",
-                -- "svelte",
-                -- "tailwindcss",
-                -- "terraform_lsp",
-                -- "tflint",
-                -- "vue_ls",
-                -- "yamlls",
-            -- },
             handlers = {
                 function(server_name)
                     require("lspconfig")[server_name].setup{
@@ -186,6 +135,60 @@ return {
                         end 
                     }
                 end,
+
+                ["lua_ls"] = function()
+                    require("lspconfig").lua_ls.setup {
+                        settings = {
+                            Lua = {
+                                diagnostics = { globals = { "vim" } },
+                                workspace = { checkThirdParty = false },
+                            },
+                        },
+                        capabilities = capabilities,
+                    }
+                end,
+
+                ["pyright"] = function()
+                    require("lspconfig").pyright.setup {
+                        settings = {
+                            python = {
+                                analysis = {
+                                    -- "off", "basic", or "strict"
+                                    typeCheckingMode = "basic",
+                                },
+                            },
+                        },
+                        capabilities = capabilities,
+                    }
+                end,
+                
+                ["gopls"] = function()
+                    require("lspconfig").gopls.setup {
+                        settings = {
+                            gopls = {
+                                analyses = {
+                                    unusedparams = true,
+                                    shadow = true,
+                                },
+                                staticcheck = true,
+                            },
+                        },
+                        capabilities = capabilities,
+                    }
+                end,
+
+                ["yamlls"] = function()
+                    require("lspconfig").yamlls.setup {
+                        settings = {
+                            yaml = {
+                                schemas = require('schemastore').yaml.schemas(),
+                                validate = true,
+                            },
+                        },
+                        capabilities = capabilities,
+                    }
+                end,
+
             }
         })
 
