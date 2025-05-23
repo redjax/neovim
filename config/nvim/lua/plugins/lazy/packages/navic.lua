@@ -9,7 +9,12 @@ return {
     event = "LspAttach",
     opts = {
         -- Automatically attach to all LSPs that support documentSymbol
-        lsp = { auto_attach = true },
+        lsp = {
+            auto_attach = true,
+            -- Prefer yamlls over other LSPs like
+            -- \ Azure pipelines or Github Actions
+            preference = { "yamlls" },
+        },
         -- Enable highlighting for breadcrumbs
         highlight = true,
         -- Breadcrumb separator
