@@ -1,7 +1,7 @@
 -- Drex https://github.com/TheBlob42/drex.nvim
 
 return {
-    enabled = true,
+    enabled = false,
     "TheBlob42/drex.nvim",
     dependencies = {
       "nvim-tree/nvim-web-devicons",

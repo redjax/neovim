@@ -6,6 +6,7 @@
   "aura-theme": { "branch": "main", "commit": "6e4f659e74577cae7cb152a96f84c23bc9213f1b" },
   "ayu": { "branch": "master", "commit": "f5da37a8ddd62fc3a7b28900c4d1b807a3582584" },
   "blink.cmp": { "branch": "main", "commit": "022521a8910a5543b0251b21c9e1a1e989745796" },
+  "carbon.nvim": { "branch": "master", "commit": "47a4718f92646aa2f95d2671f7218f3d357d885c" },
   "catppuccin": { "branch": "main", "commit": "8162a4bd9afb42837a655e404d1f937a87ba95e6" },
   "cmp-buffer": { "branch": "main", "commit": "b74fab3656eea9de20a9b8116afa3cfc4ec09657" },
   "cmp-cmdline": { "branch": "main", "commit": "d126061b624e0af6c3a556428712dd4d4194ec6d" },
