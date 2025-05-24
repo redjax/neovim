@@ -1,7 +1,7 @@
 -- Oil https://github.com/stevearc/oil.nvim
 
 return {
-    enabled = false,
+    enabled = true,
     "stevearc/oil.nvim",
     lazy = false, -- Recommended: load on startup for best integration
     dependencies = {
@@ -16,7 +16,7 @@ return {
         })
         -- Optional: vinegar-style keymap to open Oil in parent directory
         -- \ Only uncomment one of the 2 keymaps below, the 2nd is for a floating window
-        -- vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory (Oil)" })
-        vim.keymap.set("n", "-", function() require("oil").open_float() end, { desc = "Open Oil (float)" })
+        vim.keymap.set("n", "<Leader>e", "<CMD>Oil<CR>", { desc = "Open parent directory (Oil)" })
+        vim.keymap.set("n", "<Leader>fe", function() require("oil").open_float() end, { desc = "Open Oil (float)" })
     end,
 }
