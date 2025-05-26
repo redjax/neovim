@@ -60,5 +60,6 @@ jobs:
         with:
           tag_name: ${{ steps.bump_version.outputs.new_tag }}
           name: Release ${{ steps.bump_version.outputs.new_tag }}
+          generate_release_notes: true
           token: ${{ secrets.RELEASE_TOKEN }}
           files: release-assets/*.zip
