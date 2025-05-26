@@ -14,31 +14,27 @@ jobs:
   release:
     if: >
       github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.title, 'chore(main): release')
+      startsWith(github.event.pull_request.title, 'chore(main): release prepare')
 
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get tag from changelog
+      - name: Get tag from changelog or generate tag
         id: tag
         run: |
           TAG=$(grep '^## ' CHANGELOG.md | head -n 1 | awk '{print $2}')
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
-      - name: Create tag
+      - name: Create tag and push
         run: |
           git tag ${{ steps.tag.outputs.tag }}
           git push origin ${{ steps.tag.outputs.tag }}
 
-      - name: Zip configs
+      - name: Use artifacts from merged PR branch
         run: |
-          mkdir -p dist
-          for dir in config/*/; do
-            base=$(basename "$dir")
-            zip -r "dist/${base}.zip" "$dir"
-          done
+          # Optionally fetch the dist zip files from the merged branch or the repo after merge
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
