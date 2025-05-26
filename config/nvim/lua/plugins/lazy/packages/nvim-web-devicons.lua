@@ -1,6 +1,7 @@
 -- nvim-web-devicons https://github.com/nvim-tree/nvim-web-devicons
 
 return {
+    enabled = true,
     "nvim-tree/nvim-web-devicons",
     lazy = false,
     priority = 900,
