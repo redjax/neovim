@@ -31,6 +31,7 @@ PYTHON_DEPENDENCIES=(
     "salt-lsp"
     "sqruff"
     "cmake-language-server"
+    "pynvim"
 )
 
 ## Determine Python package manager
