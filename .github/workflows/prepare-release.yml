@@ -7,41 +7,40 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare-release:
+  prepare:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Zip configs
+      - name: Set release branch name
+        id: vars
+        run: echo "branch=release/$(date +%s)" >> $GITHUB_OUTPUT
+
+      - name: Create ZIPs of each config
         run: |
           mkdir -p dist
           for dir in config/*/; do
-            profile=$(basename "$dir")
-            zip -r "dist/${profile}.zip" "$dir"
+            name=$(basename "$dir")
+            zip -r "dist/${name}.zip" "$dir"
           done
 
-      - name: Create branch and commit zips
+      - name: Create release branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git switch -c ${{ steps.vars.outputs.branch }}
+          cp dist/*.zip .
+          git add *.zip
+          git commit -m "chore(release): add zipped configs"
+          git push origin HEAD
 
-          export BRANCH_NAME="release/$(date +%s)"
-          git checkout -b "$BRANCH_NAME"
-
-          mkdir -p releases
-          cp dist/*.zip releases/
-
-          git add releases/
-          git commit -m "chore: prepare release artifacts"
-          git push origin "$BRANCH_NAME"
-          
-          echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
-
-      - name: Open pull request
+      - name: Create PR to main
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: ${{ env.branch }}
           base: main
-          title: "prepare-release: Add zipped configs"
-          body: "Zipped config directories for release."
+          branch: ${{ steps.vars.outputs.branch }}
+          title: "chore: prepare release"
+          body: "Zipped configs added to prepare for release"
