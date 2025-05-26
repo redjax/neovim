@@ -1,30 +1,53 @@
 ---
 ## Do the release, run after `prepare-release.yml`
+# .github/workflows/create-release.yml
 name: Create Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
-  release:
+  create-release:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Zip config profiles
+      - name: Check if this is a prepare-release commit
+        id: check
         run: |
-          mkdir -p dist
-          for dir in config/*/ ; do
-            profile=$(basename "$dir")
-            zip -r "dist/${profile}.zip" "$dir"
-          done
+          msg=$(git log -1 --pretty=%B)
+          echo "Commit message: $msg"
+          if [[ "$msg" != *"prepare-release:"* ]]; then
+            echo "Not a prepare-release commit, exiting."
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Upload release assets
+      - name: Exit if not a prepare-release
+        if: steps.check.outputs.should_run == 'false'
+        run: exit 0
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        run: echo "version=v$(date +'%Y.%m.%d.%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Tag the release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.version.outputs.version }}
+          git push origin ${{ steps.version.outputs.version }}
+
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.zip
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          files: releases/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

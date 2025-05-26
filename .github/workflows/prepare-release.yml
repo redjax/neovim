@@ -1,18 +1,46 @@
 ---
 ## Prepare a release, run this first
-name: Prepare CI Release
+# .github/workflows/prepare-release.yml
+name: Prepare Release
 
 on:
   workflow_dispatch:
 
 jobs:
-  release:
+  prepare-release:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: googleapis/release-please-action@v4
-        id: release
+      - name: Zip configs
+        run: |
+          mkdir -p dist
+          for dir in config/*/; do
+            profile=$(basename "$dir")
+            zip -r "dist/${profile}.zip" "$dir"
+          done
+
+      - name: Create branch and commit zips
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          export BRANCH_NAME="release/$(date +%s)"
+          git checkout -b "$BRANCH_NAME"
+
+          mkdir -p releases
+          cp dist/*.zip releases/
+
+          git add releases/
+          git commit -m "chore: prepare release artifacts"
+          git push origin "$BRANCH_NAME"
+          
+          echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v6
         with:
-          release-type: simple
-          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.branch }}
+          title: "prepare-release: Add zipped configs"
+          body: "Zipped config directories for release."
