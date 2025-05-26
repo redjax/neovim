@@ -9,12 +9,9 @@ on:
 
 jobs:
   release:
-    name: Attach Neovim Config Zips to Release
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Zip config profiles
         run: |
           mkdir -p dist
@@ -22,7 +19,6 @@ jobs:
             profile=$(basename "$dir")
             zip -r "dist/${profile}.zip" "$dir"
           done
-
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
