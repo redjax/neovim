@@ -1,3 +1,5 @@
+---
+## Do the release, run after `prepare-release.yml`
 name: Create Release
 
 on:
