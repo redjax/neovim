@@ -7,7 +7,7 @@ return {
     dependencies = {
       "nvim-telescope/telescope.nvim",
       "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope-file-browser.nvim",
+      "nvim-telescope/telescope-file-browser.nvim"
     },
     config = function()
       -- "dashboard, "evil", "startify", or your custom theme
