@@ -17,10 +17,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Git user
+      - name: Setup git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create zip files
+        run: |
+          mkdir -p dist
+          for dir in config/*/; do
+            base=$(basename "$dir")
+            zip -r "dist/${base}.zip" "$dir"
+          done
+          ls -l dist
 
       - name: Create branch and commit zip files
         id: create_branch
@@ -28,19 +37,16 @@ jobs:
           BRANCH=release/prepare-$(date +%s)
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
 
-          git checkout -b $BRANCH
-
-          mkdir -p dist
-          for dir in config/*/; do
-            base=$(basename "$dir")
-            zip -r "dist/${base}.zip" "$dir"
-          done
-
+          git checkout -b "$BRANCH"
           git add dist/*.zip
-          git commit -m "chore: prepare release artifacts"
 
-      - name: Debug branch output
-        run: echo "Branch name is '${{ steps.create_branch.outputs.branch }}'"
+          ## Always commit, even if nothing changed, to force a commit.
+          # If no changes, create an empty commit
+          if git diff --cached --quiet; then
+            git commit --allow-empty -m "chore: prepare release artifacts"
+          else
+            git commit -m "chore: prepare release artifacts"
+          fi
 
       - name: Push branch
         run: |
@@ -49,8 +55,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.create_branch.outputs.branch }}
-          title: "chore(main): release prepare"
+          title: Release Prepare PR
           body: This PR prepares the release artifacts.
           base: main
