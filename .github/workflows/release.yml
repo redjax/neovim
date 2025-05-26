@@ -42,9 +42,15 @@ jobs:
         id: zip_configs
         run: |
           mkdir -p release-assets
+          VERSION="${{ steps.bump_version.outputs.new_tag }}"
+
           for dir in config/*/; do
             name=$(basename "$dir")
-            zip -r "release-assets/${name}.zip" "$dir"
+            zipname="${name}-${VERSION}.zip"
+            (
+              cd "$dir"
+              zip -r "../../release-assets/${zipname}" . -x "*.DS_Store"
+            )
           done
           echo "Zipped all configs."
 
