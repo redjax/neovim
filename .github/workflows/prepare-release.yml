@@ -6,41 +6,38 @@ name: Prepare Release
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  prepare:
+  prepare_release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set release branch name
-        id: vars
-        run: echo "branch=release/$(date +%s)" >> $GITHUB_OUTPUT
-
-      - name: Create ZIPs of each config
-        run: |
-          mkdir -p dist
-          for dir in config/*/; do
-            name=$(basename "$dir")
-            zip -r "dist/${name}.zip" "$dir"
-          done
-
-      - name: Create release branch
+      - name: Setup Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git switch -c ${{ steps.vars.outputs.branch }}
-          cp dist/*.zip .
-          git add *.zip
-          git commit -m "chore(release): add zipped configs"
-          git push origin HEAD
 
-      - name: Create PR to main
-        uses: peter-evans/create-pull-request@v6
+      - name: Create release preparation commit
+        run: |
+          # Example: bump version file or add zipped configs, adjust as needed
+          echo "Prepare release commit" > prepare.txt
+          git add prepare.txt
+          git commit -m "chore: prepare release"
+
+      - name: Push branch for PR
+        run: |
+          git push --force --set-upstream origin release/prepare
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: prepare release"
+          branch: release/prepare
+          title: Release Prepare PR
+          body: This PR prepares the release artifacts.
           base: main
-          branch: ${{ steps.vars.outputs.branch }}
-          title: "chore: prepare release"
-          body: "Zipped configs added to prepare for release"
