@@ -12,33 +12,29 @@ permissions:
 
 jobs:
   release:
-    if: github.event.pull_request.merged == true && github.event.pull_request.title == 'Release Prepare PR'
+    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.title == 'Release Prepare PR' }}
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create new tag
+      - name: Create release tag
         id: tag
         run: |
           TAG="v$(date +'%Y%m%d%H%M%S')"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Tag and push
+      - name: Push tag
         run: |
           git tag ${{ steps.tag.outputs.tag }}
           git push origin ${{ steps.tag.outputs.tag }}
 
-      - name: Zip config profiles
+      - name: Zip configs
         run: |
           mkdir -p dist
           for dir in config/*/; do
-            name=$(basename "$dir")
-            zip -r "dist/${name}.zip" "$dir"
+            base=$(basename "$dir")
+            zip -r "dist/${base}.zip" "$dir"
           done
 
       - name: Create GitHub release with assets
