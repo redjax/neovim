@@ -1,7 +1,7 @@
 -- Nvim-cmp completions https://github.com/hrsh7th/nvim-cmp
 
 return {
-    enabled = true,
+    enabled = false,
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
@@ -103,7 +103,7 @@ return {
         -- Or, for all servers:
         local lspconfig = require("lspconfig")
         for _, server in ipairs(vim.tbl_keys(lspconfig.servers)) do
-        lspconfig[server].setup({ capabilities = capabilities })
+            lspconfig[server].setup({ capabilities = capabilities })
         end
     end,
 }
