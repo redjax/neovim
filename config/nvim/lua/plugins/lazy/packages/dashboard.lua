@@ -1,7 +1,7 @@
 -- Dashboard https://github.com/nvimdev/dashboard-nvim
 
 return {
-    enabled = true,
+    enabled = false,
     "nvimdev/dashboard-nvim",
     -- loads dashboard when Neovim starts
     event = "VimEnter",
