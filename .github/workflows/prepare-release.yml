@@ -15,29 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Git user
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create a dummy commit to trigger PR
-        run: |
-          echo "release prepare $(date)" > release-prepare.txt
-          git add release-prepare.txt
-          git commit -m "chore: prepare release"
-
-      - name: Push branch for PR
-        run: |
-          git push --force --set-upstream origin release/prepare
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+      - uses: googleapis/release-please-action@v4
         with:
+          release-type: simple
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: release/prepare
-          title: Release Prepare PR
-          body: This PR prepares the release artifacts.
-          base: main
