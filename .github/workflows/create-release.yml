@@ -12,19 +12,22 @@ permissions:
 
 jobs:
   release:
-    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.title == 'Release Prepare PR' }}
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.title, 'chore(main): release')
+
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create release tag
+      - name: Get tag from changelog
         id: tag
         run: |
-          TAG="v$(date +'%Y%m%d%H%M%S')"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          TAG=$(grep '^## ' CHANGELOG.md | head -n 1 | awk '{print $2}')
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
-      - name: Push tag
+      - name: Create tag
         run: |
           git tag ${{ steps.tag.outputs.tag }}
           git push origin ${{ steps.tag.outputs.tag }}
@@ -37,7 +40,7 @@ jobs:
             zip -r "dist/${base}.zip" "$dir"
           done
 
-      - name: Create GitHub release with assets
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
