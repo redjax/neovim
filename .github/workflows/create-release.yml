@@ -2,8 +2,6 @@
 # From https://github.com/Allaman/kustomize.nvim/blob/main/.github/workflows/ci.yml
 name: CI Release
 on:
-  # push:
-  # pull_request:
   workflow_dispatch:
 
 jobs:
@@ -17,7 +15,9 @@ jobs:
         with:
           release-type: simple
           package-name: redjax.nvim
+
       - uses: actions/checkout@v4
+
       - name: tag stable versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
@@ -28,3 +28,22 @@ jobs:
           git push origin :stable || true
           git tag -a stable -m "Last Stable Release"
           git push origin stable
+
+      ## Zip each config profile ---
+      - name: Zip config profiles
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          mkdir -p dist
+          for dir in config/*/ ; do
+            profile=$(basename "$dir")
+            zip -r "dist/${profile}.zip" "$dir"
+          done
+
+      ## Upload ZIPs as release assets
+      - name: Upload release assets
+        if: ${{ steps.release.outputs.release_created }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
