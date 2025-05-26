@@ -26,13 +26,15 @@ $PythonDependencies = @(
     "ruff-lsp",
     "salt-lsp",
     "sqruff",
-    "cmake-language-server"
+    "cmake-language-server",
+    "pynvim"
 )
 
 if ( Get-Command "uv" ) {
     Write-Host "Using uv for Python dependencies"
     $PythonPkgManager = "uv"
-} else {
+}
+else {
     Write-Host "Using pip for Python dependencies"
     $PythonPkgManager = "pip"
 }
@@ -42,7 +44,8 @@ if ( Get-Command "uv" ) {
 foreach ($NpmPkg in $NpmDependencies ) {
     try {
         npm install -g $NpmPkg
-    } catch {
+    }
+    catch {
         Write-Error "Error installing NPM dependency '$NpmPkg'. Details: $($Exception.Message)"
     }
 }
@@ -52,13 +55,16 @@ foreach ($PythonPkg in $PythonDependencies ) {
     if ($PythonPkgManager -eq "uv") {
         try {
             uv tool install $PythonPkg
-        } catch {
+        }
+        catch {
             Write-Error "Error installing Python dependency '$PythonPkg'. Details: $($Exception.Message)"
         }
-    } else {
+    }
+    else {
         try {
             python -m pip install $PythonPkg
-        } catch {
+        }
+        catch {
             Write-Error "Error installing Python dependency '$PythonPkg'. Details: $($Exception.Message)"
         }
     }
