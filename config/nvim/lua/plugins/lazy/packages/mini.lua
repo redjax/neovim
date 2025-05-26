@@ -41,7 +41,7 @@ return {
             cursor = {
                 enable = true,
                 -- Animation timing: 250ms total duration, linear progression
-                timing = require('mini.animate').gen_timing.linear({ duration = 60, unit = "total" }),
+                timing = require('mini.animate').gen_timing.linear({ duration = 20, unit = "total" }),
             },
             scroll = {
                 enable = true,
@@ -53,11 +53,11 @@ return {
             },
             open = {
                 enable = true,
-                timing = require('mini.animate').gen_timing.linear({ duration = 100, unit = "total" }),
+                timing = require('mini.animate').gen_timing.linear({ duration = 10, unit = "total" }),
             },
             close = {
                 enable = true,
-                timing = require('mini.animate').gen_timing.linear({ duration = 100, unit = "total" }),
+                timing = require('mini.animate').gen_timing.linear({ duration = 10, unit = "total" }),
             },
         })
 

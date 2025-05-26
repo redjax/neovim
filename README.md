@@ -30,6 +30,9 @@ I am developing my Neovim configuration based on the Kickstart.nvim template, bu
   - [Docker](#docker)
     - [Build the container](#build-the-container)
     - [Run the container](#run-the-container)
+- [Updating](#updating)
+  - [Linux](#linux-1)
+  - [Windows](#windows-1)
 - [Notes](#notes)
   - [Configure LSP (Language Server)](#configure-lsp-language-server)
 - [Fix Github rate limit with Lazy](#fix-github-rate-limit-with-lazy)
@@ -133,6 +136,23 @@ docker exec --rm -it nvim-buildtest /bin/bash
 ```
 
 Once you're in the container, open neovim with `nvim`. The `Lazy` installer should kick off and build the configuration. After this first execution, each subsequent run will launch immediately, until the container is rebuilt.
+
+## Updating
+
+To get the latest stable version of the configuration, run `git switch main && git pull`. For the latest development release, run `git switch dev && git pull`.
+
+### Linux
+
+Run `sudo rm $(which nvim)`, then re-run the [Linux install script at `./scripts/linux/install.sh `](./scripts/linux/install.sh). This will re-install the latest version of Neovim from source.
+
+### Windows
+
+Update Neovim using whichever installer you used.
+
+- Github release: [download & install latest release](https://github.com/neovim/neovim/releases/latest)
+- Winget: Run `winget update Neovim.Neovim`
+- Scoop: Run `scoop update neovim`
+- Chocolatey: Run `choco upgrade neovim`
 
 ## Notes
 

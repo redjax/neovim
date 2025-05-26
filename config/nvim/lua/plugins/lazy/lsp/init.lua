@@ -4,7 +4,7 @@ return {
     enabled = true,
     "neovim/nvim-lspconfig",
     dependencies = {
-        "mason-org/mason",
+        "mason-org/mason.nvim",
         "mason-org/mason-lspconfig.nvim",
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-buffer",
