@@ -1,7 +1,7 @@
 -- Startup.nvim https://github.com/max397574/startup.nvim
 
 return {
-    enabled = false,
+    enabled = true,
     "startup-nvim/startup.nvim",
     lazy = false,
     dependencies = {
