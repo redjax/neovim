@@ -10,6 +10,10 @@
 
 My `neovim` configuration as a git repository.
 
+🔗 [View all releases](https://github.com/redjax/neovim/releases)
+
+*([Read more about how this repository creates releases](#releases))*
+
 ```
 NOTE
 ----
@@ -38,6 +42,7 @@ I am developing my Neovim configuration based on the Kickstart.nvim template, bu
 - [Fix Github rate limit with Lazy](#fix-github-rate-limit-with-lazy)
   - [Personal Access Token (PAT)](#personal-access-token-pat)
   - [.netrc file](#netrc-file)
+- [Releases](#releases)
 - [Links](#links)
 
 ## Requirements
@@ -234,6 +239,12 @@ machine github.com
 login your_github_username
 password ghp_your_personal_access_token
 ```
+
+## Releases
+
+This repository releases .zip archives of the [neovim configurations in `config/`](./config). The [release pipeline](./.github/workflows/release.yml) is triggered manually, and creates the next patch version automatically (i.e. `v0.0.1` -> `v0.0.2`).
+
+Each time a release is created, it will contain .zip archives of each configuration, named after the directory (i.e. `nvim-v0.0.1.zip` for the [default `nvim/` config](./config/nvim/)). When you extract the archive, a directory named `nvim/` will be created, containing the configuration you downloaded. You can move this file to the Neovim configuration path (`~/.config/nvim` on Linux, `%USERPROFILE%\AppData\Local\nvim` on Windows) to install the configuration. You can also extract the .zip archive directly to that path to extract & install in 1 step.
 
 ## Links
 
