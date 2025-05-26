@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.0.0](https://github.com/redjax/neovim/compare/v1.0.0...v1.0.0) (2025-05-26)
+
+
+### Bug Fixes
+
+* **prepare-release:** Explicitly set main branch as base ([f52ac13](https://github.com/redjax/neovim/commit/f52ac1367949ab62ec6696383323512c3c2a4b2a))
+* **prepare-release:** Explicitly set main branch as base ([c78fd62](https://github.com/redjax/neovim/commit/c78fd62c28ddd4dc8a6e48e9172b70e962bf011c))
+* **release-pipeline:** Attempt to fix the release pipeline ([3c78a9e](https://github.com/redjax/neovim/commit/3c78a9e5d4758ea83bab1b86ea0811bad5ebd875))
+* **release-pipeline:** Attempt to fix the release pipeline ([95b8216](https://github.com/redjax/neovim/commit/95b82166211f0b421b824b9687bd18fd667fed1a))
+* **release-pipeline:** Give up on convenient automation &  add a Gith… ([1e7b21f](https://github.com/redjax/neovim/commit/1e7b21fb5c12a656e2475d34090e37370961a108))
+* **release-pipeline:** Give up on convenient automation &  add a Github PAT ([b868843](https://github.com/redjax/neovim/commit/b8688439237a21cd4955a585e842ee1f3bc5e391))
+* **release-pipeline:** Please...please work. I'm losing it. ([de48921](https://github.com/redjax/neovim/commit/de489217f64e7492b6e684f4955f45556a4fcd1c))
+* **release-pipeline:** Please...please work. I'm losing it. ([665ad09](https://github.com/redjax/neovim/commit/665ad0978ccd556f7120cf0b34b217f2cac31cf3))
+* **release-pipeline:** Still trying to get this damn release pipeline to run ([5e37435](https://github.com/redjax/neovim/commit/5e37435c065b6ef6ebc8007e79b2cfc7a7226765))
+* **release-pipeline:** Still trying to get this damn release pipeline… ([7f5be10](https://github.com/redjax/neovim/commit/7f5be10f706dd26b8c519fe0e8149dbd223e6a17))
+* **release-pipeline:** Still trying to get this release to work... ([8461ea8](https://github.com/redjax/neovim/commit/8461ea82df98990ed57f7acb76250a73f9044ed7))
+* **release-pipeline:** Still trying to get this release to work... ([363f5a5](https://github.com/redjax/neovim/commit/363f5a5d23708665e9912d970b22f1c4ed8cf3c9))
+* **release-pipeline:** Still working on this release pipeline... ([e12b538](https://github.com/redjax/neovim/commit/e12b538c9967fbaf10caf795a8cc88434d936167))
+* **release-pipeline:** Still working on this release pipeline... ([91137e4](https://github.com/redjax/neovim/commit/91137e40b9de570a762922b5d4e220744ce70659))
+* **release-pipeline:** Try to fix the release pipeline, again. ([40f32a3](https://github.com/redjax/neovim/commit/40f32a32c26128a3894c45360b8f1e13c3209d4c))
+* **release-pipeline:** Try to fix the release pipeline, again. ([f8a2dec](https://github.com/redjax/neovim/commit/f8a2dec10b4521b23d1c7fd812e3114dca584af5))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9674099](https://github.com/redjax/neovim/commit/9674099804375f06cbae6c4b03815c2177d70508))
+* release 1.0.0 ([f3b06d7](https://github.com/redjax/neovim/commit/f3b06d708aa7dcaee7ace986798a5cdc489bef24))
+
 ## [1.0.0](https://github.com/redjax/neovim/compare/v1.0.1...v1.0.0) (2025-05-26)
 
 
