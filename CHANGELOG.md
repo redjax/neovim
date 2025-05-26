@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/redjax/neovim/compare/v1.0.0...v1.0.1) (2025-05-26)
+
+
+### Bug Fixes
+
+* **initial-release:** Do initial release ([9aae8ac](https://github.com/redjax/neovim/commit/9aae8ac1bbe03d1b5490201893cc381cb97911d2))
+* **initial-release:** Do initial release ([e0e2043](https://github.com/redjax/neovim/commit/e0e2043b07022a70c00da8576e85674df39e285d))
+
 ## 1.0.0 (2025-05-26)
 
 
