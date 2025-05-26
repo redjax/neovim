@@ -17,7 +17,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: googleapis/release-please-action@v4
+      - name: Setup Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create a unique branch and commit
+        id: create_branch
+        run: |
+          BRANCH=release/prepare-$(date +%s)
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          git checkout -b "$BRANCH"
+
+          # Prepare your zip files
+          mkdir -p dist
+          for dir in config/*/; do
+            base=$(basename "$dir")
+            zip -r "dist/${base}.zip" "$dir"
+          done
+
+          # Add zip files to commit
+          git add dist/*.zip
+          git commit -m "chore: prepare release artifacts"
+
+      - name: Push branch
+        run: |
+          git push --set-upstream origin ${{ steps.create_branch.outputs.branch }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
         with:
-          release-type: simple
           token: ${{ secrets.RELEASE_TOKEN }}
+          branch: ${{ steps.create_branch.outputs.branch }}
+          title: "chore(main): release prepare"
+          body: This PR prepares the release artifacts.
+          base: main
