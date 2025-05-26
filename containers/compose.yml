@@ -9,7 +9,7 @@ services:
     image: redjax-nvim
     container_name: redjax-nvim
     env_file:
-      - containers/.env
+      - .env
     environment:
       - CONTAINER_ENV=1
       - CONFIG_NAME=${CONFIG_NAME:-nvim}
