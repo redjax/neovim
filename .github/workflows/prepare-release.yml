@@ -59,3 +59,4 @@ jobs:
           title: Release Prepare PR
           body: This PR prepares the release artifacts.
           base: main
+          allow-empty: true
