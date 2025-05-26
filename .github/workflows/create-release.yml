@@ -8,46 +8,44 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check if this is a prepare-release commit
-        id: check
-        run: |
-          msg=$(git log -1 --pretty=%B)
-          echo "Commit message: $msg"
-          if [[ "$msg" != *"prepare-release:"* ]]; then
-            echo "Not a prepare-release commit, exiting."
-            echo "should_run=false" >> $GITHUB_OUTPUT
-          else
-            echo "should_run=true" >> $GITHUB_OUTPUT
-          fi
+      - uses: actions/checkout@v4
 
-      - name: Exit if not a prepare-release
-        if: steps.check.outputs.should_run == 'false'
-        run: exit 0
-
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set version
-        id: version
-        run: echo "version=v$(date +'%Y.%m.%d.%H%M%S')" >> $GITHUB_OUTPUT
-
-      - name: Tag the release
+      - name: Setup Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.version.outputs.version }}
-          git push origin ${{ steps.version.outputs.version }}
 
-      - name: Create GitHub release
+      - name: Determine new version tag
+        id: tag_version
+        run: |
+          # This example just creates a new tag with timestamp; replace with semver bump logic if needed
+          TAG="v$(date +'%Y%m%d%H%M%S')"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create and push tag
+        run: |
+          git tag ${{ steps.tag_version.outputs.tag }}
+          git push origin ${{ steps.tag_version.outputs.tag }}
+
+      - name: Zip config profiles
+        run: |
+          mkdir -p dist
+          for dir in config/*/; do
+            name=$(basename "$dir")
+            zip -r "dist/${name}.zip" "$dir"
+          done
+
+      - name: Create GitHub release and upload assets
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: Release ${{ steps.version.outputs.version }}
-          files: releases/*.zip
+          tag_name: ${{ steps.tag_version.outputs.tag }}
+          files: dist/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
