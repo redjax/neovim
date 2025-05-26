@@ -14,21 +14,21 @@ ENV DEBIAN_FRONTEND=noninteractive
 ## Update system
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        apt-utils \
-        sudo \
-        kmod \
-        git \
-        curl \
-        build-essential \
-        ripgrep \
-        xclip \
-        git \
-        fzf \
-        libssl-dev \
-        unzip \
-        fontconfig \
-        tmux \
+    ca-certificates \
+    apt-utils \
+    sudo \
+    kmod \
+    git \
+    curl \
+    build-essential \
+    ripgrep \
+    xclip \
+    git \
+    fzf \
+    libssl-dev \
+    unzip \
+    fontconfig \
+    tmux \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -71,6 +71,10 @@ RUN mkdir -p /tmp/nvim-data /tmp/nvim-state
 ## Run install-neovim-deb.sh script
 RUN chmod +x ./scripts/linux/install.sh && \
     sudo -E CONTAINER_ENV=$CONTAINER_ENV ./scripts/linux/install.sh
+
+## Install LSP dependencies
+RUN chmod +x ./scripts/linux/install-lsp-requirements.sh && \
+    sudo -E CONTAINER_ENV=${CONTAINER_ENV} ./scripts/linux/install-lsp-requirements.sh
 
 ## Debian runtime
 FROM debian-stage AS debian-runtime
