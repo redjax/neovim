@@ -1,3 +1,10 @@
+ARG PYTHON_IMG_TAG=${PYTHON_IMG_TAG:-3.12-slim}
+ARG NODE_IMG_TAG=${NODE_IMG_TAG:-latest}
+## Add layer for Python
+FROM python:${PYTHON_IMG_TAG} AS python-base
+## Add layer for Node
+# FROM node:${NODE_IMG_TAG} AS node-base
+
 FROM debian:stable-slim AS base
 RUN apt-get update && \
     apt-get install -y \
@@ -5,10 +12,33 @@ RUN apt-get update && \
     git \
     sudo \
     unzip \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
+
+## Copy node, npm, python, and pip from previous stages
+# COPY --from=node-base /usr/local/bin/node /usr/local/bin/node
+# COPY --from=node-base /usr/local/bin/npm /usr/local/bin/npm
+COPY --from=python-base /usr/local/bin/python3 /usr/local/bin/python3
+COPY --from=python-base /usr/local/bin/pip3 /usr/local/bin/pip3
+
+## symlink python and pip for convenience
+RUN ln -s /usr/local/bin/python3 /usr/local/bin/python || true
+RUN ln -s /usr/local/bin/pip3 /usr/local/bin/pip || true
 
 ## Create a non-root user (rarely changes)
 RUN useradd -ms /bin/bash nvimuser && echo "nvimuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+## Pre-install nvm
+USER nvimuser
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash && \
+    export NVM_DIR="/home/nvimuser/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && \
+    nvm install --lts && \
+    nvm alias default lts/*
+
+## Add nvm sourcing to .bashrc for interactive shells
+RUN echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc && \
+    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
 
 FROM base AS scripts
 USER nvimuser
