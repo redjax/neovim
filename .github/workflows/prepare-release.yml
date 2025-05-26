@@ -22,23 +22,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create a unique branch and commit
+      - name: Create branch and commit zip files
         id: create_branch
         run: |
           BRANCH=release/prepare-$(date +%s)
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-          git checkout -b "$BRANCH"
 
-          # Prepare your zip files
+          git checkout -b $BRANCH
+
           mkdir -p dist
           for dir in config/*/; do
             base=$(basename "$dir")
             zip -r "dist/${base}.zip" "$dir"
           done
 
-          # Add zip files to commit
           git add dist/*.zip
           git commit -m "chore: prepare release artifacts"
+
+      - name: Debug branch output
+        run: echo "Branch name is '${{ steps.create_branch.outputs.branch }}'"
 
       - name: Push branch
         run: |
