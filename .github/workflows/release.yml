@@ -48,20 +48,19 @@ jobs:
             name=$(basename "$dir")
             zipname="${name}-${VERSION}.zip"
 
-            # Create a temp directory structure like: temp/nvim/...
-            mkdir -p temp/"$name"
-            cp -r "$dir"/* temp/"$name"/
+            # Create temp/nvim/ and copy contents into it
+            mkdir -p temp/nvim
+            cp -r "$dir"/* temp/nvim/
 
-            # Zip the contents so the archive has a top-level 'nvim/' folder
+            # Zip the contents so the archive contains only a 'nvim/' folder
             (
               cd temp
-              zip -r "../release-assets/${zipname}" "$name" -x "*.DS_Store"
+              zip -r "../release-assets/${zipname}" nvim -x "*.DS_Store"
             )
 
-            # Clean up
+            # Clean up temp for next iteration
             rm -rf temp
           done
-          echo "Zipped all configs with top-level nvim/ directory."
 
       - name: Create Git tag
         run: |
