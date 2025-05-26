@@ -40,10 +40,9 @@ jobs:
           git checkout -b "$BRANCH"
           git add dist/*.zip
 
-          ## Always commit, even if nothing changed, to force a commit.
-          # If no changes, create an empty commit
+          # Force commit: if no changes, create empty commit so branch differs from main
           if git diff --cached --quiet; then
-            git commit --allow-empty -m "chore: prepare release artifacts"
+            git commit --allow-empty -m "chore: prepare release artifacts (empty commit)"
           else
             git commit -m "chore: prepare release artifacts"
           fi
