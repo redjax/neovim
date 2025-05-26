@@ -1,8 +1,16 @@
 ---
 ## Manually trigger pipeline to create a release with .zip archives of Neovim configurations
+#
+#  This pipeline creates .zip files in a release for every Neovim configuration in the config/ directory.
+#  It simply bumps the patch version (v0.0.X) each time.
+#
+#  To create a new major (vX.0.0) or minor (v0.X.0) release, manually create a new .0 tag in the repository.
+#  For example, to move from v0.0.X to v0.1.X, create a tag v0.1.0. You can do this in Github, or create
+#  the tag locally with: git tag v0.1.0 && git push origin v0.1.0
 name: Manual Release
 
 on:
+  ## Trigger workflow manualy
   workflow_dispatch:
 
 permissions:
@@ -13,14 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      ## Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      ## Setup Python in pipeline
       - name: Set up Python (for version parsing)
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
+      ## Get the latest tag for version bump
       - name: Get latest tag
         id: get_tag
         run: |
@@ -29,6 +40,7 @@ jobs:
           echo "Latest tag: $LATEST_TAG"
           echo "latest_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
 
+      ## Bump patch version (v0.0.X -> v0.0.X+1)
       - name: Bump patch version
         id: bump_version
         run: |
@@ -38,6 +50,10 @@ jobs:
           echo "New tag: $NEW_TAG"
           echo "new_tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
 
+      ## Create .zip archives for each neovim configuration in the config/ directory.
+      #  Each archive will have a directory nvim/ at the root, which can be copied/extracted to
+      #  the path your OS looks for Neovim configurations in. For example, on Linux, ~/.config/nvim,
+      #  and on Windows, %USERPROFILE%\AppData\Local\nvim
       - name: Create zip files
         id: zip_configs
         run: |
@@ -62,6 +78,8 @@ jobs:
             rm -rf temp
           done
 
+      ## Create new git tag with patch version, i.e. v0.0.X -> v0.0.X+1
+      #  This creates the tag in Github.
       - name: Create Git tag
         run: |
           git config user.name "github-actions[bot]"
@@ -69,6 +87,7 @@ jobs:
           git tag "${{ steps.bump_version.outputs.new_tag }}"
           git push origin "${{ steps.bump_version.outputs.new_tag }}"
 
+      ## Create release from the new tag and autogenerate release notes
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
