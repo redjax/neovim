@@ -96,14 +96,17 @@ return {
         })
         })
 
+        -- Only uncomment below if you do not use a separate LSP setup file.
+        -- \ If you handle all of your server setup in this cmp.lua, you can uncomment this
+
         -- LSP capabilities integration (for all servers)
-        local capabilities = require("cmp_nvim_lsp").default_capabilities()
+        -- local capabilities = require("cmp_nvim_lsp").default_capabilities()
         -- If you use nvim-lspconfig, add this to your LSP setup:
         -- require("lspconfig")[SERVER].setup({ capabilities = capabilities })
         -- Or, for all servers:
-        local lspconfig = require("lspconfig")
-        for _, server in ipairs(vim.tbl_keys(lspconfig.servers)) do
-        lspconfig[server].setup({ capabilities = capabilities })
-        end
+        -- local lspconfig = require("lspconfig")
+        -- for _, server in ipairs(vim.tbl_keys(lspconfig.servers)) do
+        --     lspconfig[server].setup({ capabilities = capabilities })
+        -- end
     end,
 }
