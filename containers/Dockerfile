@@ -22,23 +22,26 @@ COPY --from=python-base /usr/local/bin/python3 /usr/local/bin/python3
 COPY --from=python-base /usr/local/bin/pip3 /usr/local/bin/pip3
 
 ## symlink python and pip for convenience
-RUN ln -s /usr/local/bin/python3 /usr/local/bin/python || true
-RUN ln -s /usr/local/bin/pip3 /usr/local/bin/pip || true
+RUN ln -sf /usr/local/bin/python3 /usr/local/bin/python
+RUN ln -sf /usr/local/bin/pip3 /usr/local/bin/pip
 
 ## Create a non-root user (rarely changes)
 RUN useradd -ms /bin/bash nvimuser && echo "nvimuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-## Pre-install nvm
+## Install nvm as nvimuser and set up .bashrc
 USER nvimuser
+WORKDIR /home/nvimuser
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash && \
     export NVM_DIR="/home/nvimuser/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && \
     nvm install --lts && \
     nvm alias default lts/*
-
-## Add nvm sourcing to .bashrc for interactive shells
 RUN echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
+
+## Set login mode for Bash shells, subsequent layers will now have nvm, node/npm,
+#  and Python/pip
+SHELL ["/bin/bash", "-l", "-c"]
 
 FROM base AS scripts
 USER nvimuser
