@@ -642,8 +642,21 @@ function main() {
 }
 
 if command -v nvim > /dev/null 2>&1; then
-    echo "Neovim is already installed. Backing up existing config if it exists and symlinking new config."
+    echo "Neovim is already installed. Installing dependencies, backing up existing config if it exists and symlinking new config."
     symlink-config
+
+    ## Install neovim dependencies
+    if [[ ${PKG_MGR} == "dnf" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_dnf
+    elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_apt
+    else
+        print_unsupported_platform
+        # sleep 6
+        exit 1
+    fi
 else
     ## Run script
     main
