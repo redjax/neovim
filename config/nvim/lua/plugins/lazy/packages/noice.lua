@@ -1,7 +1,7 @@
 -- Noice UI folke/noice.nvim
 
 return {
-    enabled = true,
+    enabled = false,
     "folke/noice.nvim",
     dependencies = { "MunifTanjim/nui.nvim" },
     config = function()
