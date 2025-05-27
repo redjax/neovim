@@ -7,10 +7,10 @@ return {
     "mfussenegger/nvim-dap",
     dependencies = {
         -- Mason (DAP installer/manager)
-        { "williamboman/mason.nvim", config = true },
+        { "mason-org/mason.nvim", config = true },
         {
         "jay-babu/mason-nvim-dap.nvim",
-        dependencies = { "williamboman/mason.nvim" },
+        dependencies = { "mason-org/mason.nvim" },
         config = function()
             require("mason-nvim-dap").setup({
             -- Automatically install and configure DAP adapters for supported languages
