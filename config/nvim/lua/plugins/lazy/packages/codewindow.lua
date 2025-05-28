@@ -18,7 +18,7 @@ return {
         -- screen_bounds = "background",
       })
       codewindow.apply_default_keybinds()
-      codewindow.open_minimap() -- Uncomment to always show minimap on startup
+       -- codewindow.open_minimap() -- Uncomment to always show minimap on startup
     end,
     keys = {
       -- These are the default keymaps; you can change them if you like
