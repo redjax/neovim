@@ -1,3 +1,6 @@
+-- Enable syntax highlighting
+vim.cmd('syntax enable')
+
 -- GUI font settings
 if vim.g.platform == "windows" then
   vim.opt.guifont = "FiraCode Nerd Font:h11"

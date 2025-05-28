@@ -8,7 +8,7 @@ vim.opt.mouse = "a"
 
 -- UI tweaks
 vim.opt.cursorline = true
-vim.opt.termguicolors = true
+-- vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.wrap = false
 vim.opt.scrolloff = 8
