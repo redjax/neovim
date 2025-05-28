@@ -18,7 +18,7 @@ end
 
 
 return {
-    enabled = false,
+    enabled = true,
     "nvim-tree/nvim-tree.lua",
     -- optional, for file icons
     dependencies = { "nvim-tree/nvim-web-devicons" },
