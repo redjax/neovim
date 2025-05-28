@@ -1,6 +1,5 @@
 [CmdletBinding()]
 Param(
-    # [switch]$Debug,
     [switch]$DryRun,
     [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory")]
     [string]$ConfigName = "nvim"
@@ -17,11 +16,6 @@ $NVIM_CONFIG_SRC = "$($CWD)\config\$($ConfigName)"
 ## Path where neovim configuration will be symlinked to
 # $NVIM_CONFIG_DIR = "$($env:USERPROFILE)\.config\$($ConfigName)"
 $NVIM_CONFIG_DIR = "$($env:LOCALAPPDATA)\$($ConfigName)"
-
-# If ( $Debug ) {
-#     ## enable powershell logging
-#     $DebugPreference = "Continue"
-# }
 
 If ( $DryRun ) {
     Write-Host "-DryRun enabled. Actions will be described, instead of taken. Messages will appear in purple where a live action would be taken." -ForegroundColor Magenta
