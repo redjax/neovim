@@ -42,23 +42,47 @@ return {
             ["<C-Space>"] = cmp.mapping.complete(),
             ["<C-e>"] = cmp.mapping.abort(),
             ["<CR>"] = cmp.mapping.confirm({ select = true }),
+            -- Set <Tab> fallback so when cmp window is not showing,
+            -- \ <Tab> functions normally
             ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
+                if cmp.visible() then
+                    cmp.select_next_item()
+                elseif luasnip.expand_or_jumpable() then
+                    luasnip.expand_or_jump()
+                else
+                    -- Explicitly insert a tab character (which will be spaces if expandtab is set)
+                    vim.api.nvim_feedkeys(
+                        vim.api.nvim_replace_termcodes("<Tab>", true, true, true),
+                        "n",
+                        true
+                    )
+                end
             end, { "i", "s" }),
             ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
+                else
+                    -- Explicitly insert a Shift-Tab (if you want, or just fallback)
+                    fallback()
+                end
+            end, { "i", "s" }),
+            -- Set <S-Tab> fallback so when cmp window is not showing,
+            -- \ <S-Tab> dedents text
+            ["<S-Tab>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
+                else
+                    -- Explicitly dedent
+                    vim.api.nvim_feedkeys(
+                        vim.api.nvim_replace_termcodes("<C-d>", true, true, true),
+                        "n",
+                        true
+                    )
+                end
             end, { "i", "s" }),
         }),
         sources = cmp.config.sources({
