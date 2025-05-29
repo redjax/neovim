@@ -1,0 +1,29 @@
+{
+    "folders": [
+        {
+            "path": "..",
+            "name": "Git Root"
+        },
+        {
+            "path": "../scripts",
+            "name": "Scripts"
+        },
+        {
+            "path": "../containers",
+            "name": "Docker Containers"
+        },
+        {
+            "path": "../config/nvim/lua/themes/",
+            "name": "Nvim Themes"
+        },
+        {
+            "path": "../config/nvim/lua/plugins/lazy/packages/",
+            "name": "Nvim Packages"
+        },
+        {
+            "path": "../config/nvim",
+            "name": "Nvim Config Root"
+        }
+    ],
+    "settings": {}
+}
