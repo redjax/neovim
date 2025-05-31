@@ -21,15 +21,6 @@ My `neovim` configuration as a git repository.
 
 *([Read more about how this repository creates releases](#releases))*
 
-```
-NOTE
-----
-
-Until this message is removed, this repository is considered unstable.
-
-I am developing my Neovim configuration based on the Kickstart.nvim template, but am still in the early stages of developing it.
-```
-
 ## Table of Contents <!-- omit in toc -->
 
 - [Requirements](#requirements)
