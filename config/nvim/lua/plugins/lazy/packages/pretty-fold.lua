@@ -2,7 +2,7 @@
 
 return {
     enabled = true,
-    'anuvyklack/pretty-fold.nvim',
+    'bbjornstad/pretty-fold.nvim',
     config = function()
         require('pretty-fold').setup()
         require('pretty-fold').ft_setup('cs', {
