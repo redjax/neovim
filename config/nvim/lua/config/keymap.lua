@@ -16,3 +16,9 @@ vim.keymap.set({'n', 'x'}, 'X', '"_d', { desc = 'Delete line without yank' })
 
 -- Select all
 vim.keymap.set('n', '<leader>a', ':keepjumps normal! ggVG<cr>', { desc = 'Select all' })
+
+-- Home & end keys
+vim.keymap.set('n', '<Home>', '^', { desc = 'Go to first non-blank character' })
+vim.keymap.set('n', '<End>', '$', { desc = 'Go to end of line' })
+vim.keymap.set('i', '<Home>', '<C-o>^', { desc = 'Insert: go to start of line' })
+vim.keymap.set('i', '<End>', '<C-o>$', { desc = 'Insert: go to end of line' })
