@@ -1,47 +1,75 @@
 #!/bin/bash
 
+set -e
+
 CWD=$(pwd)
-echo "[DEBUG] CWD: ${CWD}"
-
-## Specify name of configuration
-CONFIG_NAME=$1
-if [[ -z $CONFIG_NAME ]]; then
-    CONFIG_NAME="nvim"
-fi
-
+DEBUG=${DEBUG:-0}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTCONFIG_DIR="${HOME}/.config"
-echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
 
-NVIM_CONFIG_SRC="${CWD}/config/$CONFIG_NAME"
-echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
+if [[ $DEBUG -eq 1 ]]; then
+  echo "[DEBUG] Script directory: ${SCRIPT_DIR}"
+  echo "[DEBUG] CWD: ${CWD}"
+  echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
+fi
 
-NVIM_CONFIG_DEST="${HOME}/.config/nvim"
-echo "[DEBUG] Neovim config destination: ${NVIM_CONFIG_DEST}"
+## Array to store discovered configs in repository
+NVIM_CONFIGS=()
 
-if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
-    echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
-    mkdir -pv "${DOTCONFIG_DIR}"
-else
-    if [[ -d $NVIM_CONFIG_DEST ]]; then
-        echo "Neovim config already exists at $NVIM_CONFIG_DEST"
-    elif [ -L "${NVIM_CONFIG_DEST}" ]; then
-        echo "Neovim path is a symlink. Removing link"
-        rm "${NVIM_CONFIG_DEST}"
-    else
-        echo "Neovim path is not a symlink. Backing up to ${NVIM_CONFIG_DEST}.bak"
-        mv "${NVIM_CONFIG_DEST}" "${NVIM_CONFIG_DEST}.bak"
+if [[ ! -d "config/" ]]; then
+  echo "[ERROR] Could not find directory 'config/' at path: ${CWD}"
+  exit 1
+fi
+
+## Iterate over config directory & load discovered config dirs into NVIM_CONFIGS
+echo "Getting configurations from path: config/"
+for _conf in config/*; do
+  if [ -d "$_conf" ]; then
+    if [[ $DEBUG -eq 1 ]]; then
+      echo "[DEBUG] Adding config: $_conf"
     fi
-fi
+    NVIM_CONFIGS+=("${_conf##*/}")
+  fi
+done
 
-echo "Creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DEST}"
-ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DEST}"
+echo "Found [${#NVIM_CONFIGS[@]}] configurations:"
+for c in "${NVIM_CONFIGS[@]}"; do
+  echo "  - $c"
+done
 
-if [[ ! $? -eq 0 ]]; then
-    echo "Error occurred creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DEST}"
-    exit 1
-fi
+## Symlink discovered configurations
+for conf in "${NVIM_CONFIGS[@]}"; do
+  ## Get absolute path to config file
+  abs_path="$(cd "./config/$conf" && pwd)"
+  
+  if [[ $DEBUG -eq 1 ]]; then
+    echo "[DEBUG] Config absolute path: $abs_path"
+  fi
 
-if [[ ! -L "${NVIM_CONFIG_DEST}" ]]; then
-    echo "Error occurred creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DEST}"
-    exit 1
-fi
+  ## Check if directory exists
+  if [[ -d "$DOTCONFIG_DIR/$conf" ]]; then
+    echo "Neovim config already exists at $DOTCONFIG_DIR/$conf"
+    continue
+  elif [ -L "$DOTCONFIG_DIR/$conf" ]; then
+    echo "Path is already a symlink: $DOTCONFIG_DIR/$conf"
+    continue
+  else
+
+    echo "Creating symlink: $abs_path --> $DOTCONFIG_DIR/$conf"
+    
+    ## Create symlink
+    ln -s "${abs_path}" "$DOTCONFIG_DIR/$conf"
+    if [[ ! $? -eq 0 ]]; then
+      echo "[ERROR] Could not create symlink for config: $conf to path: $DOTCONFIG_DIR/$conf"
+      continue
+    fi
+  fi
+done
+
+echo ""
+echo "Finished linking Neovim configurations."
+echo ""
+echo "To launch a specific config, use:"
+echo "  NVIM_APP=\$nvim_conf nvim"
+echo "  i.e. NVIM_APP=nvim-noplugins nvim"
+echo ""
