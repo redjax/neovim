@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
+## Set path where script was called from
+CWD=$(pwd)
 
 ## Arg defaults
 DEBUG=0
@@ -17,7 +18,7 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
     --appimg)
-        APPIMG=1
+        INSTALL_NVIM_APPIMG=1
         shift
         ;;
     --build-dir)
@@ -48,9 +49,6 @@ DOTCONFIG_DIR="${HOME}/.config"
 
 ## Path to neovim configuration directory src in this repository
 NVIM_CONFIG_SRC="${CWD}/config"
-
-## Set path where script was called from
-CWD=$(pwd)
 
 ## Determine the OS type
 OS_TYPE=$(uname -s)
@@ -304,7 +302,7 @@ function install_dependencies_apt() {
 
     sudo $PKG_MGR install -y "${NVIM_APT_DEPENDENCIES[@]}"
 
-    if ! command -v nvm > /dev/null 2>&1; then
+    if ! command -v nvm --version > /dev/null 2>&1 && [ ! -d "$HOME/.nvm" ]; then
         echo "[WARNING] nvm is not installed."
 
         ## Download & install nvm
@@ -316,6 +314,7 @@ function install_dependencies_apt() {
     ## Load NVM
     echo "Loading nvm"
     NVM_DIR="$HOME/.nvm"
+
     ## This loads nvm
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     ## This loads nvm bash_completion
@@ -492,31 +491,31 @@ function symlink-config() {
 
     ## Symlink discovered configurations
     for conf in "${REPO_CONFIGS[@]}"; do
-    ## Get absolute path to config file
-    abs_path="$(cd "./config/$conf" && pwd)"
-    
-    if [[ $DEBUG -eq 1 ]]; then
-        echo "[DEBUG] Config absolute path: $abs_path"
-    fi
-
-    ## Check if directory exists
-    if [[ -d "$DOTCONFIG_DIR/$conf" ]]; then
-        echo "Neovim config already exists at $DOTCONFIG_DIR/$conf"
-        continue
-    elif [ -L "$DOTCONFIG_DIR/$conf" ]; then
-        echo "Path is already a symlink: $DOTCONFIG_DIR/$conf"
-        continue
-    else
-
-        echo "Creating symlink: $abs_path --> $DOTCONFIG_DIR/$conf"
+        ## Get absolute path to config file
+        abs_path=$(cd "./config/$conf" && pwd)
         
-        ## Create symlink
-        ln -s "${abs_path}" "$DOTCONFIG_DIR/$conf"
-        if [[ ! $? -eq 0 ]]; then
-        echo "[ERROR] Could not create symlink for config: $conf to path: $DOTCONFIG_DIR/$conf"
-        continue
+        if [[ $DEBUG -eq 1 ]]; then
+            echo "[DEBUG] Config absolute path: $abs_path"
         fi
-    fi
+
+        ## Check if directory exists
+        if [[ -d "$DOTCONFIG_DIR/$conf" ]]; then
+            echo "Neovim config already exists at $DOTCONFIG_DIR/$conf"
+            continue
+        elif [ -L "$DOTCONFIG_DIR/$conf" ]; then
+            echo "Path is already a symlink: $DOTCONFIG_DIR/$conf"
+            continue
+        else
+
+            echo "Creating symlink: $abs_path --> $DOTCONFIG_DIR/$conf"
+            
+            ## Create symlink
+            ln -s "${abs_path}" "$DOTCONFIG_DIR/$conf"
+            if [[ ! $? -eq 0 ]]; then
+            echo "[ERROR] Could not create symlink for config: $conf to path: $DOTCONFIG_DIR/$conf"
+            continue
+            fi
+        fi
     done
 }
 
@@ -583,18 +582,22 @@ function pkg_mgr_update() {
 
 function detect_repo_configs() {
     ## Iterate over config directory & load discovered config dirs into NVIM_CONFIGS
-    echo "Getting configurations from path: ${CWD}/config/"
+    NVIM_CONFIGS=(
+
+    )
+    echo "Getting configurations from path: ${CWD}/config/" >&2
+
     for _conf in config/*; do
     if [ -d "$_conf" ]; then
         if [[ $DEBUG -eq 1 ]]; then
-        echo "[DEBUG] Adding config: $_conf"
+            echo "[DEBUG] Adding config: $_conf" >&2
         fi
         NVIM_CONFIGS+=("${_conf##*/}")
     fi
     done
 
     ## Return the array. Assign like: $NVIM_CONFIGS=($(detect_repo_configs))
-    echo "${configs[@]}"
+    echo "${NVIM_CONFIGS[@]}"
 }
 
 #########
@@ -670,7 +673,10 @@ function main() {
 
 if command -v nvim > /dev/null 2>&1; then
     echo "Neovim is already installed. Installing dependencies, backing up existing config if it exists and symlinking new config."
-    symlink-config
+
+    REPO_CONFIGS=($(detect_repo_configs))
+
+    symlink-config $REPO_CONFIGS
 
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then
