@@ -417,3 +417,154 @@ function symlink-config() {
     ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DIR}"
 }
 
+######################
+# Check Dependencies #
+######################
+
+function check_system_dependencies() {
+    ## Check if curl is installed
+    if ! command -v curl > /dev/null 2>&1; then
+        echo "[WARNING] curl is not installed."
+
+        if [[ $PKG_MGR == "dnf" ]]; then
+            sudo dnf install -y curl
+        elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
+            sudo $PKG_MGR install -y curl
+        else
+            print_unsupported_platform
+            # sleep 6
+            exit 1
+        fi
+    fi
+
+    ## Check if unzip is installed
+    if ! command -v unzip > /dev/null 2>&1; then
+        echo "[WARNING] unzip is not installed."
+
+        if [[ $PKG_MGR == "dnf" ]]; then
+            sudo dnf install -y unzip
+        elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
+            sudo $PKG_MGR install -y unzip
+        else
+            print_unsupported_platform
+            # sleep 6
+            exit 1
+        fi
+    fi
+
+    ## Check if fontconfig is installed
+    if ! command -v fc-cache > /dev/null 2>&1; then
+        echo "[WARNING] fontconfig is not installed."
+
+        if [[ $PKG_MGR == "dnf" ]]; then
+            sudo dnf install -y fontconfig
+        elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
+            sudo $PKG_MGR install -y fontconfig
+        else
+            print_unsupported_platform
+            # sleep 6
+            exit 1
+        fi
+    fi
+}
+
+function pkg_mgr_update() {
+    if [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
+        echo "Updating packages with $PKG_MGR"
+        sudo $PKG_MGR update -y
+    elif [[ $PKG_MGR == "dnf" || $PKG_MGR == "yum" ]]; then
+        echo "Updating packages with $PKG_MGR"
+        sudo $PKG_MGR update -y
+    fi
+}
+
+#########
+# Logic #
+#########
+
+function main() {
+    echo ""
+    echo "[ Install Neovim Configuration - ${OS_FAMILY} ($CPU_ARCH) (release: ${OS_RELEASE}, version: ${OS_VERSION}) ]"
+    echo ""
+
+    print_platform
+
+    pkg_mgr_update
+
+    ## Install neovim dependencies
+    if [[ ${PKG_MGR} == "dnf" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_dnf
+    elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_apt
+    else
+        print_unsupported_platform
+        # sleep 6
+        exit 1
+    fi
+    eval_last $?
+
+    ## Ensure script dependencies are installed
+    check_system_dependencies
+    eval_last $?
+
+    # if [[ -d $NVIM_CONFIG_DIR ]]; then
+    #     if [[ ! -L $NVIM_CONFIG_DIR ]];
+    #         then echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
+
+    #         mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
+    #     else
+    #         echo "Existing neovim configuration is a symlink. Removing link, it will be recreated by the script."
+    #         rm "${NVIM_CONFIG_DIR}"
+    #     fi
+    # fi
+    # eval_last $?
+
+    ## Install NERDFont
+    # echo "[DEBUG] Would install Nerd Fonts"
+    install_nerdfont  
+
+    if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
+        # echo "[DEBUG] Would install nvim from appimg"
+        ## Install neovim appimg from github
+        install_neovim_appimg
+    else
+        # echo "[DEBUG] Would install nvim from source"
+        ## Install neovim from source
+        install_neovim_source
+    fi
+
+    eval_last $?
+
+    ## Symlink neovim configuration
+    # echo "[DEBUG] Would symlink config"
+    symlink-config
+}
+
+if command -v nvim > /dev/null 2>&1; then
+    echo "Neovim is already installed. Installing dependencies, backing up existing config if it exists and symlinking new config."
+    symlink-config
+
+    ## Install neovim dependencies
+    if [[ ${PKG_MGR} == "dnf" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_dnf
+    elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
+        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
+        install_dependencies_apt
+    else
+        print_unsupported_platform
+        # sleep 6
+        exit 1
+    fi
+else
+    ## Run script
+    main
+fi
+
+if [[ ! $? -eq 0 ]]; then
+    echo "[WARNING] Script exited with non-zero exit code: $?"
+    # sleep 6
+    exit $?
+fi
