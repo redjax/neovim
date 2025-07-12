@@ -201,7 +201,7 @@ Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickst
 
 ## Updating
 
-To get the latest stable version of the configuration, run `git switch main && git pull`. For the latest development release, run `git switch dev && git pull`.
+To get the latest stable version of the configuration, run `git switch main && git pull`.
 
 ### Linux
 
