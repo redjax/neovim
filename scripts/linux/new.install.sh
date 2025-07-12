@@ -288,3 +288,132 @@ function install_nerdfont() {
     ## Change path back to starting point
     return_to_root
 }
+
+function install_neovim_appimg() {
+    ## Install Neovim from Github release
+
+    TEMP_DIR="/tmp/neovim"
+    NEOVIM_DOWNLOAD_URL="https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
+
+    echo ""
+    echo "[ Neovim Setup - Install neovim (appimg) ]"
+    echo ""
+
+    if [[ ! -d $TEMP_DIR ]]; then
+        echo "Creating directory: $TEMP_DIR"
+
+        mkdir -pv "${TEMP_DIR}"
+    fi
+
+    cd $TEMP_DIR
+
+    if [[ ! -f "${TEMP_DIR}/nvim.appimage" ]]; then
+        echo "Downloading latest stable release from Github"
+        curl -LO "${NEOVIM_DOWNLOAD_URL}"
+    fi
+
+    ## Make it executable
+    chmod +x nvim.appimage
+
+    # Replace the old version
+    sudo mv nvim.appimage /usr/bin/nvim
+
+    # Verify the update
+    nvim --version
+
+    return_to_root
+}
+
+function install_neovim_source() {
+    
+    declare -a APT_DEPENDS=("git" "ninja-build" "gettext" "libtool" "libtool-bin" "autoconf" "automake" "cmake" "g++" "pkg-config" "unzip" "curl" "doxygen")
+    declare -a DNF_DEPENDS=("git" "ninja-build" "libtool" "autoconf" "automake" "cmake" "gcc" "gcc-c++" "make" "pkgconfig" "unzip" "patch" "gettext" "curl")
+
+    if [[ $PKG_MGR == "dnf" ]]; then
+        echo "Installing build tools for neovim with dnf"
+        sudo $PKG_MGR install -y "${DNF_DEPENDS[@]}"
+        eval_last $?
+    elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
+        echo "Installing build tools for neovim with apt"
+        sudo $PKG_MGR install -y "${APT_DEPENDS[@]}"
+        eval_last $?
+    else
+        echo "[WARNING] Building neovim from source with package manager '${PKG_MGR}' is not supported."
+        # if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
+            ## Pause in a Docker environment to see output
+            # sleep 6
+        # fi
+
+        exit 1
+    fi
+
+    cd $NEOVIM_MAKE_BUILD_DIR
+    eval_last $?
+
+    if [[ ! -d "neovim" ]]; then
+        echo "Cloning neovim repeository"
+        git clone https://github.com/neovim/neovim.git
+    else
+        echo "Neovim repository already exists at ${NEOVIM_MAKE_BUILD_DIR}/neovim. Changes will be pulled, and Neovim will be rebuilt."
+    fi
+
+    cd neovim
+    eval_last $?
+    echo "Running a git pull to get any changes"
+    git pull
+    eval_last $?
+
+    ## Remove Make cache if in container
+    if [[ $CONTAINER_ENV -eq 1 || "${CONTAINER_ENV}" == "1" ]]; then
+        if [[ -d "${NEOVIM_MAKE_BUILD_DIR}/neovim/cmake.deps/CMakeLists.txt" ]]; then
+            echo "[WARNING] Previous CMake build detected while building in container environment.
+            Removing ${NEOVIM_MAKE_BUILD_DIR}/neovim/cmake.deps directory for a clean build.
+            "
+
+            rm -r "${NEOVIM_MAKE_BUILD_DIR}/neovim/cmake.deps}"
+            eval_last $?
+        fi
+    fi
+    
+    echo "Building Neovim"
+    make CMAKE_BUILD_TYPE=RelWithDebInfo
+    eval_last $?
+
+    echo "Installing Neovim after building source"
+    sudo make install
+    eval_last $?
+    # if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
+        ## Pause in a Docker environment to see output
+        # sleep 6
+    # fi
+
+    echo "[SUCCESS] Neovim installed" 
+}
+
+function symlink-config() {
+    ## Create symbolic link from repository's config/nvim path to ~/.config/nvim
+
+    if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
+        echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
+        mkdir -pv "${DOTCONFIG_DIR}"
+    fi
+
+    if [[ -d $NVIM_CONFIG_DIR ]]; then
+        echo "Neovim config already exists at $NVIM_CONFIG_DIR"
+
+        if [ -L "${NVIM_CONFIG_DIR}" ]; then
+            echo "Neovim config is a symlink. Removing link."
+            rm "${NVIM_CONFIG_DIR}"
+        else
+            echo "Neovim path is not a symlink. Backing up to ${NVIM_CONFIG_DIR}.bak"
+            mv "${NVIM_CONFIG_DIR}" "${NVIM_CONFIG_DIR}.bak"
+        fi
+    elif [ -L "${NVIM_CONFIG_DIR}" ]; then
+        echo "Neovim path is a symlink. Removing link"
+        rm "${NVIM_CONFIG_DIR}"
+    fi
+
+    echo "Creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DIR}"
+    ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DIR}"
+}
+
