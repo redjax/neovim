@@ -1,20 +1,19 @@
 #!/bin/bash
 
+set -e
+
 CWD=$(pwd)
 DEBUG=${DEBUG:-0}
-
-if [[ $DEBUG -eq 1 ]]; then
-  echo "[DEBUG] CWD: ${CWD}"
-fi
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 DOTCONFIG_DIR="${HOME}/.config"
 
 if [[ $DEBUG -eq 1 ]]; then
+  echo "[DEBUG] Script directory: ${SCRIPT_DIR}"
+  echo "[DEBUG] CWD: ${CWD}"
   echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
 fi
 
+## Array to store discovered configs in repository
 NVIM_CONFIGS=()
 
 if [[ ! -d "config/" ]]; then
@@ -22,6 +21,7 @@ if [[ ! -d "config/" ]]; then
   exit 1
 fi
 
+## Iterate over config directory & load discovered config dirs into NVIM_CONFIGS
 echo "Getting configurations from path: config/"
 for _conf in config/*; do
   if [ -d "$_conf" ]; then
@@ -32,24 +32,44 @@ for _conf in config/*; do
   fi
 done
 
-echo "Found [${#NVIM_CONFIGS[@]}] configurations"
+echo "Found [${#NVIM_CONFIGS[@]}] configurations:"
+for c in "${NVIM_CONFIGS[@]}"; do
+  echo "  - $c"
+done
 
+## Symlink discovered configurations
 for conf in "${NVIM_CONFIGS[@]}"; do
+  ## Get absolute path to config file
+  abs_path="$(cd "./config/$conf" && pwd)"
+  
+  if [[ $DEBUG -eq 1 ]]; then
+    echo "[DEBUG] Config absolute path: $abs_path"
+  fi
+
   ## Check if directory exists
-  if [[ ! -d "$HOME/.config/$conf" ]]; then
-    if [[ $DEBUG -eq 1 ]]; then
-        echo "[DEBUG] Creating symlink for config: $conf at path: $HOME/.config/$conf"
-    fi
-
-    ## Create symlink
-    # ln -s "$SCRIPT_DIR/config/$conf" "$DOTCONFIG_DIR/$conf"
-    # if [[ ! $? -eq 0 ]]; then
-    #   echo "[ERROR] Could not create symlink for config: $conf to path: $HOME/.config/$conf"
-    #   continue
-    # fi
-
-  elif [[ -L "$HOME/.config/$conf" ]]; then
-    echo "Path is already a symlink: $HOME/.config/$conf"
+  if [[ -d "$DOTCONFIG_DIR/$conf" ]]; then
+    echo "Neovim config already exists at $DOTCONFIG_DIR/$conf"
     continue
+  elif [ -L "$DOTCONFIG_DIR/$conf" ]; then
+    echo "Path is already a symlink: $DOTCONFIG_DIR/$conf"
+    continue
+  else
+
+    echo "Creating symlink: $abs_path --> $DOTCONFIG_DIR/$conf"
+    
+    ## Create symlink
+    ln -s "${abs_path}" "$DOTCONFIG_DIR/$conf"
+    if [[ ! $? -eq 0 ]]; then
+      echo "[ERROR] Could not create symlink for config: $conf to path: $DOTCONFIG_DIR/$conf"
+      continue
+    fi
   fi
 done
+
+echo ""
+echo "Finished linking Neovim configurations."
+echo ""
+echo "To launch a specific config, use:"
+echo "  NVIM_APP=\$nvim_conf nvim"
+echo "  i.e. NVIM_APP=nvim-noplugins nvim"
+echo ""
