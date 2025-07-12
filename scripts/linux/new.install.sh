@@ -7,6 +7,7 @@ DEBUG=0
 APPIMG=0
 BUILD_DIR="$(pwd)/build"
 DEST="${HOME}/.config"
+CREATE_SYMLINKS=0
 
 ## Parse args
 while [[ $# -gt 0 ]]; do
@@ -26,6 +27,10 @@ while [[ $# -gt 0 ]]; do
     --dest)
         DEST="$2"
         shift 2
+        ;;
+    --symlink | -S)
+        CREATE_SYMLINKS=1
+        shift
         ;;
     *)
         echo "Unknown option: $1"
@@ -289,6 +294,92 @@ function install_nerdfont() {
     return_to_root
 }
 
+function install_dependencies_apt() {
+    ## Install all neovim dependencies
+
+    echo ""
+    echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
+    echo "Please enter your admin password when prompted to install dependency packages"
+    echo ""
+
+    sudo $PKG_MGR install -y "${NVIM_APT_DEPENDENCIES[@]}"
+
+    if ! command -v nvm > /dev/null 2>&1; then
+        echo "[WARNING] nvm is not installed."
+
+        ## Download & install nvm
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+        
+        eval_last $?
+    fi
+
+    ## Load NVM
+    echo "Loading nvm"
+    NVM_DIR="$HOME/.nvm"
+    ## This loads nvm
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    ## This loads nvm bash_completion
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+    if ! command -v npm > /dev/null 2>&1; then
+        echo "[WARNING] node is not installed."
+
+        nvm install --lts
+        eval_last $?
+        nvm alias default lts/*
+    fi
+
+    if ! command -v tree-sitter --version > /dev/null 2>&1; then
+        echo "[WARNING] tree-sitter is not installed."
+        npm install -g tree-sitter-cli
+    fi
+
+    ## Install neovim package for npm
+    echo "Installing neovim with npm"
+    npm install -g neovim
+    if [[ $? -ne 0 ]]; then
+        echo "[ERROR] Error installing neovim with npm"
+    fi
+}
+
+function install_dependencies_dnf() {
+    ## Install all neovim dependencies
+
+    echo ""
+    echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
+    echo "Please enter your admin password when prompted to install dependency packages"
+    echo ""
+
+    sudo dnf update -y
+    sudo dnf install -y "${NVIM_DNF_DEPENDENCIES[@]}"
+    
+    for dnf_group in "${NVIM_DNF_GROUP_DEPENDENCIES[@]}"; do
+        echo "Installing DNF group: ${dnf_group}"
+        sudo dnf group install -y "${dnf_group}"
+    done
+
+    if ! command -v nvm > /dev/null 2>&1; then
+        echo "[WARNING] nvm is not installed."
+
+        ## Download & install nvm
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+
+        source ~/.bashrc
+    fi
+
+    if ! command -v npm > /dev/null 2>&1; then
+        echo "[WARNING] node is not installed."
+
+        nvm install --lts
+        nvm alias default lts/*
+    fi
+
+    if ! command -v tree-sitter --version > /dev/null 2>&1; then
+        echo "[WARNING] tree-sitter is not installed."
+        npm install -g tree-sitter-cli
+    fi
+}
+
 function install_neovim_appimg() {
     ## Install Neovim from Github release
 
@@ -392,29 +483,41 @@ function install_neovim_source() {
 
 function symlink-config() {
     ## Create symbolic link from repository's config/nvim path to ~/.config/nvim
+    REPO_CONFIGS=$1
 
-    if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
-        echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
-        mkdir -pv "${DOTCONFIG_DIR}"
+    if [[ ${#REPO_CONFIGS[@]} -eq 0 ]]; then
+      echo "[ERROR] Did not find any neovim configurations at path: ${CWD}/config"
+      return 1
     fi
 
-    if [[ -d $NVIM_CONFIG_DIR ]]; then
-        echo "Neovim config already exists at $NVIM_CONFIG_DIR"
+    ## Symlink discovered configurations
+    for conf in "${REPO_CONFIGS[@]}"; do
+    ## Get absolute path to config file
+    abs_path="$(cd "./config/$conf" && pwd)"
+    
+    if [[ $DEBUG -eq 1 ]]; then
+        echo "[DEBUG] Config absolute path: $abs_path"
+    fi
 
-        if [ -L "${NVIM_CONFIG_DIR}" ]; then
-            echo "Neovim config is a symlink. Removing link."
-            rm "${NVIM_CONFIG_DIR}"
-        else
-            echo "Neovim path is not a symlink. Backing up to ${NVIM_CONFIG_DIR}.bak"
-            mv "${NVIM_CONFIG_DIR}" "${NVIM_CONFIG_DIR}.bak"
+    ## Check if directory exists
+    if [[ -d "$DOTCONFIG_DIR/$conf" ]]; then
+        echo "Neovim config already exists at $DOTCONFIG_DIR/$conf"
+        continue
+    elif [ -L "$DOTCONFIG_DIR/$conf" ]; then
+        echo "Path is already a symlink: $DOTCONFIG_DIR/$conf"
+        continue
+    else
+
+        echo "Creating symlink: $abs_path --> $DOTCONFIG_DIR/$conf"
+        
+        ## Create symlink
+        ln -s "${abs_path}" "$DOTCONFIG_DIR/$conf"
+        if [[ ! $? -eq 0 ]]; then
+        echo "[ERROR] Could not create symlink for config: $conf to path: $DOTCONFIG_DIR/$conf"
+        continue
         fi
-    elif [ -L "${NVIM_CONFIG_DIR}" ]; then
-        echo "Neovim path is a symlink. Removing link"
-        rm "${NVIM_CONFIG_DIR}"
     fi
-
-    echo "Creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DIR}"
-    ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DIR}"
+    done
 }
 
 ######################
@@ -478,6 +581,22 @@ function pkg_mgr_update() {
     fi
 }
 
+function detect_repo_configs() {
+    ## Iterate over config directory & load discovered config dirs into NVIM_CONFIGS
+    echo "Getting configurations from path: ${CWD}/config/"
+    for _conf in config/*; do
+    if [ -d "$_conf" ]; then
+        if [[ $DEBUG -eq 1 ]]; then
+        echo "[DEBUG] Adding config: $_conf"
+        fi
+        NVIM_CONFIGS+=("${_conf##*/}")
+    fi
+    done
+
+    ## Return the array. Assign like: $NVIM_CONFIGS=($(detect_repo_configs))
+    echo "${configs[@]}"
+}
+
 #########
 # Logic #
 #########
@@ -491,6 +610,7 @@ function main() {
 
     pkg_mgr_update
 
+    echo "-- [ Install dependencies"
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then
         # echo "[DEBUG] Would install dependencies with $PKG_MGR"
@@ -521,6 +641,7 @@ function main() {
     # fi
     # eval_last $?
 
+    echo "--[ Install NERDFont"
     ## Install NERDFont
     # echo "[DEBUG] Would install Nerd Fonts"
     install_nerdfont  
@@ -528,18 +649,23 @@ function main() {
     if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
         # echo "[DEBUG] Would install nvim from appimg"
         ## Install neovim appimg from github
+        echo "--[ Install Neovim AppImage"
         install_neovim_appimg
     else
+        echo "--[ Install Neovim from source"
         # echo "[DEBUG] Would install nvim from source"
         ## Install neovim from source
         install_neovim_source
     fi
 
     eval_last $?
-
+    
+    echo "--[ Symlink configurations"
     ## Symlink neovim configuration
-    # echo "[DEBUG] Would symlink config"
-    symlink-config
+    if [[ $CREATE_SYMLINKS -eq 1 ]]; then
+        REPO_CONFIGS=($(detect_repo_configs))
+        symlink-config $REPO_CONFIGS
+    fi
 }
 
 if command -v nvim > /dev/null 2>&1; then
