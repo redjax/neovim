@@ -1,8 +1,8 @@
 [CmdletBinding()]
 Param(
-    [switch]$DryRun,
-    [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory")]
-    [string]$ConfigName = "nvim"
+    [switch]$DryRun
+    # [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory")]
+    # [string]$ConfigName = "nvim"
 )
 
 ## Set path script was launched from as a variable
@@ -11,11 +11,11 @@ Param(
 $CWD = $PWD.Path
 
 ## Path to neovim configuration
-$NVIM_CONFIG_SRC = "$($CWD)\config\$($ConfigName)"
+$NVIM_CONFIG_SRC = "$($CWD)\config"
 
 ## Path where neovim configuration will be symlinked to
 # $NVIM_CONFIG_DIR = "$($env:USERPROFILE)\.config\$($ConfigName)"
-$NVIM_CONFIG_DIR = "$($env:LOCALAPPDATA)\$($ConfigName)"
+$NVIM_CONFIG_DIR = "$($env:LOCALAPPDATA)"
 
 If ( $DryRun ) {
     Write-Host "-DryRun enabled. Actions will be described, instead of taken. Messages will appear in purple where a live action would be taken." -ForegroundColor Magenta
@@ -91,7 +91,7 @@ function Install-ScoopCli {
         return
     }
     
-    If ( -Not (Get-Command scoop) ) {
+    If ( -Not ( Get-Command scoop -ErrorAction SilentlyContinue) ) {
         try {
             Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
         }
@@ -175,7 +175,7 @@ function Install-Dependencies {
         }
     }
 
-    If ( -Not (Get-Command nvim) ) {
+    If ( -Not ( Get-Command nvim -ErrorAction SilentlyContinue ) ) {
         ## Install neovim
 
         If ( $DryRun ) {
@@ -193,46 +193,79 @@ function Install-Dependencies {
     } 
 }
 
+function Get-NvimRepoConfigs {
+    if ( -Not ( Test-Path -Path $NVIM_CONFIG_SRC -ErrorAction SilentlyContinue ) ) {
+        Write-Warning "Could not find repository's config path: $NVIM_CONFIG_SRC"
+        return
+    }
+
+    Write-Host "Gathering nvim configurations from path: $NVIM_CONFIG_SRC"
+
+    try {
+        $REPO_CONFIGS = Get-ChildItem -Path $NVIM_CONFIG_SRC -Directory | Select-Object -ExpandProperty FullName
+    } catch {
+        Write-Error "Error gathering Neovim configurations from path: $NVIM_CONFIG_SRC. Details: $($_.Exception.Messsage)"
+        return
+    }
+
+    $REPO_CONFIGS
+}
+
 function New-NvimConfigSymlink {
+    Param(
+        [Parameter(Mandatory = $false, HelpMessage = "Path to repository configuration that will be linked to host's configuration path.")]
+        [string]$NVIM_REPO_CONFIG
+    )
+
+    if ( -Not ( $NVIM_REPO_CONFIG ) ) {
+        Write-Warning "Could not find Neovim configuration in repository at path: $NVIM_REPO_CONFIG"
+        return
+    }
+
+    ## Split config name from end of path, i.e. ./config/nvim-kickstart -> nvim-kickstart
+    $ConfigName = Split-Path -Leaf $NVIM_REPO_CONFIG
+    ## Path on host where config will be symlinked
+    $SymlinkDest = Join-Path -Path $NVIM_CONFIG_DIR -ChildPath $ConfigName
+
     If ( $DryRun ) {
-        Write-Host "[DRY RUN] Would create symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR." -ForegroundColor Magenta
+        Write-Host "[DRY RUN] Would create symlink from $NVIM_REPO_CONFIG to $SymlinkDest." -ForegroundColor Magenta
         return
     }
     else {
         ## Check if config path already exists
-        If ( Test-Path $NVIM_CONFIG_DIR ) {
+        If ( Test-Path $SymlinkDest ) {
             ## Check if path is directory or junction
-            $Item = Get-Item $NVIM_CONFIG_DIR
+            $Item = Get-Item $SymlinkDest
 
             ## Check if path is a junction
             If ( $Item.Attributes -band [System.IO.FileAttributes]::ReparsePoint ) {
-                Write-Host "Path is already a junction: $($NVIM_CONFIG_DIR)"
+                Write-Host "Path is already a junction: $($SymlinkDest)"
                 return
             }
 
             ## Path is a regular directory
-            Write-Warning "Path already exists: $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
-            If ( Test-Path "$NVIM_CONFIG_DIR.bak" ) { 
-                Write-Warning "$NVIM_CONFIG_DIR.bak already exists. Overwriting backup."
-                Remove-Item -Recurse "$NVIM_CONFIG_DIR.bak"
+            Write-Warning "Path already exists: $SymlinkDest. Moving to $SymlinkDest.bak"
+            If ( Test-Path "$SymlinkDest.bak" ) { 
+                Write-Warning "$SymlinkDest.bak already exists. Overwriting backup."
+                Remove-Item -Recurse "$SymlinkDest.bak"
             }
 
             try {
-                Move-Item $NVIM_CONFIG_DIR "$NVIM_CONFIG_DIR.bak"
+                Move-Item $SymlinkDest "$SymlinkDest.bak"
             }
             catch {
-                Write-Error "Error moving $NVIM_CONFIG_DIR to $NVIM_CONFIG_DIR.bak. Details: $($_.Exception.Message)"
+                Write-Error "Error moving $SymlinkDest to $SymlinkDest.bak. Details: $($_.Exception.Message)"
                 exit 1
             }
         }
     }
 
-    Write-Host "Creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR"
+    Write-Host "Creating symlink from $NVIM_REPO_CONFIG to $SymlinkDest"
 
-    Write-Debug "NVIM_CONFIG_DIR: $($NVIM_CONFIG_DIR)"
-    Write-Debug "NVIM_CONFIG_SRC: $($NVIM_CONFIG_SRC)"
+    Write-Debug "NVIM_REPO_CONFIG: $($NVIM_REPO_CONFIG)"
+    Write-Debug "SymlinkDest: $($SymlinkDest)"
 
-    $SymlinkCommand = "New-Item -Path $NVIM_CONFIG_DIR -ItemType SymbolicLink -Target $NVIM_CONFIG_SRC"
+    $SymlinkCommand = "New-Item -Path $SymlinkDest -ItemType SymbolicLink -Target $NVIM_REPO_CONFIG"
 
     If ( -Not ( Test-IsAdmin ) ) {
         Write-Warning "Script was not run as administrator. Running symlink command as administrator."
@@ -241,7 +274,7 @@ function New-NvimConfigSymlink {
             Run-AsAdmin -Command "$($SymlinkCommand)"
         }
         catch {
-            Write-Error "Error creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
+            Write-Error "Error creating symlink from $NVIM_REPO_CONFIG to $SymlinkDest. Details: $($_.Exception.Message)"
         }
     }
     else {
@@ -249,7 +282,7 @@ function New-NvimConfigSymlink {
             Invoke-Expression $SymlinkCommand
         }
         catch {
-            Write-Error "Error creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
+            Write-Error "Error creating symlink from $NVIM_REPO_CONFIG to $SymlinkDest. Details: $($_.Exception.Message)"
             exit 1
         }
     }
@@ -257,10 +290,34 @@ function New-NvimConfigSymlink {
 
 Install-Dependencies
 
-try {
-    New-NvimConfigSymlink
+## Link configurations
+$REPO_CONFIGS = Get-NvimRepoConfigs
+
+ForEach ( $config in $REPO_CONFIGS ) {
+    Write-Host "Creating symlink from $config to $NVIM_CONFIG_DIR"
+    try {
+        New-NvimConfigSymlink -NVIM_REPO_CONFIG $config
+    } catch {
+        Write-Error "Failed creating symlink for config $config. Details: $($_.Exception.Message)"
+        continue
+    }
 }
-catch {
-    Write-Error "Error installing neovim configuration to path '$($NVIM_CONFIG_DIR)'."
-    exit 1
-}
+
+Write-Host @"
+Neovim installed.
+
+Multiple configurations were installed at path: $NVIM_CONFIG_DIR.
+
+To launch Neovim with a specific configuration, use the `$NVIM_APPNAME environment variable. For example,
+to launch the 'noplugins' configuration:
+
+    `$NVIM_APPNAME = 'noplugins' neovim
+"@
+
+# try {
+#     New-NvimConfigSymlink
+# }
+# catch {
+#     Write-Error "Error installing neovim configuration to path '$($NVIM_CONFIG_DIR)'."
+#     exit 1
+# }

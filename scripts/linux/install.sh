@@ -2,7 +2,53 @@
 
 ## Set path where script was called from
 CWD=$(pwd)
-# echo "[DEBUG] CWD: ${CWD}"
+
+## Arg defaults
+DEBUG=0
+APPIMG=0
+BUILD_DIR="$(pwd)/build"
+DEST="${HOME}/.config"
+CREATE_SYMLINKS=0
+
+## Parse args
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --debug | -D)
+        DEBUG=1
+        shift
+        ;;
+    --appimg)
+        INSTALL_NVIM_APPIMG=1
+        shift
+        ;;
+    --build-dir)
+        BUILD_DIR="$2"
+        shift 2
+        ;;
+    --dest)
+        DEST="$2"
+        shift 2
+        ;;
+    --symlink | -S)
+        CREATE_SYMLINKS=1
+        shift
+        ;;
+    *)
+        echo "Unknown option: $1"
+        exit 1
+        ;;
+    esac
+done
+
+if [[ $DEBUG -eq 1 ]]; then
+    echo "DEBUG logging enabled"
+fi
+
+## Path for .config directory
+DOTCONFIG_DIR="${HOME}/.config"
+
+## Path to neovim configuration directory src in this repository
+NVIM_CONFIG_SRC="${CWD}/config"
 
 ## Determine the OS type
 OS_TYPE=$(uname -s)
@@ -11,38 +57,59 @@ OS_TYPE=$(uname -s)
 #  Set CONTAINER_ENV=1 to enable
 CONTAINER_ENV=${CONTAINER_ENV:-0}
 
-## Specify name of configuration
-CONFIG_NAME=$1
-if [[ -z $CONFIG_NAME ]]; then
-    CONFIG_NAME="nvim"
-fi
+## Set build directory for building from source
+NEOVIM_MAKE_BUILD_DIR=$BUILD_DIR
 
-if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
-    echo "[DEBUG] Container environment: ${CONTAINER_ENV}"
+## Neovim dependency packages installable with dnf
+declare -a NVIM_DNF_DEPENDENCIES=(
+    "ripgrep"
+    "xclip"
+    "git"
+    "fzf"
+    "openssl-dev"
+    "compat-lua-devel-5.1.5"
+    "luarocks"
+    "fd-find"
+)
+declare -a NVIM_DNF_GROUP_DEPENDENCIES=(
+    "Development Tools"
+    "Development Libraries"
+)
 
-    ## Pause to allow viewing output in a Docker environment
-    # sleep 4
-fi
+## Neovim dependency packages installable with apt
+declare -a NVIM_APT_DEPENDENCIES=(
+    "build-essential"
+    "ripgrep"
+    "xclip"
+    "git"
+    "fzf"
+    "libssl-dev"
+    "liblua5.1-0-dev"
+    "luarocks"
+    "fd-find"
+)
 
-## If INSTALL_NEOVIM_APPIMG=1, do appimg install instead of source build
-INSTALL_NVIM_APPIMG=${INSTALL_NEOVIM_APPIMG:-0}
-echo "[DEBUG] INSTALL_NVIM_APPIMG: ${INSTALL_NVIM_APPIMG}"
+## If $INSTALL_NVIM_APPIMG=1, add FUSE dependency
+if [[ ${INSTALL_NVIM_APPIMG} -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
+    echo "Neovim will be installed by AppImage. Install FUSE dependency."
+    if [[ ! " ${NVIM_DNF_DEPENDENCIES[@]} " =~ " fuse " ]]; then
+        ## Add "fuse" to dnf dependencies
+        NVIM_DNF_DEPENDENCIES+=("fuse")
+    fi
 
-## Set build directory from environment variable or default path
-DEFAULT_BUILD_DIR="${CWD}/build"
-if [[ "$CONTAINER_ENV" = "1" ]]; then
-    NEOVIM_MAKE_BUILD_DIR="${CWD}/clean-build"
-
-    if [[ -d $NEOVIM_MAKE_BUILD_DIR ]]; then
-        echo "[WARNING] Container build path $NEOVIM_MAKE_BUILD_DIR exists, but build script is running in a container.
-        Removing path: ${NEOVIM_MAKE_BUILD_DIR}
-        "
-
-        rm -r "${NEOVIM_MAKE_BUILD_DIR}"
+    if [[ ! " ${NVIM_APT_DEPENDENCIES[@]} " =~ " fuse " ]]; then
+        echo "Neovim will be installed by AppImage. Install FUSE dependency."
+        ## Add "fuse" to apt dependencies
+        NVIM_APT_DEPENDENCIES+=("fuse")
     fi
 fi
-NEOVIM_MAKE_BUILD_DIR=${NEOVIM_MAKE_BUILD_DIR:-$DEFAULT_BUILD_DIR}
-echo "[DEBUG] NEOVIM_MAKE_BUILD_DIR: ${NEOVIM_MAKE_BUILD_DIR}"
+
+if [[ $DEBUG -eq 1 ]]; then
+    echo "[DEBUG] CWD: $CWD"
+    echo "[DEBUG] OS_TYPE: $OS_TYPE"
+    echo "[DEBUG] CONTAINER_ENV: $CONTAINER_ENV"
+    echo "[DEBUG] NEOVIM_MAKE_BUILD_DIR: $NEOVIM_MAKE_BUILD_DIR"
+fi
 
 ## Create build directory
 if [[ ! -d $NEOVIM_MAKE_BUILD_DIR ]]; then
@@ -53,15 +120,6 @@ fi
 function exit_with_error() {
     ## When the script errors, exit preemptively and cleanup the build directory
     echo "[ERROR] Exiting prematurely, doing script cleanup."
-    
-    ## Do exit tasks
-
-    #  Remove build/ path (assuming build failed)
-    # if [[ -f "${NEOVIM_MAKE_BUILD_DIR}/neovim/CMakeCache.txt" || -d "${NEOVIM_MAKE_BUILD_DIR}/neovim/CMakeFiles" ]]; then
-    #     echo "Previous Make build environment detected, but script failed. Cleaning build path: ${NEOVIM_MAKE_BUILD_DIR}/neovim."
-    #     rm "${NEOVIM_MAKE_BUILD_DIR}/CMakeCache.txt"
-    #     rm -r "${NEOVIM_MAKE_BUILD_DIR}/CMakeFiles"
-    # fi
 
     exit 1
 }
@@ -75,6 +133,10 @@ function eval_last() {
 
         exit 1
     fi
+}
+
+function return_to_root() {
+    cd $CWD
 }
 
 # Determine OS release and family
@@ -104,30 +166,23 @@ else
     OS_FAMILY="Unknown"
 fi
 
-# Determine the CPU architecture
+## Determine the CPU architecture
 CPU_ARCH=$(uname -m)
 
-# Export the variables
+## Export the variables
 export OS_TYPE OS_RELEASE OS_FAMILY CPU_ARCH
 
-## Uncomment to debug print values
-# echo "[DEBUG] OS_TYPE: $OS_TYPE"
-# echo "[DEBUG] OS_RELEASE: $OS_RELEASE"
-# echo "[DEBUG] OS_VERSION: $OS_VERSION"
-# echo "[DEBUG] OS_FAMILY: $OS_FAMILY"
-# echo "[DEBUG] CPU_ARCH: $CPU_ARCH"
-
+## Set PKG_MGR var
 if [[ $OS_FAMILY == "RedHat-family" ]]; then
-    echo "[DEBUG] RedHat-family OS detected."
-    if ! command -v dnf > /dev/null 2>&1; then
+    if [[ $DEBUG -eq 1 ]]; then
+        echo "[DEBUG] RedHat-family OS detected."
+    fi
+
+    if ! command -v dnf >/dev/null 2>&1; then
         echo "dnf not detected. Trying yum"
 
-        if ! command -v yum > /dev/null 2&>1; then
+        if ! command -v yum 2 >/dev/null &>1; then
             echo "[ERROR] RedHat family OS was detected, but script could not find dnf or yum package manager..."
-            # if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
-                ## Pause in a Docker environment to see output.
-                # sleep 6
-            # fi
 
             exit 1
         else
@@ -137,7 +192,10 @@ if [[ $OS_FAMILY == "RedHat-family" ]]; then
         PKG_MGR="dnf"
     fi
 elif [[ $OS_FAMILY == "Debian-family" ]]; then
-    echo "[DEBUG] Debian-family OS detected."
+    if [[ $DEBUG -eq 1 ]]; then
+        echo "[DEBUG] Debian-family OS detected."
+    fi
+
     if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
         echo "Script detected a container environment. Fallback to apt-get"
         PKG_MGR="apt-get"
@@ -147,41 +205,12 @@ elif [[ $OS_FAMILY == "Debian-family" ]]; then
 else
     echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
     # if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
-        ## Pause in a Docker environment to see output
-        # sleep 6
+    ## Pause in a Docker environment to see output
+    # sleep 6
     # fi
 
     exit 1
 fi
-
-## Create a print-able platform string
-PLATFORM_STR="\n
-[ Platform Info ]\n
-CPU: ${CPU_ARCH}\n
-OS Family: ${OS_FAMILY}\n
-Release: ${OS_RELEASE}\n
-Release Version: ${OS_VERSION}\n
-Package Manager: ${PKG_MGR}\n
-"
-
-function print_platform() {
-    echo -e $PLATFORM_STR
-}
-
-## Debug platform string
-echo "[DEBUG] Platform string:"
-print_platform
-
-# if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
-    ## Pause in a Docker environment to see output
-    # sleep 6
-# fi
-
-function print_unsupported_platform() {
-    echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
-}
-
-# print_platform
 
 ## Check if host platform is an LXC container
 if grep -q 'container=lxc' /proc/1/environ 2>/dev/null; then
@@ -190,64 +219,25 @@ else
     IS_LXC="false"
 fi
 
-## Path for .config directory
-DOTCONFIG_DIR="${HOME}/.config"
-## Path to neovim configuration directory src in this repository
-NVIM_CONFIG_SRC="${CWD}/config/$CONFIG_NAME"
-# echo "[DEBUG] Neovim config source: ${NVIM_CONFIG_SRC}"
+## Create a print-able platform string
+PLATFORM_STR="\n
+\t[ Platform Info ]\n
+\tCPU: ${CPU_ARCH}\n
+\tOS Family: ${OS_FAMILY}\n
+\tRelease: ${OS_RELEASE}\n
+\tRelease Version: ${OS_VERSION}\n
+\tPackage Manager: ${PKG_MGR}\n
+\tLXC container: ${IS_LXC}\n
+"
 
-## Path to neovim configuration
-NVIM_CONFIG_DIR="${DOTCONFIG_DIR}/nvim"
-# echo "[DEBUG] Neovim config path: ${NVIM_CONFIG_DIR}"
+function print_platform() {
+    echo -e $PLATFORM_STR
+}
 
-## Neovim dependency packages installable with dnf
-declare -a NVIM_DNF_DEPENDENCIES=(
-    "ripgrep"
-    "xclip"
-    "git"
-    "fzf"
-    "openssl-dev"
-    "compat-lua-devel-5.1.5"
-    "luarocks"
-    "fd-find"
-)
-declare -a NVIM_DNF_GROUP_DEPENDENCIES=(
-    "Development Tools"
-    "Development Libraries"
-)
-# echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_DNF_DEPENDENCIES[@]}"
+print_platform
 
-## Neovim dependency packages installable with apt
-declare -a NVIM_APT_DEPENDENCIES=(
-    "build-essential"
-    "ripgrep"
-    "xclip"
-    "git"
-    "fzf"
-    "libssl-dev"
-    "liblua5.1-0-dev"
-    "luarocks"
-    "fd-find"
-)
-# echo "[DEBUG] Neovim dependencies installable with dnf: ${NVIM_APT_DEPENDENCIES[@]}"
-
-## If $INSTALL_NVIM_APPIMG=1, add FUSE dependency
-if [[ ${INSTALL_NVIM_APPIMG} -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
-    echo "Neovim will be installed by AppImage. Install FUSE dependency."
-    if [[ ! " ${NVIM_DNF_DEPENDENCIES[@]} " =~ " fuse " ]]; then
-        ## Add "fuse" to dnf dependencies
-        NVIM_DNF_DEPENDENCIES+=("fuse")
-    fi
-
-    if [[ ! " ${NVIM_APT_DEPENDENCIES[@]} " =~ " fuse " ]]; then
-        echo "Neovim will be installed by AppImage. Install FUSE dependency."
-        ## Add "fuse" to apt dependencies
-        NVIM_APT_DEPENDENCIES+=("fuse")
-    fi
-fi
-
-function return_to_root() {
-    cd $CWD
+function print_unsupported_platform() {
+    echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
 }
 
 function install_nerdfont() {
@@ -312,7 +302,7 @@ function install_dependencies_apt() {
 
     sudo $PKG_MGR install -y "${NVIM_APT_DEPENDENCIES[@]}"
 
-    if ! command -v nvm > /dev/null 2>&1; then
+    if ! command -v nvm --version > /dev/null 2>&1 && [ ! -d "$HOME/.nvm" ]; then
         echo "[WARNING] nvm is not installed."
 
         ## Download & install nvm
@@ -324,6 +314,7 @@ function install_dependencies_apt() {
     ## Load NVM
     echo "Loading nvm"
     NVM_DIR="$HOME/.nvm"
+
     ## This loads nvm
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     ## This loads nvm bash_completion
@@ -385,6 +376,13 @@ function install_dependencies_dnf() {
     if ! command -v tree-sitter --version > /dev/null 2>&1; then
         echo "[WARNING] tree-sitter is not installed."
         npm install -g tree-sitter-cli
+    fi
+
+    ## Install neovim package for npm
+    echo "Installing neovim with npm"
+    npm install -g neovim
+    if [[ $? -ne 0 ]]; then
+        echo "[ERROR] Error installing neovim with npm"
     fi
 }
 
@@ -491,29 +489,41 @@ function install_neovim_source() {
 
 function symlink-config() {
     ## Create symbolic link from repository's config/nvim path to ~/.config/nvim
+    REPO_CONFIGS=$1
 
-    if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
-        echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
-        mkdir -pv "${DOTCONFIG_DIR}"
+    if [[ ${#REPO_CONFIGS[@]} -eq 0 ]]; then
+      echo "[ERROR] Did not find any neovim configurations at path: ${CWD}/config"
+      return 1
     fi
 
-    if [[ -d $NVIM_CONFIG_DIR ]]; then
-        echo "Neovim config already exists at $NVIM_CONFIG_DIR"
-
-        if [ -L "${NVIM_CONFIG_DIR}" ]; then
-            echo "Neovim config is a symlink. Removing link."
-            rm "${NVIM_CONFIG_DIR}"
-        else
-            echo "Neovim path is not a symlink. Backing up to ${NVIM_CONFIG_DIR}.bak"
-            mv "${NVIM_CONFIG_DIR}" "${NVIM_CONFIG_DIR}.bak"
+    ## Symlink discovered configurations
+    for conf in "${REPO_CONFIGS[@]}"; do
+        ## Get absolute path to config file
+        abs_path=$(cd "./config/$conf" && pwd)
+        
+        if [[ $DEBUG -eq 1 ]]; then
+            echo "[DEBUG] Config absolute path: $abs_path"
         fi
-    elif [ -L "${NVIM_CONFIG_DIR}" ]; then
-        echo "Neovim path is a symlink. Removing link"
-        rm "${NVIM_CONFIG_DIR}"
-    fi
 
-    echo "Creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DIR}"
-    ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DIR}"
+        ## Check if directory exists
+        if [[ -d "$DOTCONFIG_DIR/$conf" ]]; then
+            echo "Neovim config already exists at $DOTCONFIG_DIR/$conf"
+            continue
+        elif [ -L "$DOTCONFIG_DIR/$conf" ]; then
+            echo "Path is already a symlink: $DOTCONFIG_DIR/$conf"
+            continue
+        else
+
+            echo "Creating symlink: $abs_path --> $DOTCONFIG_DIR/$conf"
+            
+            ## Create symlink
+            ln -s "${abs_path}" "$DOTCONFIG_DIR/$conf"
+            if [[ ! $? -eq 0 ]]; then
+            echo "[ERROR] Could not create symlink for config: $conf to path: $DOTCONFIG_DIR/$conf"
+            continue
+            fi
+        fi
+    done
 }
 
 ######################
@@ -577,6 +587,26 @@ function pkg_mgr_update() {
     fi
 }
 
+function detect_repo_configs() {
+    ## Iterate over config directory & load discovered config dirs into NVIM_CONFIGS
+    NVIM_CONFIGS=(
+
+    )
+    echo "Getting configurations from path: ${CWD}/config/" >&2
+
+    for _conf in config/*; do
+    if [ -d "$_conf" ]; then
+        if [[ $DEBUG -eq 1 ]]; then
+            echo "[DEBUG] Adding config: $_conf" >&2
+        fi
+        NVIM_CONFIGS+=("${_conf##*/}")
+    fi
+    done
+
+    ## Return the array. Assign like: $NVIM_CONFIGS=($(detect_repo_configs))
+    echo "${NVIM_CONFIGS[@]}"
+}
+
 #########
 # Logic #
 #########
@@ -590,6 +620,7 @@ function main() {
 
     pkg_mgr_update
 
+    echo "-- [ Install dependencies"
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then
         # echo "[DEBUG] Would install dependencies with $PKG_MGR"
@@ -608,18 +639,19 @@ function main() {
     check_system_dependencies
     eval_last $?
 
-    if [[ -d $NVIM_CONFIG_DIR ]]; then
-        if [[ ! -L $NVIM_CONFIG_DIR ]];
-            then echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
+    # if [[ -d $NVIM_CONFIG_DIR ]]; then
+    #     if [[ ! -L $NVIM_CONFIG_DIR ]];
+    #         then echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
 
-            mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
-        else
-            echo "Existing neovim configuration is a symlink. Removing link, it will be recreated by the script."
-            rm "${NVIM_CONFIG_DIR}"
-        fi
-    fi
-    eval_last $?
+    #         mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
+    #     else
+    #         echo "Existing neovim configuration is a symlink. Removing link, it will be recreated by the script."
+    #         rm "${NVIM_CONFIG_DIR}"
+    #     fi
+    # fi
+    # eval_last $?
 
+    echo "--[ Install NERDFont"
     ## Install NERDFont
     # echo "[DEBUG] Would install Nerd Fonts"
     install_nerdfont  
@@ -627,23 +659,31 @@ function main() {
     if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
         # echo "[DEBUG] Would install nvim from appimg"
         ## Install neovim appimg from github
+        echo "--[ Install Neovim AppImage"
         install_neovim_appimg
     else
+        echo "--[ Install Neovim from source"
         # echo "[DEBUG] Would install nvim from source"
         ## Install neovim from source
         install_neovim_source
     fi
 
     eval_last $?
-
+    
+    echo "--[ Symlink configurations"
     ## Symlink neovim configuration
-    # echo "[DEBUG] Would symlink config"
-    symlink-config
+    if [[ $CREATE_SYMLINKS -eq 1 ]]; then
+        REPO_CONFIGS=($(detect_repo_configs))
+        symlink-config $REPO_CONFIGS
+    fi
 }
 
 if command -v nvim > /dev/null 2>&1; then
     echo "Neovim is already installed. Installing dependencies, backing up existing config if it exists and symlinking new config."
-    symlink-config
+
+    REPO_CONFIGS=($(detect_repo_configs))
+
+    symlink-config $REPO_CONFIGS
 
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then
@@ -666,4 +706,16 @@ if [[ ! $? -eq 0 ]]; then
     echo "[WARNING] Script exited with non-zero exit code: $?"
     # sleep 6
     exit $?
+else
+    echo ""
+    echo "--[ Finished installing & configuring Neovim."
+    echo ""
+    echo "    Neovim configurations were installed to: $DOTCONFIG_DIR"
+    echo "    To use a specific configuration, run NVIM_APPNAME=nvim-\$config_name nvim"
+    echo ""
+    echo "    For example, to use the 'nvim-noplugins' profile, run:"
+    echo "      NVIM_APPNAME=nvim-noplugins nvim"
+    echo ""
+
+    exit 0
 fi
