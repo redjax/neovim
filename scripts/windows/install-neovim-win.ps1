@@ -1,8 +1,8 @@
 [CmdletBinding()]
 Param(
     [switch]$DryRun,
-    [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory")]
-    [string]$ConfigName = "nvim"
+    # [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory")]
+    # [string]$ConfigName = "nvim"
 )
 
 ## Set path script was launched from as a variable
@@ -11,11 +11,11 @@ Param(
 $CWD = $PWD.Path
 
 ## Path to neovim configuration
-$NVIM_CONFIG_SRC = "$($CWD)\config\$($ConfigName)"
+$NVIM_CONFIG_SRC = "$($CWD)\config"
 
 ## Path where neovim configuration will be symlinked to
 # $NVIM_CONFIG_DIR = "$($env:USERPROFILE)\.config\$($ConfigName)"
-$NVIM_CONFIG_DIR = "$($env:LOCALAPPDATA)\$($ConfigName)"
+$NVIM_CONFIG_DIR = "$($env:LOCALAPPDATA)"
 
 If ( $DryRun ) {
     Write-Host "-DryRun enabled. Actions will be described, instead of taken. Messages will appear in purple where a live action would be taken." -ForegroundColor Magenta
@@ -191,6 +191,24 @@ function Install-Dependencies {
             }
         }
     } 
+}
+
+function Get-NvimRepoConfigs {
+    if ( -Not ( Test-Path -Path $NVIM_CONFIG_SRC -ErrorAction SilentlyContinue ) ) {
+        Write-Warning "Could not find repository's config path: $NVIM_CONFIG_SRC"
+        return
+    }
+
+    Write-Host "Gathering nvim configurations from path: $NVIM_CONFIG_SRC"
+
+    try {
+        $REPO_CONFIGS = Get-ChildItem -Path $NVIM_CONFIG_SRC -Directory | Select-Object -ExpandProperty FullName
+    } catch {
+        Write-Error "Error gathering Neovim configurations from path: $NVIM_CONFIG_SRC. Details: $($_.Exception.Messsage)"
+        return
+    }
+
+    $REPO_CONFIGS
 }
 
 function New-NvimConfigSymlink {
