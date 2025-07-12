@@ -1,0 +1,290 @@
+#!/bin/bash
+
+set -e
+
+## Arg defaults
+DEBUG=0
+APPIMG=0
+BUILD_DIR="$(pwd)/build"
+DEST="${HOME}/.config"
+
+## Parse args
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --debug | -D)
+        DEBUG=1
+        shift
+        ;;
+    --appimg)
+        APPIMG=1
+        shift
+        ;;
+    --build-dir)
+        BUILD_DIR="$2"
+        shift 2
+        ;;
+    --dest)
+        DEST="$2"
+        shift 2
+        ;;
+    *)
+        echo "Unknown option: $1"
+        exit 1
+        ;;
+    esac
+done
+
+if [[ $DEBUG -eq 1 ]]; then
+    echo "DEBUG logging enabled"
+fi
+
+## Path for .config directory
+DOTCONFIG_DIR="${HOME}/.config"
+
+## Path to neovim configuration directory src in this repository
+NVIM_CONFIG_SRC="${CWD}/config"
+
+## Set path where script was called from
+CWD=$(pwd)
+
+## Determine the OS type
+OS_TYPE=$(uname -s)
+
+## Detect container environment
+#  Set CONTAINER_ENV=1 to enable
+CONTAINER_ENV=${CONTAINER_ENV:-0}
+
+## Set build directory for building from source
+NEOVIM_MAKE_BUILD_DIR=$BUILD_DIR
+
+## Neovim dependency packages installable with dnf
+declare -a NVIM_DNF_DEPENDENCIES=(
+    "ripgrep"
+    "xclip"
+    "git"
+    "fzf"
+    "openssl-dev"
+    "compat-lua-devel-5.1.5"
+    "luarocks"
+    "fd-find"
+)
+declare -a NVIM_DNF_GROUP_DEPENDENCIES=(
+    "Development Tools"
+    "Development Libraries"
+)
+
+## Neovim dependency packages installable with apt
+declare -a NVIM_APT_DEPENDENCIES=(
+    "build-essential"
+    "ripgrep"
+    "xclip"
+    "git"
+    "fzf"
+    "libssl-dev"
+    "liblua5.1-0-dev"
+    "luarocks"
+    "fd-find"
+)
+
+## If $INSTALL_NVIM_APPIMG=1, add FUSE dependency
+if [[ ${INSTALL_NVIM_APPIMG} -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
+    echo "Neovim will be installed by AppImage. Install FUSE dependency."
+    if [[ ! " ${NVIM_DNF_DEPENDENCIES[@]} " =~ " fuse " ]]; then
+        ## Add "fuse" to dnf dependencies
+        NVIM_DNF_DEPENDENCIES+=("fuse")
+    fi
+
+    if [[ ! " ${NVIM_APT_DEPENDENCIES[@]} " =~ " fuse " ]]; then
+        echo "Neovim will be installed by AppImage. Install FUSE dependency."
+        ## Add "fuse" to apt dependencies
+        NVIM_APT_DEPENDENCIES+=("fuse")
+    fi
+fi
+
+if [[ $DEBUG -eq 1 ]]; then
+    echo "[DEBUG] CWD: $CWD"
+    echo "[DEBUG] OS_TYPE: $OS_TYPE"
+    echo "[DEBUG] CONTAINER_ENV: $CONTAINER_ENV"
+    echo "[DEBUG] NEOVIM_MAKE_BUILD_DIR: $NEOVIM_MAKE_BUILD_DIR"
+fi
+
+## Create build directory
+if [[ ! -d $NEOVIM_MAKE_BUILD_DIR ]]; then
+    echo "Creating build path: ${NEOVIM_MAKE_BUILD_DIR}"
+    mkdir -pv "${NEOVIM_MAKE_BUILD_DIR}"
+fi
+
+function exit_with_error() {
+    ## When the script errors, exit preemptively and cleanup the build directory
+    echo "[ERROR] Exiting prematurely, doing script cleanup."
+
+    exit 1
+}
+
+function eval_last() {
+    ## Evaluate the last exit code
+    if [[ $1 -eq 0 ]]; then
+        return
+    elif [[ $1 -eq 1 ]]; then
+        echo "Non-zero exit code on the last command. Exiting."
+
+        exit 1
+    fi
+}
+
+function return_to_root() {
+    cd $CWD
+}
+
+# Determine OS release and family
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS_RELEASE=$NAME
+    OS_VERSION=${VERSION_ID:-"Unknown"}
+    OS_FAMILY="Unknown"
+
+    # Check for ID_LIKE or use ID as a fallback
+    if [ -n "$ID_LIKE" ]; then
+        if echo "$ID_LIKE" | grep -q "debian"; then
+            OS_FAMILY="Debian-family"
+        elif echo "$ID_LIKE" | grep -q "rhel"; then
+            OS_FAMILY="RedHat-family"
+        fi
+    elif [ -n "$ID" ]; then
+        if echo "$ID" | grep -qE "debian|ubuntu"; then
+            OS_FAMILY="Debian-family"
+        elif echo "$ID" | grep -qE "rhel|fedora|centos"; then
+            OS_FAMILY="RedHat-family"
+        fi
+    fi
+else
+    OS_RELEASE="Unknown"
+    OS_VERSION="Unknown"
+    OS_FAMILY="Unknown"
+fi
+
+## Determine the CPU architecture
+CPU_ARCH=$(uname -m)
+
+## Export the variables
+export OS_TYPE OS_RELEASE OS_FAMILY CPU_ARCH
+
+## Set PKG_MGR var
+if [[ $OS_FAMILY == "RedHat-family" ]]; then
+    if [[ $DEBUG -eq 1 ]]; then
+        echo "[DEBUG] RedHat-family OS detected."
+    fi
+
+    if ! command -v dnf >/dev/null 2>&1; then
+        echo "dnf not detected. Trying yum"
+
+        if ! command -v yum 2 >/dev/null &>1; then
+            echo "[ERROR] RedHat family OS was detected, but script could not find dnf or yum package manager..."
+
+            exit 1
+        else
+            PKG_MGR="yum"
+        fi
+    else
+        PKG_MGR="dnf"
+    fi
+elif [[ $OS_FAMILY == "Debian-family" ]]; then
+    if [[ $DEBUG -eq 1 ]]; then
+        echo "[DEBUG] Debian-family OS detected."
+    fi
+
+    if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
+        echo "Script detected a container environment. Fallback to apt-get"
+        PKG_MGR="apt-get"
+    else
+        PKG_MGR="apt"
+    fi
+else
+    echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
+    # if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
+    ## Pause in a Docker environment to see output
+    # sleep 6
+    # fi
+
+    exit 1
+fi
+
+## Check if host platform is an LXC container
+if grep -q 'container=lxc' /proc/1/environ 2>/dev/null; then
+    IS_LXC="true"
+else
+    IS_LXC="false"
+fi
+
+## Create a print-able platform string
+PLATFORM_STR="\n
+\t[ Platform Info ]\n
+\tCPU: ${CPU_ARCH}\n
+\tOS Family: ${OS_FAMILY}\n
+\tRelease: ${OS_RELEASE}\n
+\tRelease Version: ${OS_VERSION}\n
+\tPackage Manager: ${PKG_MGR}\n
+\tLXC container: ${IS_LXC}\n
+"
+
+function print_platform() {
+    echo -e $PLATFORM_STR
+}
+
+print_platform
+
+function print_unsupported_platform() {
+    echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
+}
+
+function install_nerdfont() {
+    ## Install the FiraCode nerd font
+
+    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
+    FONT_DIR="$HOME/.local/share/fonts"
+    TEMP_DIR="/tmp/firacode-nerdfont"
+
+    if [[ ! -d "$FONT_DIR/FiraCode" ]]; then
+        echo ""
+        echo "[ Neovim Setup - Install NerdFont ]"
+        echo ""
+    else
+        return
+    fi
+
+    if [[ ! -d $FONT_DIR ]]; then
+        echo "Creating directory '$FONT_DIR'"
+        mkdir -pv "$FONT_DIR"
+    fi
+
+    if [[ ! -d $TEMP_DIR ]]; then
+        echo "Creating directory '$TEMP_DIR'"
+        mkdir -pv "$TEMP_DIR"
+    fi
+
+    if [[ ! -f "${TEMP_DIR}/FiraCode.zip" ]]; then
+        echo "Downloading FiraCode font..."
+        cd $TEMP_DIR
+
+        curl -LO "$FONT_URL"
+    fi
+
+    if [[ ! -d "${TEMP_DIR}/FiraCode" ]]; then
+        echo "Unzipping FiraCode font..."
+
+        unzip -o FiraCode.zip -d FiraCode
+    fi
+
+    if [[ ! -d "${FONT_DIR}/FiraCode" ]]; then
+        echo "Installing FiraCode to $FONT_DIR"
+
+        cp -R "${TEMP_DIR}/FiraCode" "${FONT_DIR}"
+    fi
+
+    echo ""
+    echo "Refreshing font cache"
+    fc-cache -fv
+
+    ## Change path back to starting point
+    return_to_root
+}
