@@ -211,9 +211,81 @@ function Get-NvimRepoConfigs {
     $REPO_CONFIGS
 }
 
+# function New-NvimConfigSymlink {
+#     If ( $DryRun ) {
+#         Write-Host "[DRY RUN] Would create symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR." -ForegroundColor Magenta
+#         return
+#     }
+#     else {
+#         ## Check if config path already exists
+#         If ( Test-Path $NVIM_CONFIG_DIR ) {
+#             ## Check if path is directory or junction
+#             $Item = Get-Item $NVIM_CONFIG_DIR
+
+#             ## Check if path is a junction
+#             If ( $Item.Attributes -band [System.IO.FileAttributes]::ReparsePoint ) {
+#                 Write-Host "Path is already a junction: $($NVIM_CONFIG_DIR)"
+#                 return
+#             }
+
+#             ## Path is a regular directory
+#             Write-Warning "Path already exists: $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
+#             If ( Test-Path "$NVIM_CONFIG_DIR.bak" ) { 
+#                 Write-Warning "$NVIM_CONFIG_DIR.bak already exists. Overwriting backup."
+#                 Remove-Item -Recurse "$NVIM_CONFIG_DIR.bak"
+#             }
+
+#             try {
+#                 Move-Item $NVIM_CONFIG_DIR "$NVIM_CONFIG_DIR.bak"
+#             }
+#             catch {
+#                 Write-Error "Error moving $NVIM_CONFIG_DIR to $NVIM_CONFIG_DIR.bak. Details: $($_.Exception.Message)"
+#                 exit 1
+#             }
+#         }
+#     }
+
+#     Write-Host "Creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR"
+
+#     Write-Debug "NVIM_CONFIG_DIR: $($NVIM_CONFIG_DIR)"
+#     Write-Debug "NVIM_CONFIG_SRC: $($NVIM_CONFIG_SRC)"
+
+#     $SymlinkCommand = "New-Item -Path $NVIM_CONFIG_DIR -ItemType SymbolicLink -Target $NVIM_CONFIG_SRC"
+
+#     If ( -Not ( Test-IsAdmin ) ) {
+#         Write-Warning "Script was not run as administrator. Running symlink command as administrator."
+
+#         try {
+#             Run-AsAdmin -Command "$($SymlinkCommand)"
+#         }
+#         catch {
+#             Write-Error "Error creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
+#         }
+#     }
+#     else {
+#         try {
+#             Invoke-Expression $SymlinkCommand
+#         }
+#         catch {
+#             Write-Error "Error creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
+#             exit 1
+#         }
+#     }
+# }
+
 function New-NvimConfigSymlink {
+    Param(
+        [Parameter(Mandatory = $false, HelpMessage = "Path to repository configuration that will be linked to host's configuration path.")]
+        [string]$NVIM_REPO_CONFIG
+    )
+
+    if ( -Not ( $NVIM_REPO_CONFIG ) ) {
+        Write-Warning "Could not find Neovim configuration in repository at path: $NVIM_REPO_CONFIG"
+        return
+    }
+
     If ( $DryRun ) {
-        Write-Host "[DRY RUN] Would create symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR." -ForegroundColor Magenta
+        Write-Host "[DRY RUN] Would create symlink from $NVIM_REPO_CONFIG to $NVIM_CONFIG_DIR." -ForegroundColor Magenta
         return
     }
     else {
@@ -245,12 +317,12 @@ function New-NvimConfigSymlink {
         }
     }
 
-    Write-Host "Creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR"
+    Write-Host "Creating symlink from $NVIM_REPO_CONFIG to $NVIM_CONFIG_DIR"
 
     Write-Debug "NVIM_CONFIG_DIR: $($NVIM_CONFIG_DIR)"
-    Write-Debug "NVIM_CONFIG_SRC: $($NVIM_CONFIG_SRC)"
+    Write-Debug "NVIM_REPO_CONFIG: $($NVIM_REPO_CONFIG)"
 
-    $SymlinkCommand = "New-Item -Path $NVIM_CONFIG_DIR -ItemType SymbolicLink -Target $NVIM_CONFIG_SRC"
+    $SymlinkCommand = "New-Item -Path $NVIM_CONFIG_DIR -ItemType SymbolicLink -Target $NVIM_REPO_CONFIG"
 
     If ( -Not ( Test-IsAdmin ) ) {
         Write-Warning "Script was not run as administrator. Running symlink command as administrator."
@@ -259,7 +331,7 @@ function New-NvimConfigSymlink {
             Run-AsAdmin -Command "$($SymlinkCommand)"
         }
         catch {
-            Write-Error "Error creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
+            Write-Error "Error creating symlink from $NVIM_REPO_CONFIG to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
         }
     }
     else {
@@ -267,13 +339,16 @@ function New-NvimConfigSymlink {
             Invoke-Expression $SymlinkCommand
         }
         catch {
-            Write-Error "Error creating symlink from $NVIM_CONFIG_SRC to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
+            Write-Error "Error creating symlink from $NVIM_REPO_CONFIG to $NVIM_CONFIG_DIR. Details: $($_.Exception.Message)"
             exit 1
         }
     }
 }
 
 Install-Dependencies
+
+## Link configurations
+$REPO_CONFIGS = Get-NvimRepoConfigs
 
 try {
     New-NvimConfigSymlink
