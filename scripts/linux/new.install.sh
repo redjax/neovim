@@ -706,4 +706,10 @@ if [[ ! $? -eq 0 ]]; then
     echo "[WARNING] Script exited with non-zero exit code: $?"
     # sleep 6
     exit $?
+else
+    echo ""
+    echo "--[ Finished installing & configuring Neovim."
+    echo ""
+
+    exit 0
 fi
