@@ -32,9 +32,16 @@ My `neovim` configuration as a git repository.
   - [Docker](#docker)
     - [Build the container](#build-the-container)
     - [Run the container](#run-the-container)
+- [Switching profiles](#switching-profiles)
+  - [Temporarily switch profiles](#temporarily-switch-profiles)
+    - [Linux](#linux-1)
+    - [Windows](#windows-1)
+  - [Permanently set/change default profile](#permanently-setchange-default-profile)
+    - [Linux](#linux-2)
+    - [Windows](#windows-2)
 - [Updating](#updating)
-  - [Linux](#linux-1)
-  - [Windows](#windows-1)
+  - [Linux](#linux-3)
+  - [Windows](#windows-3)
 - [Notes](#notes)
   - [Configure LSP (Language Server)](#configure-lsp-language-server)
 - [Fix Github rate limit with Lazy](#fix-github-rate-limit-with-lazy)
@@ -53,15 +60,11 @@ Minimum: `v0.11.0`
 
 ### Dependencies
 
-```warning
-WARNING
--------
-
-The Linux install script(s) do not support LXC container environments or ARM CPUs.
-
-I have access to both of these environments and will develop the configuration for those platforms,
+> [!WARNING]
+> The Linux install script(s) do not support LXC container environments or ARM CPUs.
+> 
+> I have access to both of these environments and will develop the configuration for those platforms,
 but until this message is removed, LXC containers and ARM CPUs are not supported.
-```
 
 If you install `neovim` using one of the [install/setup scripts](./scripts/), the dependencies for my `neovim` configuration will be installed automatically.
 
@@ -94,7 +97,7 @@ Otherwise, requirements for this configuration are:
 
 ### Linux
 
-The [Linux setup script](./scripts/linux/install.sh) installs & configures `neovim` and any dependencies needed to build/configure/run the program. The script also creates a symlink of the [`config/nvim`](./config/nvim) profile at `~/.config/nvim`.
+The [Linux setup script](./scripts/linux/install.sh) installs & configures `neovim` and any dependencies needed to build/configure/run the program. The script also creates a symlink of each Neovim configuration in the [`config/` directory](./config/) to the `~/.config/{neovim-config-name}` path on the host.
 
 Run `./scripts/linux/install.sh` to install `neovim` and its dependencies.
 
@@ -140,9 +143,65 @@ docker exec --rm -it nvim-buildtest /bin/bash
 
 Once you're in the container, open neovim with `nvim`. The `Lazy` installer should kick off and build the configuration. After this first execution, each subsequent run will launch immediately, until the container is rebuilt.
 
+## Switching profiles
+
+The install scripts create symbolic links to each configuration in the [`config/` directory](./config). By default, running `nvim` will open the configuration at `~/.config/nvim` (or `$env:LOCALAPPDATA\nvim` on Windows).
+
+You can have Neovim open a different configuration by setting the `NVIM_APPNAME` environment variable.
+
+### Temporarily switch profiles
+
+#### Linux
+
+Prepend your `nvim` command with `NVIM_APPNAME=`:
+
+```bash
+NVIM_APPNAME=nvim-configname nvim
+```
+
+Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickstart/) or [`nvim-noplugins`](./config/nvim-noplugins/).
+
+#### Windows
+
+In a Powershell prompt, run:
+
+```powershell
+$NVIM_APPNAME=nvim-configname
+
+nvim
+```
+
+Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickstart/) or [`nvim-noplugins`](./config/nvim-noplugins/).
+
+### Permanently set/change default profile
+
+If you export the `NVIM_APPNAME` environment variable globally, you can set the configuration Neovim will use whenever you run `nvim`. You can still [temporarily override the profile](#temporarily-switch-profiles).
+
+#### Linux
+
+Export the `NVIM_APPNAME` environment variable, i.e. by putting the following in your `~/.bashrc`:
+
+```bash
+NVIM_APPNAME="nvim-configname"
+```
+
+Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickstart/) or [`nvim-noplugins`](./config/nvim-noplugins/).
+
+#### Windows
+
+On Windows, you can set this environment variable by hitting the Start button, searching for "environment variables," and opening the option to edit the user's environment variables. Then, create a new variable called `NVIM_APPNAME`, and set the value to the configuration you want to use, i.e. `nvim-noplugins`.
+
+You can also do this with an elevated Powershell prompt using `setx`:
+
+```powershell
+setx NVIM_APPNAME "nvim-configname"
+```
+
+Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickstart/) or [`nvim-noplugins`](./config/nvim-noplugins/).
+
 ## Updating
 
-To get the latest stable version of the configuration, run `git switch main && git pull`. For the latest development release, run `git switch dev && git pull`.
+To get the latest stable version of the configuration, run `git switch main && git pull`.
 
 ### Linux
 
