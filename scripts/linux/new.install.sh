@@ -710,6 +710,12 @@ else
     echo ""
     echo "--[ Finished installing & configuring Neovim."
     echo ""
+    echo "    Neovim configurations were installed to: $DOTCONFIG_DIR"
+    echo "    To use a specific configuration, run NVIM_APPNAME=nvim-\$config_name nvim"
+    echo ""
+    echo "    For example, to use the 'nvim-noplugins' profile, run:"
+    echo "      NVIM_APPNAME=nvim-noplugins nvim"
+    echo ""
 
     exit 0
 fi
