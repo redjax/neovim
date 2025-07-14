@@ -166,12 +166,24 @@ Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickst
 In a Powershell prompt, run:
 
 ```powershell
-$NVIM_APPNAME=nvim-configname
-
-nvim
+$env:NVIM_APPNAME=nvim-configname; nvim
 ```
 
 Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickstart/) or [`nvim-noplugins`](./config/nvim-noplugins/).
+
+You may see an error about HOME not being set:
+
+```shell
+Error detected while processing C:\Users\$USERNAME\AppData\Local\nvim-noplugins\init.lua:
+HOME not set! Undo directory not configured.
+```
+
+If you see this, you must also set a value for `$env:HOME`:
+
+```shell
+
+$env:HOME=$env:USERPROFILE; $NVIM_APPNAME="nvim-noplugins"; nvim
+```
 
 ### Permanently set/change default profile
 
@@ -198,6 +210,20 @@ setx NVIM_APPNAME "nvim-configname"
 ```
 
 Use an existing configuration name, i.e. [`nvim-kickstart`](./config/nvim-kickstart/) or [`nvim-noplugins`](./config/nvim-noplugins/).
+
+You may see an error about HOME not being set:
+
+```shell
+Error detected while processing C:\Users\$USERNAME\AppData\Local\nvim-noplugins\init.lua:
+HOME not set! Undo directory not configured.
+```
+
+If you see this, you must also set a value for `$env:HOME`:
+
+```shell
+
+setx HOME "$env:USERPROFILE"; setx NVIM_APPNAME "nvim-noplugins"
+```
 
 ## Updating
 
