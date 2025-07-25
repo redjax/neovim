@@ -23,4 +23,4 @@ else
   platform = require("config.platform")
 end
 
-require("plugins.manager")
+require("manager")
