@@ -1,0 +1,8 @@
+{
+  "ayu": { "branch": "master", "commit": "30e53f8a0f3708e92c84d4df676898cd16b8b64f" },
+  "horizon-extended": { "branch": "master", "commit": "f4c35c9ed712c4b615bed3d99a535ec68f27998c" },
+  "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
+  "onedarkpro": { "branch": "main", "commit": "5ffd45b3602bc1ed75f0b2be6c5c1f6ba5c6b796" },
+  "oxocarbon": { "branch": "main", "commit": "1dc7b7ea9df60edd9547b667fd1f789ce9f028fb" },
+  "vscode_modern": { "branch": "main", "commit": "8aa1ea927cc626f29ec3cb44f986b82e5509969e" }
+}

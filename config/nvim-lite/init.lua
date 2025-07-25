@@ -22,3 +22,5 @@ else
   require("config")
   platform = require("config.platform")
 end
+
+require("plugins.manager")

@@ -15,7 +15,7 @@ require("lazy").setup({
     spec = {
       -- { import = "plugins.lazy" },
     --   { import = "plugins.lazy.lsp" },
-      { import = "plugins.lazy.packages"},
+      { import = "plugins.packages"},
       { import = "themes"}
     },
     change_detection = { notify = false },
