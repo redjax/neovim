@@ -1,5 +1,16 @@
--- Check if ~/.config/nvim-core exists
-local nvim_core_path = vim.fn.expand("~/.config/nvim-core")
+local home = vim.fn.expand("~")
+local sep = package.config:sub(1, 1)
+
+-- Determine the nvim-core config path based on platform
+local nvim_core_path
+if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
+  -- Windows: %USERPROFILE%\AppData\Local\nvim-core
+  nvim_core_path = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-core"
+else
+  -- Unix: ~/.config/nvim-core
+  nvim_core_path = home .. sep .. ".config" .. sep .. "nvim-core"
+end
+
 local use_core = vim.fn.isdirectory(nvim_core_path) == 1
 
 local core, platform
