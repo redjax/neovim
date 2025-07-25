@@ -1,7 +1,5 @@
 -- Yanky https://github.com/gbprod/yanky.nvim
 
--- Yanky https://github.com/gbprod/yanky.nvim
-
 return {
   enabled = true,
   "gbprod/yanky.nvim",

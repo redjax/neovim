@@ -1,4 +1,4 @@
--- Noice UI folke/noice.nvim
+-- Noice UI folke/noice.nvim https://github.com/folke/noice.nvim
 
 return {
     enabled = true,

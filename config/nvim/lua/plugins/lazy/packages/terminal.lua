@@ -1,4 +1,4 @@
--- Terminal https://github.com/
+-- Terminal https://github.com/rebelot/terminal.nvim
 
 return {
     enabled = false,
