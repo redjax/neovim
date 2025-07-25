@@ -9,16 +9,28 @@
 			"name": "Scripts"
 		},
 		{
-			"path": "../containers",
-			"name": "Docker Containers"
+			"path": "../config",
+			"name": "Neovim Configs"
 		},
 		{
-			"path": "../config/kickstart",
-			"name": "Kickstart Config"
+			"path": "../config/nvim-core",
+			"name": "Core Config"
 		},
 		{
 			"path": "../config/nvim",
 			"name": "Default Config"
+		},
+		{
+			"path": "../config/nvim-lite",
+			"name": "Lite Config"
+		},
+		{
+			"path": "../config/nvim-kickstart",
+			"name": "Kickstart Config"
+		},
+		{
+			"path": "../config/nvim-work",
+			"name": "Work Config"
 		}
 	],
 	"settings": {}
