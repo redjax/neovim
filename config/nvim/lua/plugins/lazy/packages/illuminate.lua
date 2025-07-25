@@ -1,4 +1,4 @@
--- Illuminate https://github.com/
+-- Illuminate https://github.com/RRethy/vim-illuminate
 
 return {
     enabled = true,
