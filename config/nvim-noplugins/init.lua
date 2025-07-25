@@ -1,11 +1,19 @@
--- Check if ~/.config/nvim-core exists
-local nvim_core_path = vim.fn.expand("~/.config/nvim-core")
+local home = vim.fn.expand("~")
+local sep = package.config:sub(1, 1)
+
+-- Determine the nvim-core config path based on platform
+local nvim_core_path
+if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
+  nvim_core_path = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-core"
+else
+  nvim_core_path = home .. sep .. ".config" .. sep .. "nvim-core"
+end
+
 local use_core = vim.fn.isdirectory(nvim_core_path) == 1
 
 local core, platform
 
 if use_core then
-  -- Prefer nvim-core: add to runtimepath and try to require it
   vim.opt.runtimepath:append(nvim_core_path)
   local ok, mod = pcall(require, "nvim-core")
   if ok and mod then
@@ -18,7 +26,6 @@ if use_core then
     platform = require("config.platform")
   end
 else
-  -- Fallback to local config
   require("config")
   platform = require("config.platform")
 end
