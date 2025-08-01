@@ -5,6 +5,17 @@ return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
+        -- Add .norg parser for Neorg
+        local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+        parser_config.norg = {
+          install_info = {
+            url = "https://github.com/nvim-neorg/tree-sitter-norg", -- Add parser repo
+            files = { "src/parser.c", "src/scanner.cc" },
+            branch = "main",
+          },
+          filetype = "norg" -- Associate parser with .norg files
+        }
+
         require("nvim-treesitter.configs").setup({
             -- Add languages supported by Treesitter
             --   https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
@@ -46,6 +57,7 @@ return {
                 "markdown",
                 "nginx",
                 "nix",
+                "norg",
                 "php",
                 "powershell",
                 "properties",
