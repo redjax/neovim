@@ -10,36 +10,11 @@ return {
     "nvim-neorg/neorg",
     dependencies = {
       "luarocks.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-      "nvim-neorg/neorg-telescope"
+      "nvim-telescope/telescope.nvim",          -- keep if you later re-enable integrations
+      "nvim-neorg/neorg-telescope"              -- required for core.integrations.telescope
     },
-    version = "*", -- Latest stable
-    -- lazy = false, -- optional: disables lazy loading for troubleshooting
+    version = "*", -- Latest stable; consider pinning if integration mismatches occur
     config = function()
-      -- Global keymap: <leader>jt opens orgfiles workspace and today's journal
-      vim.keymap.set("n", "<leader>jt", "<cmd>Neorg workspace orgfiles<CR><cmd>Neorg journal today<CR>", { noremap = true, silent = true })
-
-      -- Register global which-key label for <leader>jt if which-key installed (new spec)
-      do
-        local ok, wk = pcall(require, "which-key")
-        if ok then
-          if wk.add then
-            wk.add({
-              { "<leader>jt", "Open today's Neorg journal" },
-            }, {
-              mode = "n",
-            })
-          else
-            wk.register({
-              { "<leader>jt", "Open today's Neorg journal" },
-            }, {
-              mode = "n",
-            })
-          end
-        end
-      end
-
       require("neorg").setup({
         load = {
           ["core.defaults"] = {},
@@ -53,7 +28,7 @@ return {
             },
           },
           ["core.esupports.metagen"] = {}, -- Autogenerate metadata for notes
-          ["core.integrations.telescope"] = {}, -- Telescope integration for fuzzy searching notes/headlines
+          ["core.integrations.telescope"] = {}, -- Telescope integration (disabled until neorg-telescope matches)
           ["core.summary"] = {}, -- Lets you view structured summaries of a workspace
           ["core.journal"] = {
             config = {
@@ -87,7 +62,7 @@ return {
                 -- Toggle concealer icons (for quick plain view)
                 keybinds.map("norg", "n", "<localleader>ic", "<cmd>Neorg toggle-concealer<CR>")
 
-                -- Quick search workspace headlines with Telescope
+                -- Quick search workspace headlines with Telescope (will work once integration is re-enabled)
                 keybinds.map("norg", "n", "<localleader>sh", "<cmd>Telescope neorg headlines<CR>")
 
                 -- Optionally: open the default workspace via a Neorg-local binding
@@ -121,6 +96,17 @@ return {
           },
         },
       })
+
+      -- Explicit localleader mapping to open today's journal (\jt)
+      vim.keymap.set("n", "<localleader>jt", function()
+        vim.cmd("Neorg workspace orgfiles")  -- ensure workspace
+        vim.cmd("Neorg journal today")
+      end, { noremap = true, silent = true, desc = "Open today's Neorg journal" })
+
+      -- NOTE: intentionally not registering a which-key description-only entry for <localleader>jt
+      -- because that was causing the fallback-typing behavior. If you want to re-add it later,
+      -- ensure the actual mapping works first and then, separately, register the label.
+
     end,
   },
 }
