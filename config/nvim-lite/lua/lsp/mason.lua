@@ -1,7 +1,6 @@
 -- Mason https://github.com/mason-org/mason-lspconfig.nvim
 
 return {
-    enable = true,
     "mason-org/mason-lspconfig.nvim",
     opts = {},
     dependencies = {

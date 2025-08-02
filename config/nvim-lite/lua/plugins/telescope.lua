@@ -1,7 +1,6 @@
 -- Telescope https://github.com/nvim-telescope/telescope.nvim
 
 return {
-    enabled = true,
     "nvim-telescope/telescope.nvim",
     dependencies = {
         "nvim-lua/plenary.nvim",

@@ -1,7 +1,6 @@
 -- JABS https://github.com/matbme/JABS.nvim
 
 return {
-    enabled = true,
     "matbme/JABS.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     -- "VeryLazy", "BufWinEnter" or "VimEnter" as you prefer
