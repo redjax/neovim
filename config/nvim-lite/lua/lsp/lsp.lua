@@ -1,7 +1,6 @@
 -- Language Server Protocol (LSP) https://github.com/neovim/nvim-lspconfig
 
 return {
-  enabled = true,
   "neovim/nvim-lspconfig",
   dependencies = {
       -- Add JSON schema support to JSON LSPs
@@ -89,7 +88,7 @@ return {
           table.insert(ensure_installed, "pyright")
           table.insert(ensure_installed, "sqlls")
           table.insert(ensure_installed, "svelte")
-          table.insert(ensure_installed, "tailwindcss")
+        --   table.insert(ensure_installed, "tailwindcss")
           table.insert(ensure_installed, "vue_ls")
           table.insert(ensure_installed, "yamlls")
       end
@@ -192,6 +191,24 @@ return {
                   }
               end,
 
+            --   ["tailwindcss"] = function()
+            --     require("lspconfig").tailwindcss.setup {
+            --       capabilities = capabilities,
+            --       -- Override filetypes, excluding types like Markdown
+            --       filetypes = {
+            --         "aspnetcorerazor", "astro", "astro-markdown", "blade", "django-html",
+            --         "edge", "eelixir", "elixir", "ejs", "erb",
+            --         "gohtml", "haml", "handlebars", "html", "html-eex",
+            --         "heex", "jade", "liquid", "mdx", "mustache",
+            --         "css", "less", "postcss", "sass", "scss", "stylus", "sugarss",
+            --         "javascript", "javascriptreact", "typescript", "typescriptreact",
+            --         "vue", "svelte"
+            --       },
+
+            --       root_dir = require("lspconfig.util").root_pattern(
+            --         "tailwind.config.js", "tailwind.config.ts", "postcss.config.js", "package.json", ".git"
+            --       ),
+            --   }
           }
       })
 
