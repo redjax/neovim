@@ -2,17 +2,21 @@
 
 ## Define NPM dependencies
 NPM_DEPENDENCIES=(
+    "alex"
     "neovim"
     "gh-actions-language-server"
     "azure-pipelines-language-server"
     "bash-language-server"
     "css-variables-language-server"
+    "markdownlint-cli2"
     "@microsoft/compose-language-service"
     "dockerfile-language-server-nodejs"
     "graphql-language-service-cli"
     "pyright"
     "@stoplight/spectral-cli"
     "yaml-language-server"
+    "textlint"
+    "write-good"
     # "@ansible/ansible-language-server"
     # "css-language-server"
     # "cssmodules-language-server"
@@ -31,6 +35,7 @@ PYTHON_DEPENDENCIES=(
     "salt-lsp"
     "sqruff"
     "cmake-language-server"
+    "proselint"
 )
 
 ## Determine Python package manager
