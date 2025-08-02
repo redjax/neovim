@@ -1,7 +1,6 @@
 -- Project manager https://github.com/ahmedkhalf/project.nvim
 
 return {
-    enabled = true,
     "ahmedkhalf/project.nvim",
     -- Loads after startup for best performance
     event = "VeryLazy",

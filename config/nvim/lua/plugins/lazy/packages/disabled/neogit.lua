@@ -1,7 +1,6 @@
 -- Neogit https://github.com/
 
 return {
-    enabled = false,
     "NeogitOrg/neogit",
     dependencies = {
         "nvim-lua/plenary.nvim",

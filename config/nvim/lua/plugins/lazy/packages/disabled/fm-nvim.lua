@@ -1,7 +1,6 @@
 -- fm-nvim https://github.com/is0n/fm-nvim
 
 return {
-    lazy = false,
     "is0n/fm-nvim",
     config = function()
       require("fm-nvim").setup({

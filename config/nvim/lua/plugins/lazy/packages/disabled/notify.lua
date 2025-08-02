@@ -1,7 +1,6 @@
 -- Notify https://github.com/rcarriga/nvim-notify
 
 return {
-    enabled = false,
     "rcarriga/nvim-notify",
     event = "VeryLazy",
     config = function()

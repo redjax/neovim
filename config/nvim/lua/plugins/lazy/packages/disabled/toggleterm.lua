@@ -1,7 +1,6 @@
 -- Toggleterm http://github.com/
 
 return {
-    enabled = false,
     'akinsho/toggleterm.nvim',
     version = "*",
     opts = {

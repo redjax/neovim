@@ -1,7 +1,6 @@
 -- Pretty fold https://github.com/anuvyklack/pretty-fold.nvim
 
 return {
-    enabled = true,
     'bbjornstad/pretty-fold.nvim',
     config = function()
         require('pretty-fold').setup()

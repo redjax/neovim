@@ -1,7 +1,6 @@
 -- Telescope undo https://github.com/debugloop/telescope-undo.nvim
 
 return {
-    enabled = true,
     "debugloop/telescope-undo.nvim",
     dependencies = {
       {

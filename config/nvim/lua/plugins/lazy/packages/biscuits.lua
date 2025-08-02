@@ -1,7 +1,6 @@
 -- Biscuits https://github.com/code-biscuits/nvim-biscuits
 
 return {
-    enabled = true,
     "code-biscuits/nvim-biscuits",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     -- "VeryLazy", or "BufReadPost" if you want it to load on file open

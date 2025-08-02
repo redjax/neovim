@@ -1,7 +1,6 @@
 -- Fugitive git client https://github.com/tpope/vim-fugitive
 
 return {
-    enabled = true,
     "tpope/vim-fugitive",
     -- Default: "VeryLazy". "BufReadPre" if you want it loaded earlier
     event = "VeryLazy",

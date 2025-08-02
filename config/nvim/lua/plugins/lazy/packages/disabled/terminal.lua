@@ -1,7 +1,6 @@
 -- Terminal https://github.com/rebelot/terminal.nvim
 
 return {
-    enabled = false,
     "rebelot/terminal.nvim",
     opts = {
         layout = {

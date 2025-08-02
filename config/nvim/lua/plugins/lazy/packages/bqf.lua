@@ -1,7 +1,6 @@
 -- BQF https://github.com/kevinhwang91/nvim-bqf
 
 return {
-    enabled = true,
     "kevinhwang91/nvim-bqf",
     -- Only loads for quickfix windows (recommended)
     ft = "qf",

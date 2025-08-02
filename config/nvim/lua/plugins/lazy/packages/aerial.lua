@@ -1,7 +1,6 @@
 -- Ariel https://github.com/stevearc/aerial.nvim
 
 return {
-    enabled = true,
     "stevearc/aerial.nvim",
     opts = {
         -- Prefer Treesitter, then LSP, then fallback for outline

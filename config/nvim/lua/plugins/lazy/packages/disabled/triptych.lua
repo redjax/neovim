@@ -1,7 +1,6 @@
 -- Triptych https://github.com/simonmclean/triptych.nvim
 
 return {
-    enabled = false,
     -- Main plugin repository
     "simonmclean/triptych.nvim",
     lazy = true,

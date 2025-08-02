@@ -1,7 +1,6 @@
 -- Yanky https://github.com/gbprod/yanky.nvim
 
 return {
-  enabled = true,
   "gbprod/yanky.nvim",
   -- "VeryLazy" or "BufReadPre" if you want it earlier
   event = "VeryLazy",

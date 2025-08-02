@@ -1,7 +1,6 @@
 -- Navic https://github.com/SmiteshP/nvim-navic
 
 return {
-    enabled = true,
     "SmiteshP/nvim-navic",
     -- Required for LSP integration
     dependencies = { "neovim/nvim-lspconfig" },

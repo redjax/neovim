@@ -1,7 +1,6 @@
 -- Persistence https://github.com/folke/persistence.nvim
 
 return {
-    enabled = true,
     "folke/persistence.nvim",
     -- Start session management before buffers are read
     event = "BufReadPre",

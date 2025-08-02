@@ -1,7 +1,6 @@
 -- Codewindow https://github.com/gorbit99/codewindow.nvim
 
 return {
-    enabled = true,
     "gorbit99/codewindow.nvim",
     -- "VeryLazy" or "BufReadPre" if you want it earlier
     event = "VeryLazy",

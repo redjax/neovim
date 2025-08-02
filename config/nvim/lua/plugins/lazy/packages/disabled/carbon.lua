@@ -1,7 +1,6 @@
 -- Carbon https://github.com/SidOfc/carbon.nvim
 
 return {
-    enabled = false,
     "SidOfc/carbon.nvim",
     -- Optional: for file icons support
     dependencies = {
