@@ -1,7 +1,6 @@
 -- Auto-mkdir https://github.com/mateuszwieloch/automkdir.nvim
 
 return {
-    enabled = true,
     "mateuszwieloch/automkdir.nvim",
     lazy = false,
     config = function()

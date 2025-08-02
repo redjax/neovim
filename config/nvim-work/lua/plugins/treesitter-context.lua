@@ -1,7 +1,6 @@
 -- Treesitter context (shows the current code context at the top of your window) https://github.com/nvim-treesitter/nvim-treesitter-context
 
 return {
-    enabled = true,
     "nvim-treesitter/nvim-treesitter-context",
     -- "VeryLazy" or "BufReadPre" if you want it earlier
     event = "VeryLazy",

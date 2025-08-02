@@ -3,7 +3,6 @@
 -- \ https://github.com/rcarriga/nvim-dap-ui
 
 return {
-    enabled = true,
     "mfussenegger/nvim-dap",
     dependencies = {
         -- Mason (DAP installer/manager)

@@ -1,7 +1,6 @@
 -- Trouble https://github.com/folke/trouble.nvim
 
 return {
-    enabled = true,
     "folke/trouble.nvim",
     cmd = { "Trouble", "TroubleToggle", "TroubleClose", "TroubleRefresh" },
     event = "VeryLazy", -- or "BufReadPost" to load on file open

@@ -1,7 +1,6 @@
 -- Nvim-cmp completions https://github.com/hrsh7th/nvim-cmp
 
 return {
-    enabled = true,
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {

@@ -1,7 +1,6 @@
 -- Lualine https://github.com/nvim-lualine/lualine.nvim
 
 return {
-    enabled = true,
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function ()

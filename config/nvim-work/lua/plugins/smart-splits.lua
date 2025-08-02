@@ -1,7 +1,6 @@
 -- Smart-splits https://github.com/mrjones2014/smart-splits.nvim
 
 return {
-    enabled = true,
     "mrjones2014/smart-splits.nvim",
     -- Remove lazy-loading if you want multiplexer integration (recommended)
     event = "VeryLazy",
