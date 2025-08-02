@@ -1,7 +1,6 @@
 -- Precognition https://github.com/tris203/precognition.nvim
 
 return {
-    enabled = true,
     "tris203/precognition.nvim",
     -- "VeryLazy" or "BufReadPre" if you want it even earlier
     event = "VeryLazy",

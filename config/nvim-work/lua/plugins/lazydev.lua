@@ -1,7 +1,7 @@
 -- Lazydev https://github.com/folke/lazydev.nvim
 
 return {
-    {   enabled = true,
+    {   
         "folke/lazydev.nvim",
         -- Only load for Lua files (recommended)
         ft = "lua",
@@ -9,7 +9,6 @@ return {
     },
     -- cmp completions
     {
-        enabled = true,
         "hrsh7th/nvim-cmp",
         opts = function(_, opts)
         opts.sources = opts.sources or {}
@@ -21,7 +20,6 @@ return {
     },
     -- Blink completions
     {
-        enabled = true,
         "saghen/blink.cmp",
         opts = {
             sources = {

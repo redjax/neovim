@@ -1,7 +1,6 @@
 -- Git conflict https://github.com/
 
 return {
-    enabled = true,
     "akinsho/git-conflict.nvim",
     version = "*",
     -- This will call require('git-conflict').setup() with defaults
