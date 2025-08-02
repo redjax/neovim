@@ -116,7 +116,7 @@ return {
 
                 -- English prose
                 null_ls.builtins.diagnostics.proselint,
-                null_ls.builtins.diagnostics.vale,
+                -- null_ls.builtins.diagnostics.vale,
                 null_ls.builtins.diagnostics.write_good,
 
                 -- Salt
