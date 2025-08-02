@@ -1,7 +1,6 @@
 -- Neotree https://github.com/
 
 return {
-    enabled = false,
     "nvim-neo-tree/neo-tree.nvim",
     lazy = false,
     -- Check latest release: https://github.com/nvim-neo-tree/neo-tree.nvim/releases

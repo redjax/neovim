@@ -1,7 +1,6 @@
 -- Hardtime (break bad habits, master vim shortcuts) https://github.com/m4xshen/hardtime.nvim
 
 return {
-    enabled = false,
     "m4xshen/hardtime.nvim",
     -- "VeryLazy" or "BufReadPre" if you want it even earlier
     event = "VeryLazy",

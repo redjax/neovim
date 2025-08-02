@@ -32,7 +32,6 @@ local theme_menu_items = {
 }
 
 return {
-    enabled = true,
     "zaldih/themery.nvim",
     config = function()
         require("themery").setup({

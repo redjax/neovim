@@ -1,7 +1,6 @@
 -- Fold preview https://github.com/anuvyklack/fold-preview.nvim
 
 return {
-    enabled = true,
     'anuvyklack/fold-preview.nvim',
     dependencies = {
         'anuvyklack/keymap-amend.nvim'

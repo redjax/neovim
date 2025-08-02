@@ -1,7 +1,6 @@
 -- SQLite.lua https://github.com/kkharji/sqlite.lua
 
 return {
-    enabled=true,
     "kkharji/sqlite.lua",
     lazy = true,
     -- No config needed for basic use; plugins will require it as a dependency

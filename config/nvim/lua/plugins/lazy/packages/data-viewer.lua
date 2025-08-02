@@ -1,7 +1,6 @@
 -- Data viewer (CSV, TSV) https://github.com/VidocqH/data-viewer.nvim
 
 return {
-    enabled = true,
     "VidocqH/data-viewer.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",

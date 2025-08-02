@@ -1,7 +1,6 @@
 -- 
 
 return {
-    enabled = false,
     'CWood-sdf/spaceport.nvim',
     lazy = false,
     opts = {

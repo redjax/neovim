@@ -1,7 +1,6 @@
 -- Treesitter https://github.com/nvim-treesitter/nvim-treesitter
 
 return {
-    enabled = true,
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()

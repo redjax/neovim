@@ -1,7 +1,6 @@
 -- Flash https://github.com/folke/flash.nvim
 
 return {
-    enabled = true,
     "folke/flash.nvim",
     event = "VeryLazy",
     ---@type Flash.Config

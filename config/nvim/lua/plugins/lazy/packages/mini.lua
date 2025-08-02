@@ -1,7 +1,6 @@
 -- mini.nvim https://github.com/echasnovski/mini.nvim
 
 return {
-    enabled = true,
     "echasnovski/mini.nvim",
     -- Use `version = false` for latest (main branch). Use `version = '*'` for stable.
     version = "*",

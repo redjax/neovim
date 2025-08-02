@@ -1,7 +1,6 @@
 -- Gitsigns lewis6991/gitsigns.nvim
 
 return {
-    enabled = true,
     'lewis6991/gitsigns.nvim',
     -- event = "VeryLazy",
     cmd = "Gitsigns",

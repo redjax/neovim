@@ -1,7 +1,6 @@
 -- Obsidian 
 
 return {
-    enabled = false,
     "epwalsh/obsidian.nvim",
     version = "*", -- Use latest release for stability
     ft = "markdown", -- Loads only for markdown files (recommended)

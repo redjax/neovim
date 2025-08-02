@@ -1,7 +1,6 @@
 -- Buffer Manager https://github.com/j-morano/buffer_manager.nvim
 
 return {
-    enabled = false,
     "j-morano/buffer_manager.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     -- "VeryLazy" or "BufReadPost" if you want it to load on file open

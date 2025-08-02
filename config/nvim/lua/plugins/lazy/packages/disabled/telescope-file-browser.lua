@@ -1,7 +1,6 @@
 -- Telescope file browser https://github.com/nvim-telescope/telescope-file-browser.nvim
 
 return {
-    enabled = false,
     "nvim-telescope/telescope-file-browser.nvim",
     dependencies = {
       "nvim-telescope/telescope.nvim",

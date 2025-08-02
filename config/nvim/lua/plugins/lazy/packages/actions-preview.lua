@@ -1,7 +1,6 @@
 -- Actions preview https://github.com/aznhe21/actions-preview.nvim
 
 return {
-    enabled = true,
     "aznhe21/actions-preview.nvim",
     event = "VeryLazy",
 
