@@ -2,13 +2,11 @@
 
 return {
   {
-    enabled = true,
     "vhyrro/luarocks.nvim",
     priority = 1000, -- Loads before other plugins
     config = true,   -- Runs require("luarocks-nvim").setup()
   },
   {
-    enabled = true,
     "nvim-neorg/neorg",
     dependencies = {
       "luarocks.nvim",
@@ -19,6 +17,29 @@ return {
     version = "*", -- Latest stable
     -- lazy = false, -- optional: disables lazy loading for troubleshooting
     config = function()
+      -- Global keymap: <leader>jt opens orgfiles workspace and today's journal
+      vim.keymap.set("n", "<leader>jt", "<cmd>Neorg workspace orgfiles<CR><cmd>Neorg journal today<CR>", { noremap = true, silent = true })
+
+      -- Register global which-key label for <leader>jt if which-key installed (new spec)
+      do
+        local ok, wk = pcall(require, "which-key")
+        if ok then
+          if wk.add then
+            wk.add({
+              { "<leader>jt", "Open today's Neorg journal" },
+            }, {
+              mode = "n",
+            })
+          else
+            wk.register({
+              { "<leader>jt", "Open today's Neorg journal" },
+            }, {
+              mode = "n",
+            })
+          end
+        end
+      end
+
       require("neorg").setup({
         load = {
           ["core.defaults"] = {},
@@ -27,7 +48,7 @@ return {
           ["core.export.markdown"] = {}, -- Export directly to Markdown
           ["core.dirman"] = { -- Workspace management
             config = {
-              workspaces = { orgfiles = "~/orgfiles", notes = "~/notes" },
+              workspaces = { orgfiles = "~/.orgfiles", notes = "~/notes" },
               default_workspace = "orgfiles",
             },
           },
@@ -49,59 +70,57 @@ return {
                 local ok, wk = pcall(require, "which-key")
 
                 -- Unmap conflicting keys so Neorg won't bind them
-                keybinds.unmap("norg", "n", "<LocalLeader>cm") -- unbind magnify-code-block
+                keybinds.unmap("norg", "n", "<localleader>cm") -- unbind magnify-code-block
                 keybinds.unmap("norg", "n", "gO") -- unbind toc key
                 keybinds.unmap("norg", "n", "gT")
-                keybinds.unmap("norg", "n", "<LocalLeader>tj")
+                keybinds.unmap("norg", "n", "<localleader>tj")
 
                 -- Remap TOC
                 keybinds.map("norg", "n", "gT", "<cmd>Neorg toc<CR>")
 
-                -- For magnify code block, remap to <LocalLeader>cx
-                keybinds.map("norg", "n", "<LocalLeader>cx", "<Plug>(neorg.looking-glass.magnify-code-block)")
+                -- For magnify code block, remap to <localleader>cx
+                keybinds.map("norg", "n", "<localleader>cx", "<Plug>(neorg.looking-glass.magnify-code-block)")
 
                 -- Open today's daily note quickly (buffer-local)
-                keybinds.map("norg", "n", "<LocalLeader>tj", "<cmd>Neorg journal today<CR>")
+                keybinds.map("norg", "n", "<localleader>tj", "<cmd>Neorg journal today<CR>")
 
                 -- Toggle concealer icons (for quick plain view)
-                keybinds.map("norg", "n", "<LocalLeader>ic", "<cmd>Neorg toggle-concealer<CR>")
+                keybinds.map("norg", "n", "<localleader>ic", "<cmd>Neorg toggle-concealer<CR>")
 
                 -- Quick search workspace headlines with Telescope
-                keybinds.map("norg", "n", "<LocalLeader>sh", "<cmd>Telescope neorg headlines<CR>")
+                keybinds.map("norg", "n", "<localleader>sh", "<cmd>Telescope neorg headlines<CR>")
 
-                -- Add keybinds to which-key if it's installed
+                -- Optionally: open the default workspace via a Neorg-local binding
+                keybinds.map("norg", "n", "<localleader>wo", "<cmd>Neorg workspace orgfiles<CR>")
+
+                -- Add keybinds to which-key if it's installed (buffer-local, new spec)
                 if ok then
-                  wk.register({
-                    t = {
-                      name = "+journal",
-                      j = "Open today's journal"
-                    },
-                  }, {
-                    prefix = "<localleader>",
-                    mode = "n",
-                  })
+                  local buf = vim.api.nvim_get_current_buf()
+                  if wk.add then
+                    wk.add({
+                      { "<localleader>t", name = "journal" },                -- group header
+                      { "<localleader>tj", "Open today's journal" },        -- description
+                      { "<localleader>wo", "Open default workspace" },      -- new workspace launcher
+                    }, {
+                      mode = "n",
+                      buffer = buf,
+                    })
+                  else
+                    wk.register({
+                      { "<localleader>t", name = "journal" },
+                      { "<localleader>tj", "Open today's journal" },
+                      { "<localleader>wo", "Open default workspace" },
+                    }, {
+                      mode = "n",
+                      buffer = buf,
+                    })
+                  end
                 end
               end,
             },
           },
         },
       })
-
-      -- Define global keymap here, after Neorg setup to avoid errors if Neorg isn't loaded yet
-      vim.keymap.set("n", "<LocalLeader>tj", "<cmd>Neorg journal today<CR>", { noremap = true, silent = true })
-
-      -- Register global which-key label for the above mapping if which-key installed
-      local ok, wk = pcall(require, "which-key")
-      if ok then
-        wk.register({
-          ["<localleader>"] = {
-            t = {
-              j = "Open today's Neorg journal",
-            },
-          },
-        }, { mode = "n" })
-      end
     end,
   },
 }
-
