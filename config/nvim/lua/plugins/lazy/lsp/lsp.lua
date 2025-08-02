@@ -1,7 +1,6 @@
 -- Language Server Protocol (LSP) https://github.com/neovim/nvim-lspconfig
 
 return {
-  enabled = true,
   "neovim/nvim-lspconfig",
   dependencies = {
       -- Add JSON schema support to JSON LSPs
