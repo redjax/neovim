@@ -1,7 +1,6 @@
 -- Cheezmoi integration https://github.com/xvzc/chezmoi.nvim
 
 return {
-  enabled = true,
   "xvzc/chezmoi.nvim",
   dependencies = { "nvim-lua/plenary.nvim" },
   -- Load conditionally, if chezmoi is found in $PATH

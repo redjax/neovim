@@ -1,7 +1,6 @@
 -- Hawtkeys https://github.com/tris203/hawtkeys.nvim
 
 return {
-    enabled = true,
     "tris203/hawtkeys.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",

@@ -1,7 +1,6 @@
 -- Floaterm https://github.com/
 
 return {
-    enabled = true,
     "voldikss/vim-floaterm",
     cmd = { "FloatermToggle", "FloatermNew", "FloatermNext", "FloatermPrev", "FloatermKill" }, -- lazy-load on command
     keys = {

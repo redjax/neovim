@@ -1,7 +1,6 @@
 -- Scrollview https://github.com/dstein64/nvim-scrollview
 
 return {
-    enabled = true,
     "dstein64/nvim-scrollview",
     event = "VeryLazy", -- or "BufWinEnter" if you want it earlier
     opts = {

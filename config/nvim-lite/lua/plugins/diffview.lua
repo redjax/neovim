@@ -1,7 +1,6 @@
 -- Diffview https://github.com/sindrets/diffview.nvim
 
 return {
-    enabled = true,
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles", "DiffviewFileHistory", "DiffviewRefresh" },
     dependencies = { "nvim-tree/nvim-web-devicons" },

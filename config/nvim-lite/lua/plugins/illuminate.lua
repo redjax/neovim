@@ -1,7 +1,6 @@
 -- Illuminate https://github.com/RRethy/vim-illuminate
 
 return {
-    enabled = true,
     "RRethy/vim-illuminate",
     -- Loads on file open
     event = { "BufReadPost", "BufNewFile" },
