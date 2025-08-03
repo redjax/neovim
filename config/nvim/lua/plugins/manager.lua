@@ -24,7 +24,7 @@ local specs = {
   { import = "themes" },
 }
 
--- Check if nvim-lsp config path exists
+-- Check if nvim-shared config path exists
 if vim.loop.fs_stat(nvim_shared_path) and vim.loop.fs_stat(nvim_shared_path).type == "directory" then
   vim.opt.runtimepath:append(nvim_shared_path)
   table.insert(specs, { import = "nvim-shared.lsp" })
