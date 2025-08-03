@@ -36,7 +36,7 @@ local specs = {
   -- Assumes your config has a lua/plugins dir,
   -- with a lazy/packages subdirectory where plugins are defined
   { import = "plugins.lazy.packages" },
-  -- Impor themess from config's lua/themes
+  -- Import themes from config's lua/themes
   { import = "themes" },
 }
 
