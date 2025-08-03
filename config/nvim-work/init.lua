@@ -1,33 +1,40 @@
--- Platform-independent detection of nvim-core shared config
 local home = vim.fn.expand("~")
 local sep = package.config:sub(1, 1)
-local nvim_core_path
 
+-- Determine the nvim-core config path based on platform
+local nvim_core_path
 if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
   -- Windows: %USERPROFILE%\AppData\Local\nvim-core
   nvim_core_path = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-core"
 else
-  -- Unix: ~/.config/nvim-core
-  nvim_core_path = home .. sep .. ".config" .. sep .. "nvim-core"
+  -- Unix: ~/.config/nvim-shared
+  nvim_shared_path = home .. sep .. ".config" .. sep .. "nvim-shared"
 end
 
-local use_core = vim.fn.isdirectory(nvim_core_path) == 1
+local use_shared = vim.fn.isdirectory(nvim_shared_path) == 1
 
-local core, platform
+local shared, platform
 
-if use_core then
-  -- Prefer nvim-core: add to runtimepath and try to require it
-  vim.opt.runtimepath:append(nvim_core_path)
-  local ok, mod = pcall(require, "nvim-core")
+if use_shared then
+  -- Prefer nvim-shared: add to runtimepath and try to require it
+  vim.opt.runtimepath:append(nvim_shared_path)
+
+  -- Debug print neovim's runtimepath
+  -- print("rtp: ", vim.inspect(vim.opt.runtimepath:get()))
+  -- Debug print neovim's package path
+  -- print("pkg:", package.path)
+
+  local ok, mod = pcall(require, "nvim-shared")
   if ok and mod then
-    core = mod
-    platform = core.platform
-    require("nvim-core.config")
+    shared = mod
+    platform = shared.platform
+    require("nvim-shared.config")
   else
-    vim.notify("Failed to load nvim-core, falling back to local config.", vim.log.levels.WARN)
+    vim.notify("Failed to load nvim-shared, falling back to local config.", vim.log.levels.WARN)
     require("config")
     platform = require("config.platform")
   end
+
 else
   -- Fallback to local config
   require("config")
@@ -38,4 +45,4 @@ require("manager")
 
 -- Set your active theme here
 -- \ Managed by Themery plugin for this config
--- vim.cmd.colorscheme("catppuccin-mocha")
+vim.cmd.colorscheme("oxocarbon")
