@@ -6,7 +6,7 @@ return {
     "mfussenegger/nvim-dap",
     dependencies = {
         -- Mason (DAP installer/manager)
-        { "mason-org/mason.nvim", config = true },
+        { "mason-org/mason.nvim" },
         {
         "jay-babu/mason-nvim-dap.nvim",
         dependencies = { "mason-org/mason.nvim" },
