@@ -14,9 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 local home = vim.fn.expand("~")
 local sep = package.config:sub(1,1)
 local nvim_shared_root
-
 if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
-  -- Prefer LOCALAPPDATA if set, else fallback
   local localappdata = vim.env.LOCALAPPDATA or (home .. sep .. "AppData" .. sep .. "Local")
   nvim_shared_root = localappdata .. sep .. "nvim-shared"
 else
@@ -31,23 +29,33 @@ local specs = {
 
 -- If nvim-shared exists, expose it and pull in the shared LSP bundle + helpers
 if vim.fn.isdirectory(nvim_shared_root) == 1 then
-  -- Prepend so it's found early
+  -- Prepend so shared modules are resolved early
   vim.opt.rtp:prepend(nvim_shared_root)
-
-  -- If your module layout lives under lua/, you can optionally adjust package.path,
-  -- but prepending the root to rtp is usually sufficient for require("nvim-shared...")
-  -- Example if you need it explicitly:
-  -- local shared_lua = nvim_shared_root .. sep .. "lua"
-  -- package.path = table.concat({
-  --   shared_lua .. "/?.lua",
-  --   shared_lua .. "/?/init.lua",
-  --   package.path,
-  -- }, ";")
 
   -- Acquire dynamic server list (with optional per-profile overrides)
   local ok_auto, auto_servers = pcall(require, "nvim-shared.lsp.auto_servers")
   local servers = {}
   if ok_auto and auto_servers then
-    -- Example override for this profile; adjust or omit as needed:
-    -- auto_servers.overrides.dotnet = {} -- disable dotnet servers here
-    servers = auto_servers_
+    -- Example overrides for this profile (customize or remove as needed)
+    -- auto_servers.overrides.dotnet = {} -- disable dotnet if desired
+    -- auto_servers.overrides.npm = { "bashls", "jsonls" } -- tailor npm LSPs
+    servers = auto_servers.get()
+  else
+    vim.notify("Failed to load nvim-shared.lsp.auto_servers: " .. tostring(auto_servers), vim.log.levels.WARN)
+  end
+
+  -- Add shared LSP-related specs
+  table.insert(specs, { import = "nvim-shared.lsp.plugins.mason" })
+  table.insert(specs, { import = "nvim-shared.lsp.plugins.cmp" })
+  table.insert(specs, { import = "nvim-shared.lsp.plugins.signature" })
+  table.insert(specs, { import = "nvim-shared.lsp.plugins.none_ls" })
+  table.insert(specs, { import = "nvim-shared.lsp.bundle", opts = { ensure_installed = servers } })
+  table.insert(specs, { import = "nvim-shared.lsp.dap" })
+end
+
+-- Finalize lazy.nvim setup
+require("lazy").setup({
+  spec = specs,
+  change_detection = { notify = false },
+  checker = { enabled = true },
+})
