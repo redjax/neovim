@@ -15,8 +15,8 @@ vim.opt.rtp:prepend(lazypath)
 local home = vim.fn.expand("~")
 -- Detect path separator (/ or \)
 local sep = package.config:sub(1,1)
--- Build path to shared nvim-lsp language server config
-local nvim_lsp_path = home .. sep .. ".config" .. sep .. "nvim-lsp"
+-- Build path to shared nvim-shared language server config
+local nvim_shared_path = home .. sep .. ".config" .. sep .. "nvim-shared"
 
 -- Build specs object for lazy init
 local specs = {
@@ -25,9 +25,9 @@ local specs = {
 }
 
 -- Check if nvim-lsp config path exists
-if vim.loop.fs_stat(nvim_lsp_path) and vim.loop.fs_stat(nvim_lsp_path).type == "directory" then
-  vim.opt.runtimepath:append(nvim_lsp_path)
-  table.insert(specs, { import = "nvim-lsp" })
+if vim.loop.fs_stat(nvim_shared_path) and vim.loop.fs_stat(nvim_shared_path).type == "directory" then
+  vim.opt.runtimepath:append(nvim_shared_path)
+  table.insert(specs, { import = "nvim-shared.lsp" })
 end
 
 -- Setup lazy plugin manager
