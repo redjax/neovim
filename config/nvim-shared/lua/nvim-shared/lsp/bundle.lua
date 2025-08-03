@@ -22,7 +22,11 @@ return {
       -- Setup signature if present
       local signature = require("nvim-shared.lsp.plugins.signature")
       if signature.config then
-        require("lsp_signature").setup(signature.config)
+        if type(signature.config) == "function" then
+          signature.config()  -- call it directly
+        elseif type(signature.config) == "table" then
+          require("lsp_signature").setup(signature.config)
+        end
       end
 
       -- Setup none-ls if present
