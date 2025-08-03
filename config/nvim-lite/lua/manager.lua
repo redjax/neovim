@@ -15,19 +15,14 @@ local home = vim.fn.expand("~")
 local sep = package.config:sub(1, 1)
 local nvim_lsp_path = home .. sep .. ".config" .. sep .. "nvim-lsp"
 
-local has_nvim_lsp = vim.fn.isdirectory(nvim_lsp_path) == 1
-
 local specs = {
   { import = "plugins" },
   { import = "themes" },
 }
 
-if has_nvim_lsp then
+if vim.loop.fs_stat(nvim_lsp_path) and vim.loop.fs_stat(nvim_lsp_path).type == "directory" then
   vim.opt.runtimepath:append(nvim_lsp_path)
-  local ok, err = pcall(require, "lsp.init")
-  if not ok then
-    vim.notify("Failed to load shared LSP config: " .. tostring(err), vim.log.levels.WARN)
-  end
+  table.insert(specs, { import = "nvim-lsp" })
 end
 
 require("lazy").setup({
