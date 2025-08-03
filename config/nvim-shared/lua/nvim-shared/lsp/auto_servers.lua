@@ -4,6 +4,45 @@ local function has(cmd)
   return vim.fn.executable(cmd) == 1
 end
 
+-- Map of LSP servers to required external tools
+-- If tool is nil or missing, assume no special tool required
+local server_tool_requirements = {
+  -- dotnet servers (bicep requires dotnet)
+  bicep = "dotnet",
+
+  -- npm-based servers
+  ansiblels = "ansible",
+  azure_pipelines_ls = "ansible",          -- example, adjust as needed
+  bashls = "bash",
+  css_variables = "npm",                   -- assumes npm present; adjust or nil to skip
+  cssls = "npm",
+  cssmodules_ls = "npm",
+  docker_compose_language_service = "docker",
+  dockerls = "docker",
+  eslint = "node",
+  gh_actions_ls = "npm",
+  html = "npm",
+  jsonls = "node",
+  pyright = "node",
+  sqlls = "sql",                           -- may work without extra deps, adjust
+  svelte = "npm",
+  vue_ls = "npm",
+  yamlls = "npm",
+
+  -- go servers
+  golangci_lint_ls = "golangci-lint",
+  gopls = "go",
+  sqls = "sql",
+
+  -- base / general
+  lua_ls = "lua",
+  marksman = "cargo",                      -- example; if it needs cargo; adjust accordingly
+  postgres_lsp = "psql",                   -- example; adjust as needed
+  powershell_es = "pwsh",                  -- powershell executable
+  superhtml = nil,                         -- assume no tooling needed
+  tflint = "tflint",
+}
+
 -- Default servers for all environments
 M.defaults = {
   base = {
@@ -54,6 +93,15 @@ M.overrides = {
 -- Cache table local to the module
 local cached_servers = nil
 
+local function server_tool_available(server)
+  local required_tool = server_tool_requirements[server]
+  -- If no tool required or tool is unknown, assume available
+  if not required_tool then
+    return true
+  end
+  return has(required_tool)
+end
+
 function M.get()
   if cached_servers then
     return cached_servers
@@ -63,32 +111,60 @@ function M.get()
 
   -- Merge defaults and overrides
   local function merge_list(key)
-    -- if overrides exist for this key, use them only
     if M.overrides[key] ~= nil then
       return M.overrides[key]
     end
-    -- otherwise return defaults
     return M.defaults[key] or {}
   end
 
   -- Always include base
-  vim.list_extend(ensure_installed, merge_list("base"))
+  for _, server in ipairs(merge_list("base")) do
+    if server_tool_available(server) then
+      table.insert(ensure_installed, server)
+    else
+      vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+    end
+  end
 
   -- Conditionally include based on available executables
   if has("dotnet") then
-    vim.list_extend(ensure_installed, merge_list("dotnet"))
+    for _, server in ipairs(merge_list("dotnet")) do
+      if server_tool_available(server) then
+        table.insert(ensure_installed, server)
+      else
+        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      end
+    end
   end
 
   if has("npm") then
-    vim.list_extend(ensure_installed, merge_list("npm"))
+    for _, server in ipairs(merge_list("npm")) do
+      if server_tool_available(server) then
+        table.insert(ensure_installed, server)
+      else
+        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      end
+    end
   end
 
   if has("go") then
-    vim.list_extend(ensure_installed, merge_list("go"))
+    for _, server in ipairs(merge_list("go")) do
+      if server_tool_available(server) then
+        table.insert(ensure_installed, server)
+      else
+        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      end
+    end
   end
 
   if has("pip") then
-    vim.list_extend(ensure_installed, merge_list("pip"))
+    for _, server in ipairs(merge_list("pip")) do
+      if server_tool_available(server) then
+        table.insert(ensure_installed, server)
+      else
+        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      end
+    end
   end
 
   cached_servers = ensure_installed
