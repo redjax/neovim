@@ -121,8 +121,8 @@ function M.get()
   for _, server in ipairs(merge_list("base")) do
     if server_tool_available(server) then
       table.insert(ensure_installed, server)
-    else
-      vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+    -- else
+    --   vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
     end
   end
 
@@ -131,8 +131,8 @@ function M.get()
     for _, server in ipairs(merge_list("dotnet")) do
       if server_tool_available(server) then
         table.insert(ensure_installed, server)
-      else
-        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      -- else
+      --   vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
       end
     end
   end
@@ -141,8 +141,8 @@ function M.get()
     for _, server in ipairs(merge_list("npm")) do
       if server_tool_available(server) then
         table.insert(ensure_installed, server)
-      else
-        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      -- else
+      --   vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
       end
     end
   end
@@ -151,8 +151,8 @@ function M.get()
     for _, server in ipairs(merge_list("go")) do
       if server_tool_available(server) then
         table.insert(ensure_installed, server)
-      else
-        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      -- else
+      --   vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
       end
     end
   end
@@ -161,8 +161,8 @@ function M.get()
     for _, server in ipairs(merge_list("pip")) do
       if server_tool_available(server) then
         table.insert(ensure_installed, server)
-      else
-        vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
+      -- else
+      --   vim.notify(("Skipping '%s' because required tool '%s' is missing"):format(server, server_tool_requirements[server]), vim.log.levels.WARN)
       end
     end
   end
