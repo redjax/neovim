@@ -1,13 +1,14 @@
 local home = vim.fn.expand("~")
 local sep = package.config:sub(1, 1)
 
--- Determine shared config path depending on platform
-local nvim_shared_root
+-- Use nvim-shared on all platforms for consistency
+local nvim_shared_root = nil
+
+-- On Windows
 if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
-  -- Windows: use nvim-core path (adjust if needed)
-  nvim_shared_root = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-core"
+  nvim_shared_root = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-shared"
 else
-  -- Unix-like: use nvim-shared path
+  -- Unix-like
   nvim_shared_root = home .. sep .. ".config" .. sep .. "nvim-shared"
 end
 
