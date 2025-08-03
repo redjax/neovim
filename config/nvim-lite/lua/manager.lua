@@ -49,6 +49,13 @@ if vim.fn.isdirectory(nvim_shared_root) == 1 then
   local servers = {}
   if ok_auto and auto_servers then
     auto_servers.overrides = auto_servers.overrides or {}
+    auto_servers.overrides.base = {
+      "lua_ls",
+      "marksman",
+      "powershell_es",
+      "superhtml",
+      "tflint",
+    }
     auto_servers.overrides.npm = {
       "ansiblels",
       "bashls",
