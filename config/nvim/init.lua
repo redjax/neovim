@@ -1,11 +1,12 @@
 local home = vim.fn.expand("~")
 local sep = package.config:sub(1, 1)
 
--- Determine the nvim-shared config path based on platform
+-- Determine shared config root per platform
 local nvim_shared_path
 if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
-  -- Windows: %USERPROFILE%\AppData\Local\nvim-shared
-  nvim_shared_path = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-shared"
+  -- Windows: use %LOCALAPPDATA%\nvim-shared if set, else fall back to ~/AppData/Local/nvim-shared
+  local localappdata = vim.env.LOCALAPPDATA or (home .. sep .. "AppData" .. sep .. "Local")
+  nvim_shared_path = localappdata .. sep .. "nvim-shared"
 else
   -- Unix: ~/.config/nvim-shared
   nvim_shared_path = home .. sep .. ".config" .. sep .. "nvim-shared"
@@ -13,17 +14,21 @@ end
 
 local use_shared = vim.fn.isdirectory(nvim_shared_path) == 1
 
-local shared, platform
-
 if use_shared then
-  -- Prefer nvim-shared: add to runtimepath and try to require it
-  vim.opt.runtimepath:append(nvim_shared_path)
+  -- Prepend so shared modules are found early
+  vim.opt.runtimepath:prepend(nvim_shared_path)
 
-  -- Debug print neovim's runtimepath
-  -- print("rtp: ", vim.inspect(vim.opt.runtimepath:get()))
-  -- Debug print neovim's package path
-  -- print("pkg:", package.path)
+  -- Also add its lua subfolder to package.path for direct requires (if you still need it)
+  local nvim_shared_lua = nvim_shared_path .. sep .. "lua"
+  package.path = table.concat({
+    nvim_shared_lua .. "/?.lua",
+    nvim_shared_lua .. "/?/init.lua",
+    package.path,
+  }, ";")
+end
 
+local shared, platform
+if use_shared then
   local ok, mod = pcall(require, "nvim-shared")
   if ok and mod then
     shared = mod
@@ -34,15 +39,9 @@ if use_shared then
     require("config")
     platform = require("config.platform")
   end
-
 else
-  -- Fallback to local config
   require("config")
   platform = require("config.platform")
 end
 
 require("plugins.manager")
-
--- Set your active theme here
--- \ Managed by Themery plugin for this config
--- vim.cmd.colorscheme("catppuccin-mocha")

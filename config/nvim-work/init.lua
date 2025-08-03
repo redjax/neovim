@@ -1,48 +1,39 @@
 local home = vim.fn.expand("~")
 local sep = package.config:sub(1, 1)
 
--- Determine the nvim-core config path based on platform
-local nvim_core_path
+-- Use nvim-shared on all platforms for consistency
+local nvim_shared_root = nil
+
+-- On Windows
 if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
-  -- Windows: %USERPROFILE%\AppData\Local\nvim-core
-  nvim_core_path = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-core"
+  nvim_shared_root = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-shared"
 else
-  -- Unix: ~/.config/nvim-shared
-  nvim_shared_path = home .. sep .. ".config" .. sep .. "nvim-shared"
+  -- Unix-like
+  nvim_shared_root = home .. sep .. ".config" .. sep .. "nvim-shared"
 end
 
-local use_shared = vim.fn.isdirectory(nvim_shared_path) == 1
-
-local shared, platform
-
-if use_shared then
-  -- Prefer nvim-shared: add to runtimepath and try to require it
-  vim.opt.runtimepath:append(nvim_shared_path)
-
-  -- Debug print neovim's runtimepath
-  -- print("rtp: ", vim.inspect(vim.opt.runtimepath:get()))
-  -- Debug print neovim's package path
-  -- print("pkg:", package.path)
-
-  local ok, mod = pcall(require, "nvim-shared")
-  if ok and mod then
-    shared = mod
-    platform = shared.platform
-    require("nvim-shared.config")
-  else
-    vim.notify("Failed to load nvim-shared, falling back to local config.", vim.log.levels.WARN)
-    require("config")
-    platform = require("config.platform")
-  end
-
-else
-  -- Fallback to local config
-  require("config")
-  platform = require("config.platform")
+-- Check if shared config directory exists
+local stat = vim.loop.fs_stat(nvim_shared_root)
+if not (stat and stat.type == "directory") then
+  error(("Shared config folder not found at '%s'. Please ensure the directory exists."):format(nvim_shared_root))
 end
 
+-- Append shared config to runtimepath (append to keep order)
+vim.opt.runtimepath:append(nvim_shared_root)
+
+-- Require shared config module, error if it fails
+local ok, shared = pcall(require, "nvim-shared")
+if not ok or not shared then
+  error("Failed to load shared config module 'nvim-shared'.")
+end
+
+local platform = shared.platform
+
+-- Require shared config setup
+require("nvim-shared.config")
+
+-- Load plugin manager
 require("manager")
 
--- Set your active theme here
--- \ Managed by Themery plugin for this config
+-- Set your active colorscheme (managed by Themery plugin)
 vim.cmd.colorscheme("oxocarbon")

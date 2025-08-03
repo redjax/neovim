@@ -1,0 +1,130 @@
+-- shared LSP foundation: capabilities, on_attach, and applying mason-lspconfig with a chosen set of servers
+
+local M = {}
+
+local cmp_lsp = require("cmp_nvim_lsp")
+
+-- capabilities for all LSP servers
+M.capabilities = vim.tbl_deep_extend(
+  "force",
+  {},
+  vim.lsp.protocol.make_client_capabilities(),
+  cmp_lsp.default_capabilities()
+)
+
+-- common on_attach
+function M.on_attach(client, bufnr)
+  local nmap = function(keys, func, desc)
+    desc = "LSP: " .. desc
+    vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc, noremap = true })
+  end
+
+  nmap("<leader>gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+  nmap("<leader>gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+  nmap("<leader>gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+  nmap("<leader>gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+  nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+  nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+end
+
+-- Setup diagnostics defaults
+local function setup_diagnostics()
+  vim.diagnostic.config({
+    underline = true,
+    update_in_insert = false,
+    virtual_text = { spacing = 4, prefix = "●" },
+    severity_sort = true,
+  })
+end
+
+-- Entry: given a list of server names, bootstrap mason-lspconfig and configure servers
+function M.setup(ensure_installed)
+  -- fidget for progress
+  require("fidget").setup({})
+
+  -- mason + mason-lspconfig (no automatic global install beyond provided list)
+  require("mason").setup({
+    registries = {
+      'github:mason-org/mason-registry',
+      'github:crashdummyy/mason-registry',
+    },
+  })
+
+  require("mason-lspconfig").setup({
+    ensure_installed = ensure_installed,
+    handlers = {
+      -- default handler
+      function(server_name)
+        require("lspconfig")[server_name].setup {
+          capabilities = M.capabilities,
+          on_attach = M.on_attach,
+        }
+      end,
+      ["sqls"] = function()
+        require("lspconfig").sqls.setup {
+          on_attach = function(client, bufnr)
+            require('sqls').on_attach(client, bufnr)
+            M.on_attach(client, bufnr)
+          end,
+          capabilities = M.capabilities,
+        }
+      end,
+      ["lua_ls"] = function()
+        require("lspconfig").lua_ls.setup {
+          settings = {
+            Lua = {
+              diagnostics = { globals = { "vim" } },
+              workspace = { checkThirdParty = false },
+            },
+          },
+          capabilities = M.capabilities,
+          on_attach = M.on_attach,
+        }
+      end,
+      ["pyright"] = function()
+        require("lspconfig").pyright.setup {
+          settings = {
+            python = {
+              analysis = {
+                typeCheckingMode = "basic",
+              },
+            },
+          },
+          capabilities = M.capabilities,
+          on_attach = M.on_attach,
+        }
+      end,
+      ["gopls"] = function()
+        require("lspconfig").gopls.setup {
+          settings = {
+            gopls = {
+              analyses = {
+                unusedparams = true,
+                shadow = true,
+              },
+              staticcheck = true,
+            },
+          },
+          capabilities = M.capabilities,
+          on_attach = M.on_attach,
+        }
+      end,
+      ["yamlls"] = function()
+        require("lspconfig").yamlls.setup {
+          settings = {
+            yaml = {
+              schemas = require('schemastore').yaml.schemas(),
+              validate = true,
+            },
+          },
+          capabilities = M.capabilities,
+          on_attach = M.on_attach,
+        }
+      end,
+    },
+  })
+
+  setup_diagnostics()
+end
+
+return M
