@@ -12,36 +12,27 @@ else
 end
 
 -- Check if shared config directory exists
-local use_shared = false
 local stat = vim.loop.fs_stat(nvim_shared_root)
-if stat and stat.type == "directory" then
-  use_shared = true
+if not (stat and stat.type == "directory") then
+  error(("Shared config folder not found at '%s'. Please ensure the directory exists."):format(nvim_shared_root))
 end
 
-local shared, platform
+-- Append shared config to runtimepath (append to keep order)
+vim.opt.runtimepath:append(nvim_shared_root)
 
-if use_shared then
-  -- Append shared config to runtimepath (append preferred here to keep your runtimepath order)
-  vim.opt.runtimepath:append(nvim_shared_root)
-
-  local ok, mod = pcall(require, "nvim-shared")
-  if ok and mod then
-    shared = mod
-    platform = shared.platform
-    require("nvim-shared.config")
-  else
-    vim.notify("Failed to load nvim-shared module, falling back to local config.", vim.log.levels.WARN)
-    require("config")
-    platform = require("config.platform")
-  end
-else
-  -- Fallback to local config
-  require("config")
-  platform = require("config.platform")
+-- Require shared config module, error if it fails
+local ok, shared = pcall(require, "nvim-shared")
+if not ok or not shared then
+  error("Failed to load shared config module 'nvim-shared'.")
 end
+
+local platform = shared.platform
+
+-- Require shared config setup
+require("nvim-shared.config")
 
 -- Load plugin manager
 require("manager")
 
--- Set your active colorscheme (managed by Themery)
+-- Set your active colorscheme (managed by Themery plugin)
 vim.cmd.colorscheme("oxocarbon")
