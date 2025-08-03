@@ -1,4 +1,6 @@
+-- Look for lazy in the nvim data directory
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+-- If lazy is not installed, install it
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
     "git", "clone", "--filter=blob:none",
@@ -6,22 +8,29 @@ if not vim.loop.fs_stat(lazypath) then
     "--branch=stable", lazypath,
   })
 end
+-- Add lazy to Neovim's path
 vim.opt.rtp:prepend(lazypath)
 
+-- Set $HOME dir (cross platform)
 local home = vim.fn.expand("~")
+-- Detect path separator (/ or \)
 local sep = package.config:sub(1,1)
+-- Build path to shared nvim-lsp language server config
 local nvim_lsp_path = home .. sep .. ".config" .. sep .. "nvim-lsp"
 
+-- Build specs object for lazy init
 local specs = {
   { import = "plugins.lazy.packages" },
   { import = "themes" },
 }
 
+-- Check if nvim-lsp config path exists
 if vim.loop.fs_stat(nvim_lsp_path) and vim.loop.fs_stat(nvim_lsp_path).type == "directory" then
   vim.opt.runtimepath:append(nvim_lsp_path)
   table.insert(specs, { import = "nvim-lsp" })
 end
 
+-- Setup lazy plugin manager
 require("lazy").setup({
   spec = specs,
   change_detection = { notify = false },
