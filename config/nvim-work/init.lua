@@ -1,28 +1,28 @@
 local home = vim.fn.expand("~")
 local sep = package.config:sub(1, 1)
 
--- Determine the nvim-core config path based on platform
-local nvim_core_path
+-- Determine shared config path depending on platform
+local nvim_shared_root
 if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
-  -- Windows: %USERPROFILE%\AppData\Local\nvim-core
-  nvim_core_path = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-core"
+  -- Windows: use nvim-core path (adjust if needed)
+  nvim_shared_root = home .. sep .. "AppData" .. sep .. "Local" .. sep .. "nvim-core"
 else
-  -- Unix: ~/.config/nvim-shared
-  nvim_shared_path = home .. sep .. ".config" .. sep .. "nvim-shared"
+  -- Unix-like: use nvim-shared path
+  nvim_shared_root = home .. sep .. ".config" .. sep .. "nvim-shared"
 end
 
-local use_shared = vim.fn.isdirectory(nvim_shared_path) == 1
+-- Check if shared config directory exists
+local use_shared = false
+local stat = vim.loop.fs_stat(nvim_shared_root)
+if stat and stat.type == "directory" then
+  use_shared = true
+end
 
 local shared, platform
 
 if use_shared then
-  -- Prefer nvim-shared: add to runtimepath and try to require it
-  vim.opt.runtimepath:append(nvim_shared_path)
-
-  -- Debug print neovim's runtimepath
-  -- print("rtp: ", vim.inspect(vim.opt.runtimepath:get()))
-  -- Debug print neovim's package path
-  -- print("pkg:", package.path)
+  -- Append shared config to runtimepath (append preferred here to keep your runtimepath order)
+  vim.opt.runtimepath:append(nvim_shared_root)
 
   local ok, mod = pcall(require, "nvim-shared")
   if ok and mod then
@@ -30,19 +30,18 @@ if use_shared then
     platform = shared.platform
     require("nvim-shared.config")
   else
-    vim.notify("Failed to load nvim-shared, falling back to local config.", vim.log.levels.WARN)
+    vim.notify("Failed to load nvim-shared module, falling back to local config.", vim.log.levels.WARN)
     require("config")
     platform = require("config.platform")
   end
-
 else
   -- Fallback to local config
   require("config")
   platform = require("config.platform")
 end
 
+-- Load plugin manager
 require("manager")
 
--- Set your active theme here
--- \ Managed by Themery plugin for this config
+-- Set your active colorscheme (managed by Themery)
 vim.cmd.colorscheme("oxocarbon")
