@@ -63,14 +63,12 @@ function M.get()
 
   -- Merge defaults and overrides
   local function merge_list(key)
-    local list = {}
-    if M.defaults[key] then
-      vim.list_extend(list, M.defaults[key])
+    -- if overrides exist for this key, use them only
+    if M.overrides[key] ~= nil then
+      return M.overrides[key]
     end
-    if M.overrides[key] then
-      vim.list_extend(list, M.overrides[key])
-    end
-    return list
+    -- otherwise return defaults
+    return M.defaults[key] or {}
   end
 
   -- Always include base
