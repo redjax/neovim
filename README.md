@@ -15,7 +15,7 @@
   <img alt="Github Repo Size" src="https://img.shields.io/github/repo-size/redjax/neovim">
 </p>
 
-My `neovim` configuration as a git repository.
+My `neovim` configurations as a git repository.
 
 🔗 [View all releases](https://github.com/redjax/neovim/releases)
 
@@ -68,24 +68,7 @@ but until this message is removed, LXC containers and ARM CPUs are not supported
 
 If you install `neovim` using one of the [install/setup scripts](./scripts/), the dependencies for my `neovim` configuration will be installed automatically.
 
-Otherwise, requirements for this configuration are:
-
-- [Kickstart.nvim dependencies](https://github.com/nvim-lua/kickstart.nvim?tab=readme-ov-file#install-external-dependencies)
-  - `git`
-  - `make` / `CMake`
-  - `unzip`
-  - `gcc`
-  - [`ripgrep`](https://github.com/BurntSushi/ripgrep#installation)
-  - `xclip` / `win32yank`
-  - A [Nerd Font](https://www.nerdfonts.com/)
-    - The setup scripts install `FiraCode` Nerd Fonts
-- `nodejs`/`npm`
-  - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
-- Languages for Neovim LSP (all optional, except Node)
-  - Python
-  - Go
-  - Node
-  - Lua / Luarocks
+Each [neovim configuration/profile](./config/) should have a `README.md` detailing any specific requirements. Some profiles, like the [`nvim-noplugins` profile](./config/nvim-noplugins/), do not have any dependencies, just configurations for stock neovim.
 
 ## Instructions
 
@@ -94,6 +77,8 @@ Otherwise, requirements for this configuration are:
   - [Linux](#linux)
   - [Windows](#windows)
 - Run `nvim` to ensure everything installed correctly.
+- (Optional) Change the [neovim configuration](./config/) to use by setting the `NVIM_APPNAME` var.
+  - Read [Switching profiles](#switching-profiles) to learn how to use the `$NVIM_APPNAME` environment variable.
 
 ### Linux
 
@@ -250,6 +235,9 @@ Update Neovim using whichever installer you used.
 
 ### Configure LSP (Language Server)
 
+> [!WARNING]
+> This section is out of date with the way I handle language servers now. You can check the [shared LSP config](./config/nvim-shared/lua/nvim-shared/lsp/) to see how LSPs are managed by configs in this repository.
+
 Configuring a language server (LSP) with Lazy and Mason is pretty simple. [Find a language server here](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md), for example the [`marksman` Markdown LSP](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#marksman).
 
 In your [`init.lua`](./config/nvim/init.lua), find the line that begins with `require('lazy').setup({`. Within that function, find the section that begins with the comment `-- Main LSP Configuration`. In that section, in the `config = function()` function, find the variable `local servers = {`.
@@ -284,12 +272,12 @@ Github [rate limits unauthenticated requests at 60/hour](https://docs.github.com
 
 ```shell
 clone failed
-Cloning into 'C:/Users/jack/AppData/Local/nvim-data/lazy/mason'...
+Cloning into 'C:/Users/$USERNAME/AppData/Local/nvim-data/lazy/mason'...
 remote: Repository not found.
 fatal: repository 'https://github.com/mason-org/mason.git/' not found
 ```
 
-To fix this, you can configure a [Github Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and set it in your environment or a `.netrc` file in your home directory.
+To fix this, you can configure a [Github Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and [set it in your environment](#personal-access-token-pat) or a [`.netrc`](#netrc-file) file in your home directory.
 
 ### Personal Access Token (PAT)
 
