@@ -99,9 +99,37 @@ return {
 
       -- Explicit localleader mapping to open today's journal (\jt)
       vim.keymap.set("n", "<localleader>jt", function()
-        vim.cmd("Neorg workspace orgfiles")  -- ensure workspace
-        vim.cmd("Neorg journal today")
-      end, { noremap = true, silent = true, desc = "Open today's Neorg journal" })
+      -- ensure workspace and open today's journal
+      vim.cmd("Neorg workspace orgfiles")
+      vim.cmd("Neorg journal today")
+
+      vim.schedule(function()
+        local buf = vim.api.nvim_get_current_buf()
+        if vim.bo[buf].filetype ~= "norg" then
+          return
+        end
+
+        -- Get current buffer contents
+        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+        local is_blank = true
+        for _, l in ipairs(lines) do
+          if l:match("%S") then
+            is_blank = false
+            break
+          end
+        end
+
+        -- If it's effectively empty, seed with Neorg-style date heading
+        if is_blank then
+          local today = os.date("%Y-%m-%d")
+          local heading = "* " .. today
+          -- Insert heading + two blank lines so cursor can safely be on line 3
+          vim.api.nvim_buf_set_lines(buf, 0, -1, false, { heading, "", "" })
+          -- place cursor on third line (after heading + one blank)
+          vim.api.nvim_win_set_cursor(0, { 3, 0 })
+        end
+      end)
+    end, { noremap = true, silent = true, desc = "Open today's Neorg journal and add date heading" })
 
       -- NOTE: intentionally not registering a which-key description-only entry for <localleader>jt
       -- because that was causing the fallback-typing behavior. If you want to re-add it later,
