@@ -1,0 +1,1 @@
+-- Minimal bundle, with QOL plugins but nothing too fancy or resource hungy.
