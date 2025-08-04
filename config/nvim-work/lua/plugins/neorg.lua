@@ -131,9 +131,34 @@ return {
       end)
     end, { noremap = true, silent = true, desc = "Open today's Neorg journal and add date heading" })
 
-      -- NOTE: intentionally not registering a which-key description-only entry for <localleader>jt
-      -- because that was causing the fallback-typing behavior. If you want to re-add it later,
-      -- ensure the actual mapping works first and then, separately, register the label.
+      -- Keymap to generate weekly summary from daily Neorg journal entries
+      vim.keymap.set("n", "<localleader>gws", function()
+        local year = os.date("%Y")
+        local month = os.date("%m")
+        local journal_path = vim.fn.expand("~/.orgfiles/journal/" .. year .. "/" .. month)
+        local summary_path = journal_path .. "/weekly-summary.norg"
+        local files = vim.fn.globpath(journal_path, "*.norg", false, true)
+
+        if #files == 0 then
+          print("No journal files found for this month.")
+          return
+        end
+
+        local summary = {}
+        for _, file in ipairs(files) do
+          local date = vim.fn.fnamemodify(file, ":t:r")
+          table.insert(summary, "* " .. date)
+          local lines = vim.fn.readfile(file)
+          vim.list_extend(summary, lines)
+          table.insert(summary, "")
+        end
+
+        vim.fn.writefile(summary, summary_path)
+        print("✅ Weekly summary written to: " .. summary_path)
+
+        -- Open the summary file in a new buffer
+        vim.cmd("edit " .. summary_path)
+      end, { noremap = true, silent = true, desc = "Generate and open weekly Neorg summary" })
 
     end,
   },
