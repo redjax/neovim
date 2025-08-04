@@ -92,7 +92,7 @@ foreach ($dir in $toDelete) {
     Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction Stop
     Write-Host "Removed $dir"
   } catch {
-    Write-Warning "Failed to remove $dir: $($_.Exception.Message)"
+    Write-Warning "Failed to remove $($dir): $($_.Exception.Message)"
   }
 }
 
