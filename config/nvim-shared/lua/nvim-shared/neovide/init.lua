@@ -1,6 +1,10 @@
 -- Enable true color support
 vim.o.termguicolors = true
 
+-- Set window size
+vim.o.columns  = 24
+vim.o.lines = 10
+
 -- Set the font for Neovide (adjust to your preferred font and size)
 vim.o.guifont = "FiraCode Nerd Font:h14"
 
