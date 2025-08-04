@@ -41,7 +41,7 @@ vim.cmd.colorscheme("oxocarbon")
 -- Load Neovide-specific config if running in Neovide
 --   https://neovide.dev
 if vim.g.neovide then
-  local neovide_config_path = nvim_shared_path .. sep .. "neovide"
+  local neovide_config_path = nvim_shared_root .. sep .. "neovide"
   if vim.fn.isdirectory(neovide_config_path) == 1 then
     -- Protected call to require neovide init.lua inside that directory
     local ok, _ = pcall(require, "neovide.init")
