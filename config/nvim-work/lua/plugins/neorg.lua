@@ -170,17 +170,16 @@ return {
           already_summarized[match] = true
         end
       end
-
+      
       for _, file in ipairs(files) do
         local filename = vim.fn.fnamemodify(file, ":t:r")
         if not summary_path:match(filename) then
           local lines = vim.fn.readfile(file)
           for _, line in ipairs(lines) do
-            if not line:match("^%*") and not line:match("^◉") then
+            if line:match("%S") and not line:match("^%*") and not line:match("^◉") then
               table.insert(summary, line)
             end
           end
-          table.insert(summary, "")
         end
       end
 
