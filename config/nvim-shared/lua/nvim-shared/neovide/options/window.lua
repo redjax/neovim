@@ -7,7 +7,7 @@ vim.o.lines = 24
 vim.g.neovide_scale_factor = 1.0
 
 -- Neovide transparency settings
-vim.g.neovide_opacity = 0.8
+vim.g.neovide_opacity = 1.0
 
 -- Disable Neovide splash screen for faster start
 vim.g.neovide_no_idle = true
