@@ -3,7 +3,7 @@ vim.cmd('syntax enable')
 
 -- GUI font settings
 if vim.g.platform == "windows" then
-  vim.opt.guifont = "FiraCode Nerd Font:h11"
+  vim.opt.guifont = "Hack Nerd Font Mono:h11"
 elseif vim.g.platform == "mac" then
   vim.opt.guifont = "FiraCode Nerd Font:h12"
 else
