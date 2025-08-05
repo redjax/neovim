@@ -23,7 +23,7 @@ return {
           ["core.export.markdown"] = {}, -- Export directly to Markdown
           ["core.dirman"] = { -- Workspace management
             config = {
-              workspaces = { orgfiles = "~/.orgfiles", notes = "~/notes" },
+              workspaces = { orgfiles = "~/.orgfiles", notes = "~/.orgfiles/notes", journal = "~/.orgfiles/journal" },
               default_workspace = "orgfiles",
             },
           },
