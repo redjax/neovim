@@ -37,3 +37,16 @@ require("manager")
 
 -- Set your active colorscheme (managed by Themery plugin)
 vim.cmd.colorscheme("oxocarbon")
+
+-- Load Neovide-specific config if running in Neovide
+--   https://neovide.dev
+if vim.g.neovide then
+  local neovide_config_path = nvim_shared_root .. sep .. "neovide"
+  if vim.fn.isdirectory(neovide_config_path) == 1 then
+    -- Protected call to require neovide init.lua inside that directory
+    local ok, _ = pcall(require, "neovide.init")
+    if not ok then
+      vim.notify("Failed to load Neovide config", vim.log.levels.WARN)
+    end
+  end
+end
