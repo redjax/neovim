@@ -23,7 +23,7 @@ return {
           ["core.export.markdown"] = {}, -- Export directly to Markdown
           ["core.dirman"] = { -- Workspace management
             config = {
-              workspaces = { orgfiles = "~/.orgfiles", notes = "~/notes" },
+              workspaces = { orgfiles = "~/.orgfiles", notes = "~/.orgfiles/notes", journal = "~/.orgfiles/journal" },
               default_workspace = "orgfiles",
             },
           },
@@ -131,9 +131,62 @@ return {
       end)
     end, { noremap = true, silent = true, desc = "Open today's Neorg journal and add date heading" })
 
-      -- NOTE: intentionally not registering a which-key description-only entry for <localleader>jt
-      -- because that was causing the fallback-typing behavior. If you want to re-add it later,
-      -- ensure the actual mapping works first and then, separately, register the label.
+      -- Keymap to generate weekly summary from daily Neorg journal entries
+      vim.keymap.set("n", "<localleader>gws", function()
+      local year = os.date("%Y")
+      local month = os.date("%m")
+      local journal_path = vim.fn.expand("~/.orgfiles/journal/" .. year .. "/" .. month)
+      local summary_path = journal_path .. "/weekly-summary.norg"
+      local files = vim.fn.globpath(journal_path, "*.norg", false, true)
+
+      -- Exclude the summary file itself
+      files = vim.tbl_filter(function(file)
+        return not file:match("weekly%-summary%.norg$")
+      end, files)
+
+      if #files == 0 then
+        print("No journal files found for this month.")
+        return
+      end
+
+      table.sort(files)
+
+      local first_day = vim.fn.fnamemodify(files[1], ":t:r")
+      local last_day = vim.fn.fnamemodify(files[#files], ":t:r")
+      local heading = "* Weekly Summary: " .. first_day .. " to " .. last_day
+
+      local summary = { heading, "" }
+
+      -- Read existing summary to detect already summarized files
+      local existing_summary = {}
+      if vim.fn.filereadable(summary_path) == 1 then
+        existing_summary = vim.fn.readfile(summary_path)
+      end
+
+      local already_summarized = {}
+      for _, line in ipairs(existing_summary) do
+        local match = line:match("^%* Weekly Summary: (%d%d%d%d%-%d%d%-%d%d) to (%d%d%d%d%-%d%d%-%d%d)")
+        if match then
+          already_summarized[match] = true
+        end
+      end
+      
+      for _, file in ipairs(files) do
+        local filename = vim.fn.fnamemodify(file, ":t:r")
+        if not summary_path:match(filename) then
+          local lines = vim.fn.readfile(file)
+          for _, line in ipairs(lines) do
+            if line:match("%S") and not line:match("^%*") and not line:match("^◉") then
+              table.insert(summary, line)
+            end
+          end
+        end
+      end
+
+      vim.fn.writefile(summary, summary_path)
+      print("✅ Weekly summary written to: " .. summary_path)
+      vim.cmd("edit " .. summary_path)
+    end, { noremap = true, silent = true, desc = "Generate and open weekly Neorg summary" })
 
     end,
   },
