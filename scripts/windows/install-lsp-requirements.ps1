@@ -1,4 +1,5 @@
 $NpmDependencies = @(
+    "alex",
     "neovim",
     "gh-actions-language-server",
     "azure-pipelines-language-server",
@@ -9,7 +10,9 @@ $NpmDependencies = @(
     "graphql-language-service-cli",
     "pyright",
     "@stoplight/spectral-cli",
-    "yaml-language-server"
+    "yaml-language-server",
+    "markdownlint",
+    "markdownlint-cli2"
     # "@ansible/ansible-language-server",
     # "css-language-server",
     # "cssmodules-language-server",
@@ -25,6 +28,7 @@ $PythonDependencies = @(
     "ruff",
     "ruff-lsp",
     "salt-lsp",
+    "pyyaml>=6.0.2",
     "sqruff",
     "cmake-language-server"
 )
@@ -60,6 +64,9 @@ foreach ($PythonPkg in $PythonDependencies ) {
             python -m pip install $PythonPkg
         } catch {
             Write-Error "Error installing Python dependency '$PythonPkg'. Details: $($Exception.Message)"
+            Write-Host "Retrying $PythonPkg install with python -m pip"
+
+            python -m pip install $PythonPkg
         }
     }
 }

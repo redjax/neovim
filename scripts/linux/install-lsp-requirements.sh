@@ -8,6 +8,7 @@ NPM_DEPENDENCIES=(
     "azure-pipelines-language-server"
     "bash-language-server"
     "css-variables-language-server"
+    "markdownlint"
     "markdownlint-cli2"
     "@microsoft/compose-language-service"
     "dockerfile-language-server-nodejs"
@@ -30,6 +31,7 @@ NPM_DEPENDENCIES=(
 ## Define Python dependencies
 PYTHON_DEPENDENCIES=(
     "nginx-language-server"
+    "pyyaml>=6.0.2"
     "ruff"
     "ruff-lsp"
     "salt-lsp"
@@ -69,6 +71,9 @@ for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
     else
         if ! pip install "$pkg"; then
             echo "Error installing Python dependency '$pkg'" >&2
+            echo "Retrying $pkg install with python -m pip"
+
+            python -m pip install $pkg
         fi
     fi
 done
