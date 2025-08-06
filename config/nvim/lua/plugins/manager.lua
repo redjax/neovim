@@ -46,7 +46,7 @@ if vim.fn.isdirectory(nvim_shared_root) == 1 then
 
   -- Add shared LSP-related specs
   table.insert(specs, { import = "nvim-shared.lsp.plugins.mason" })
-  table.insert(specs, { import = "nvim-shared.lsp.plugins.cmp" })
+  -- table.insert(specs, { import = "nvim-shared.lsp.plugins.cmp" })
   table.insert(specs, { import = "nvim-shared.lsp.plugins.signature" })
   table.insert(specs, { import = "nvim-shared.lsp.plugins.none_ls" })
   table.insert(specs, { import = "nvim-shared.lsp.bundle", opts = { ensure_installed = servers } })
