@@ -2,15 +2,16 @@
 
 local M = {}
 
-local cmp_lsp = require("cmp_nvim_lsp")
+-- local cmp_lsp = require("cmp_nvim_lsp")
 
 -- capabilities for all LSP servers
 M.capabilities = vim.tbl_deep_extend(
   "force",
   {},
-  vim.lsp.protocol.make_client_capabilities(),
-  cmp_lsp.default_capabilities()
+  vim.lsp.protocol.make_client_capabilities()
 )
+--   cmp_lsp.default_capabilities()
+-- )
 
 -- common on_attach
 function M.on_attach(client, bufnr)
