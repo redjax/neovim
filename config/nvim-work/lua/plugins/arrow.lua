@@ -8,7 +8,6 @@ return {
       leader_key = "<leader>a",  -- default keybinding prefix
       window = {
         border = "rounded",  -- nice floating window style
-        position = "center", -- can be "center" or "top"
       },
       mappings = {
         edit = "<CR>",       -- open file
