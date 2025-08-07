@@ -1,6 +1,6 @@
 # Shared Neovim Configurations <!-- omit in toc -->
 
-This directory contains all shared Neovim configurations, which other Neovim profiles can import. For example, a profile can import my standard keybinds by importing `SET THIS PATH ONCE IT EXISTS`.
+This directory contains all shared Neovim configurations, which other Neovim profiles can import. For example, a profile can import my standard keybinds by importing `nvim-shared.config.keymap`.
 
 ## Table of Contents <!-- omit in toc -->
 
