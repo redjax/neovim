@@ -1,7 +1,6 @@
 -- Nightfly theme https://github.com/bluz71/vim-nightfly-colors
 
 return {
-    enabled = true,
     "bluz71/vim-nightfly-colors",
     name = "nightfly",
     lazy = false,

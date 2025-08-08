@@ -1,7 +1,6 @@
 -- Aura theme https://github.com/daltonmenezes/aura-theme
 
 return {
-    enabled = true,
     "daltonmenezes/aura-theme",
     name = "aura-theme",
     lazy = false,

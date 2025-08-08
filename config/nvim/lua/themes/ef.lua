@@ -1,9 +1,6 @@
 -- Ef themes https://github.com/oonamo/ef-themes.nvim
 
--- Ef themes https://github.com/oonamo/ef-themes.nvim
-
 return {
-    enabled = true,
     "oonamo/ef-themes.nvim",
     name = "ef",
     lazy = false,
