@@ -6,6 +6,7 @@
   "automkdir.nvim": { "branch": "main", "commit": "e36da288764cc41864dc5b4e1234f1425033ce59" },
   "blink.cmp": { "branch": "main", "commit": "bae4bae0eedd1fa55f34b685862e94a222d5c6f8" },
   "diffview.nvim": { "branch": "main", "commit": "4516612fe98ff56ae0415a259ff6361a89419b0a" },
+  "eldritch": { "branch": "master", "commit": "c980caea40cab7eab2c3a467af5bab1e7e66fcce" },
   "fidget.nvim": { "branch": "main", "commit": "4ec7bed6c86b671ddde03ca1b227343cfa3e65fa" },
   "friendly-snippets": { "branch": "main", "commit": "572f5660cf05f8cd8834e096d7b4c921ba18e175" },
   "garbage-day.nvim": { "branch": "main", "commit": "cce4a0b394d33878bde3c1648f4e6b358e8769bb" },

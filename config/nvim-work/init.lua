@@ -36,7 +36,7 @@ require("nvim-shared.config")
 require("manager")
 
 -- Set your active colorscheme
-vim.cmd.colorscheme("kanagawa")
+vim.cmd.colorscheme("eldritch")
 
 -- Load Neovide-specific config if running in Neovide
 --   https://neovide.dev
