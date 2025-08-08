@@ -36,7 +36,7 @@ require("nvim-shared.config")
 require("manager")
 
 -- Set your active colorscheme
-vim.cmd.colorscheme("poimandres")
+vim.cmd.colorscheme("one_monokai")
 
 -- Load Neovide-specific config if running in Neovide
 --   https://neovide.dev
