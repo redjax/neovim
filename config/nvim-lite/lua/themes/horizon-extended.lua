@@ -1,7 +1,6 @@
 -- Horizon Extended theme https://github.com/lancewilhelm/horizon-extended.nvim
 
 return { 
-    enabled = true,
     "lancewilhelm/horizon-extended.nvim",
     name = "horizon-extended",
     lazy = false,
