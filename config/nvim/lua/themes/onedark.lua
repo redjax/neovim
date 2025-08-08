@@ -1,7 +1,6 @@
 -- OneDark theme https://github.com/navarasu/onedark.nvim
 
 return {
-    enabled = true,
     "navarasu/onedark.nvim",
     name = "onedark",
     lazy = false,

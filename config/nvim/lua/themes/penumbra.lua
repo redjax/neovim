@@ -1,7 +1,6 @@
 -- Penumbra theme https://github.com/Allianaab2m/penumbra.nvim
 
 return {
-    enabled = true,
     "Allianaab2m/penumbra.nvim",
     name = "penumbra",
     lazy = false,

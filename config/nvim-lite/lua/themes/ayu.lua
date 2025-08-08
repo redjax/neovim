@@ -1,7 +1,6 @@
 -- Ayu theme https://github.com/Shatur/neovim-ayu
 
 return {
-    enabled = true,
     "Shatur/neovim-ayu",
     name = "ayu",
     lazy = false,

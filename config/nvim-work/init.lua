@@ -35,8 +35,8 @@ require("nvim-shared.config")
 -- Load plugin manager
 require("manager")
 
--- Set your active colorscheme (managed by Themery plugin)
-vim.cmd.colorscheme("oxocarbon")
+-- Set your active colorscheme
+vim.cmd.colorscheme("one_monokai")
 
 -- Load Neovide-specific config if running in Neovide
 --   https://neovide.dev

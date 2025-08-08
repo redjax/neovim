@@ -1,7 +1,6 @@
 -- VSCode Modern theme https://github.com/gmr458/vscode_modern_theme.nvim
 
 return {
-    enbaled = true,
     "gmr458/vscode_modern_theme.nvim",
     name = "vscode_modern",
     lazy = false,

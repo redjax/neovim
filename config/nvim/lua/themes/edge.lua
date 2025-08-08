@@ -1,7 +1,6 @@
 -- Edge theme https://github.com/sainnhe/edge
 
 return {
-    enabled = true,
     "sainnhe/edge",
     name = "edge",
     lazy = false,
