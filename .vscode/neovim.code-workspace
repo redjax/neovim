@@ -13,8 +13,8 @@
 			"name": "Neovim Configs"
 		},
 		{
-			"path": "../config/nvim-core",
-			"name": "Core Config"
+			"path": "../config/nvim-shared",
+			"name": "Shared Config"
 		},
 		{
 			"path": "../config/nvim",
@@ -23,6 +23,10 @@
 		{
 			"path": "../config/nvim-lite",
 			"name": "Lite Config"
+		},
+		{
+			"path": "../config/nvim-noplugins",
+			"name": "No-Plugins Config"
 		},
 		{
 			"path": "../config/nvim-kickstart",
