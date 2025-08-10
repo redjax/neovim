@@ -21,6 +21,11 @@ My `neovim` configurations as a git repository.
 
 *([Read more about how this repository creates releases](#releases))*
 
+> [!WARNING]
+> This documentation is out of date, I have changed the way I manage my Neovim configurations but have not fully updated the docs.
+>
+> I am working on a rewrite in the [`topic/docs-rewrite` branch](https://github.com/redjax/neovim/tree/topic/docs-rewrite).
+
 ## Table of Contents <!-- omit in toc -->
 
 - [Requirements](#requirements)
