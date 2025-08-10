@@ -9,16 +9,16 @@
             "name": "Scripts"
         },
         {
-            "path": "../containers",
-            "name": "Docker Containers"
-        },
-        {
             "path": "../config/nvim/lua/themes/",
             "name": "Nvim Themes"
         },
         {
             "path": "../config/nvim/lua/plugins/lazy/packages/",
             "name": "Nvim Packages"
+        },
+        {
+            "path": "../config/nvim-shared",
+            "name": "Shared Nvim Config Root"
         },
         {
             "path": "../config/nvim",
