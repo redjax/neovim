@@ -10,6 +10,7 @@ My Neovim configurations. The default configuration in [`nvim`](./nvim/) is my m
   - [Shared](#shared)
     - [Example import](#example-import)
   - [Kickstart](#kickstart)
+    - [Kickstart requirements](#kickstart-requirements)
   - [Lite](#lite)
   - [No Plugins](#no-plugins)
   - [Work](#work)
@@ -18,17 +19,21 @@ My Neovim configurations. The default configuration in [`nvim`](./nvim/) is my m
 
 Most configurations include a `README.md` that will detail any requirements for that configuration. If you use one of the install scripts ([Linux](../scripts/linux/install.sh)/[Windows](../scripts/windows/install-neovim-win.ps1)), and the accompanying LSP install script ([Linux](../scripts/linux/install-lsp-requirements.sh)/[Windows](../scripts/windows/install-lsp-requirements.ps1)), you should have all of the "common" dependencies any given profile might require.
 
-- [Kickstart.nvim dependencies](https://github.com/nvim-lua/kickstart.nvim?tab=readme-ov-file#install-external-dependencies)
-  - `git`
-  - `make` / `CMake`
-  - `unzip`
-  - `gcc`
-  - [`ripgrep`](https://github.com/BurntSushi/ripgrep#installation)
-  - `xclip` / `win32yank`
-  - A [Nerd Font](https://www.nerdfonts.com/)
-    - The setup scripts install `FiraCode` Nerd Fonts
-- `nodejs`/`npm`
+In general, the following are required:
+
+- `git`
+- `make` / `CMake`
+- `unzip`
+- `gcc`
+- `xclip` / [`win32yank`](https://github.com/equalsraf/win32yank)
+- A [Nerd Font](https://www.nerdfonts.com/)
+  - The setup scripts install `FiraCode` Nerd Fonts
+- [`fzf`](https://github.com/junegunn/fzf)
+- [`nodejs`/`npm`](https://nodejs.org/en)
   - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
+- [`python`/`pip`](https://www.python.org)
+
+Some LSPs require [Go](https://golang.org) and/org [Rust](https://www.rust-lang.org) to be installed.
 
 ## Configurations
 
@@ -159,6 +164,19 @@ end
 
 Built from the [Kickstart.nvim repository](https://github.com/nvim-lua/kickstart.nvim).
 
+#### Kickstart requirements
+
+- [Kickstart.nvim dependencies](https://github.com/nvim-lua/kickstart.nvim?tab=readme-ov-file#install-external-dependencies)
+  - `git`
+  - `make` / `CMake`
+  - `unzip`
+  - `gcc`
+  - [`ripgrep`](https://github.com/BurntSushi/ripgrep#installation)
+  - `xclip` / `win32yank`
+  - A [Nerd Font](https://www.nerdfonts.com/)
+    - The setup scripts install `FiraCode` Nerd Fonts
+  - `nodejs`/`npm`
+    - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
 ### Lite
 
 *[config](./nvim-lite/)*
