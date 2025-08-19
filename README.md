@@ -38,7 +38,7 @@ My `neovim` configurations as a git repository.
 
 ## Documentation
 
-📕 [Read the documentation](./docs)
+📕 [Read the documentation](./docs/README.md)
 
 ## Releases
 
