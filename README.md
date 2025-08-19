@@ -28,12 +28,17 @@ My `neovim` configurations as a git repository.
 
 ## Table of Contents <!-- omit in toc -->
 
+- [Documentation](#documentation)
 - [Releases](#releases)
 - [Instructions](#instructions)
 - [Usage](#usage)
 - [Updating](#updating)
 - [Notes](#notes)
 - [Links](#links)
+
+## Documentation
+
+📕 [Read the documentation](./docs)
 
 ## Releases
 
