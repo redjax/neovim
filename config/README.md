@@ -5,6 +5,7 @@ My Neovim configurations. The default configuration in [`nvim`](./nvim/) is my m
 ## Table of Contents <!-- omit in toc -->
 
 - [Requirements](#requirements)
+- [Switching Configurations](#switching-configurations)
 - [Configurations](#configurations)
   - [nvim (default)](#nvim-default)
   - [Shared](#shared)
@@ -29,23 +30,40 @@ In general, the following are required:
 - A [Nerd Font](https://www.nerdfonts.com/)
   - The setup scripts install `FiraCode` Nerd Fonts
 - [`fzf`](https://github.com/junegunn/fzf)
-- [`nodejs`/`npm`](https://nodejs.org/en)
+- [`nodejs` / `npm`](https://nodejs.org/en)
   - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
-- [`python`/`pip`](https://www.python.org)
+- [`python` / `pip`](https://www.python.org)
 
-Some LSPs require [Go](https://golang.org) and/org [Rust](https://www.rust-lang.org) to be installed.
+Some LSPs require [Go](https://golang.org) and/or [Rust](https://www.rust-lang.org) to be installed.
+
+## Switching Configurations
+
+> [!TIP]
+> **TL/DR**: Use the `NVIM_APPNAME` environment variable to set which configuration profile is loaded, i.e. `NVIM_APPNAME="nvim-noplugins"`.
+
+By default, Neovim will load the configuration at `~/.config/nvim` on Linux and `$env:LOCALAPPDATA\nvim` on Windows. My configuration places multiple configuration "profiles" at the config path, and you can control which profile is loaded using the `NVIM_APPNAME` environment variable.
+
+Each configuration below has a table with the Linux and Windows environment variable you should set when you want to use a different profile. On Linux, you can use `export NVIM_APPNAME="nvim-profilename"` to temporarily set the Neovim profile for the current shell session, or add that line to your `~/.bashrc` to set it as the default. You can do the same on Windows, but using the `$env:NVIM_APPNAME="nvim-profilename"` environment variable.
 
 ## Configurations
 
 ### nvim (default)
 
-*[config](./nvim/)*
+| Config | Linux Env Var | Windows Env Var |
+| ------ | ------------- | --------------- |
+| [`nvim`](./nvim/) | None/unset | None/unset |
 
 My 'default' configuration, custom-built by referencing configurations from all over the place.
 
 ### Shared
 
-*[config](./nvim-shared/)*
+| Config | Linux Env Var | Windows Env Var | 
+| ------ | ------------- | --------------- |
+| [`nvim-shared`](./nvim-shared/) | None/unset | None/unset |
+
+> [!WARNING]
+> This configuration is not meant to be loaded directly.
+> Other profiles load configurations like keybinds from this module.
 
 I keep common/shared code in the `nvim-shared` profile. Other profiles can import configurations from this profile, like keymaps, UI options, etc.
 
@@ -160,7 +178,9 @@ end
 
 ### Kickstart
 
-*[config](./nvim-kickstart/)*
+| Config | Linux Env Var | Windows Env Var |
+| ------ | ------------- | --------------- |
+| [`nvim-kickstart`](./nvim-kickstart/) | `$NVIM_APPNAME="nvim-kickstart` | `$env:NVIM_APPNAME="nvim-kickstart` |
 
 Built from the [Kickstart.nvim repository](https://github.com/nvim-lua/kickstart.nvim).
 
@@ -177,20 +197,27 @@ Built from the [Kickstart.nvim repository](https://github.com/nvim-lua/kickstart
     - The setup scripts install `FiraCode` Nerd Fonts
   - `nodejs`/`npm`
     - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
+
 ### Lite
 
-*[config](./nvim-lite/)*
+| Config | Linux Env Var | Windows Env Var |
+| ------ | ------------- | --------------- |
+| [`nvim-lite`](./nvim-lite/) | `$NVIM_APPNAME="nvim-lite"` | `$env:NVIM_APPNAME="nvim-lite"` |
 
 My "lightweight". It uses plugins and themes, but I try not to overload with plugins, and only keep a couple of themes handy.
 
 ### No Plugins
 
-*[config](./nvim-noplugins/)*
+| Config | Linux Env Var | Windows Env Var |
+| ------ | ------------- | --------------- |
+| [`nvim-noplugins`](./nvim-noplugins/) | `$NVIM_APPNAME="nvim-noplugins"` | `$env:NVIM_APPNAME="nvim-noplugins"` |
 
 A configuration that loads the common configuration from the [shared profile](#shared), but does not have a plugin manager or load any plugins or themes. A "vanilla" configuration.
 
 ### Work
 
-*[config](./nvim-work/)*
+| Config | Linux Env Var | Windows Env Var |
+| ------ | ------------- | --------------- |
+| [`nvim-work`](./nvim-work/) | `$NVIM_APPNAME="nvim-work"` | `$env:NVIM_APPNAME="nvim-work"` |
 
 My work profile, which I change & adapt to suit my environment at `$JOB`.
