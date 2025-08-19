@@ -17,28 +17,18 @@
 
 My `neovim` configurations as a git repository.
 
-🔗 [View all releases](https://github.com/redjax/neovim/releases)
-
-*([Read more about how this repository creates releases](#releases))*
-
-> [!WARNING]
-> This documentation is out of date, I have changed the way I manage my Neovim configurations but have not fully updated the docs.
->
-> I am working on a rewrite in the [`topic/docs-rewrite` branch](https://github.com/redjax/neovim/tree/topic/docs-rewrite).
+> * 🔗 [View all releases](https://github.com/redjax/neovim/releases)
+>   * [Read more about how this repository creates releases](#releases)
+> * 📕 [Read the documentation](./docs/README.md)
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Documentation](#documentation)
 - [Releases](#releases)
 - [Instructions](#instructions)
 - [Usage](#usage)
 - [Updating](#updating)
 - [Notes](#notes)
 - [Links](#links)
-
-## Documentation
-
-📕 [Read the documentation](./docs/README.md)
 
 ## Releases
 
