@@ -30,6 +30,7 @@ $NeovimDependencies = @(
     "fzf",
     "tree-sitter",
     "ripgrep",
+    "FiraCode-NF",
     "FiraCode-NF-Mono",
     "cmake"
     "gcc"
