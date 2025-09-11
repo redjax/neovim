@@ -1,6 +1,9 @@
 -- Set leader key (optional, recommended)
 vim.g.mapleader = " " -- Space as leader
 
+-- Set local leader key to \
+vim.g.maplocalleader = '\\'
+
 -- Save file with <leader>w
 vim.keymap.set('n', '<leader>w', '<cmd>write<cr>', { desc = 'Save file' })
 
