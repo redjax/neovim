@@ -19,6 +19,9 @@ NPM_DEPENDENCIES=(
     "textlint"
     "write-good"
     "prettier"
+    "stylelint"
+    "write-good"
+    "sql-formatter"
     # "@ansible/ansible-language-server"
     # "css-language-server"
     # "cssmodules-language-server"
@@ -40,6 +43,11 @@ PYTHON_DEPENDENCIES=(
     "sqruff"
     "cmake-language-server"
     "proselint"
+    "mdformat"
+    "ansible-lint"
+    "yamlfix"
+    "sqlfmt"
+    "sqlformat"
 )
 
 ## Define Python tools (installed with uv tool install or pipx)
@@ -54,6 +62,8 @@ CARGO_DEPENDENCIES=(
 GO_DEPENDENCIES=(
     "mvdan.cc/sh/v3/cmd/shfmt@latest"
     "github.com/rhysd/actionlint/cmd/actionlint@latest"
+    "github.com/incu6us/goimports-reviser/v3@latest"
+    "github.com/google/yamlfmt/cmd/yamlfmt@latest"
 )
 
 ## Determine Python package manager
