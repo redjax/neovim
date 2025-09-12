@@ -31,6 +31,7 @@ NPM_DEPENDENCIES=(
 
 ## Define Python dependencies
 PYTHON_DEPENDENCIES=(
+    "pyyaml"
     "nginx-language-server"
     "pynvim"
     "ruff"
@@ -42,9 +43,7 @@ PYTHON_DEPENDENCIES=(
 )
 
 ## Define Python tools (installed with uv tool install or pipx)
-PYTHON_TOOL_DEPENDENCIES=(
-    "pyyaml"
-)
+PYTHON_TOOL_DEPENDENCIES=()
 
 ## Define Rust/Cargo dependencies
 CARGO_DEPENDENCIES=(
@@ -83,31 +82,7 @@ else
     exit 1
 fi
 
-## Install Python dependencies
-if command -v $PYTHON_PKG_MANAGER >/dev/null 2>&1; then
-    for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
-        ## Skip commented dependencies
-        [[ "$pkg" =~ ^# ]] && continue
-        echo "Installing Python package: $pkg"
-        if [[ "$PYTHON_PKG_MANAGER" == "uv" ]]; then
-            if ! uv tool install "$pkg"; then
-                echo "Error installing Python dependency '$pkg'" >&2
-            fi
-        else
-            echo "Installing Python dependency with pip: $pkg"
-            if ! pip install "$pkg"; then
-                echo "Error installing Python dependency '$pkg'" >&2
-                echo "Retrying $pkg install with python -m pip"
-
-                python -m pip install $pkg
-            fi
-        fi
-    done
-else
-    echo "$PYTHON_PKG_MANAGER is not installed. Please install it and re-run the script." >&2
-    exit 1
-fi
-
+## Install Python tools
 if command -v $PYTHON_TOOL_MANAGER >/dev/null 2>&1; then
     for pkg in "${PYTHON_TOOL_DEPENDENCIES[@]}"; do
         ## Skip commented dependencies
@@ -131,6 +106,31 @@ if command -v $PYTHON_TOOL_MANAGER >/dev/null 2>&1; then
     done
 else
     echo "$PYTHON_TOOL_MANAGER is not installed. Please install it and re-run the script." >&2
+    exit 1
+fi
+
+## Install Python dependencies
+if command -v $PYTHON_PKG_MANAGER >/dev/null 2>&1; then
+    for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
+        ## Skip commented dependencies
+        [[ "$pkg" =~ ^# ]] && continue
+        echo "Installing Python package: $pkg"
+        if [[ "$PYTHON_PKG_MANAGER" == "uv" ]]; then
+            if ! uv tool install "$pkg"; then
+                echo "Error installing Python dependency '$pkg'" >&2
+            fi
+        else
+            echo "Installing Python dependency with pip: $pkg"
+            if ! pip install "$pkg"; then
+                echo "Error installing Python dependency '$pkg'" >&2
+                echo "Retrying $pkg install with python -m pip"
+
+                python -m pip install $pkg
+            fi
+        fi
+    done
+else
+    echo "$PYTHON_PKG_MANAGER is not installed. Please install it and re-run the script." >&2
     exit 1
 fi
 

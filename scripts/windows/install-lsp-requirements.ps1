@@ -27,6 +27,7 @@ $NpmDependencies = @(
 
 ## Define Python dependencies
 $PythonDependencies = @(
+    "pyyaml",
     "nginx-language-server",
     "pynvim",
     "ruff",
@@ -37,9 +38,7 @@ $PythonDependencies = @(
 )
 
 ## Define Python tools (installed with uv tool install or pipx)
-$PythonToolDependencies = @(
-    "pyyaml"
-)
+$PythonToolDependencies = @()
 
 ## Define Rust/Cargo dependencies
 $CargoDependencies = @(
@@ -76,35 +75,6 @@ if ( Get-Command "npm" -ErrorAction SilentlyContinue ) {
 }
 else {
     Write-Warning "NPM is not installed. Please install Node.js and NPM before running this script."
-    exit 1
-}
-
-## Install Python dependencies
-if ( Get-Command $PythonPkgManager -ErrorAction SilentlyContinue ) {
-    foreach ($PythonPkg in $PythonDependencies ) {
-        if ($PythonPkgManager -eq "uv") {
-            try {
-                uv tool install $PythonPkg
-            }
-            catch {
-                Write-Error "Error installing Python dependency '$PythonPkg'. Details: $($Exception.Message)"
-            }
-        }
-        else {
-            try {
-                python -m pip install $PythonPkg
-            }
-            catch {
-                Write-Error "Error installing Python dependency '$PythonPkg'. Details: $($Exception.Message)"
-                Write-Host "Retrying $PythonPkg install with python -m pip"
-
-                python -m pip install $PythonPkg
-            }
-        }
-    }
-}
-else {
-    Write-Warning "$PythonPkgManager is not installed. Please install Python and pip before running this script."
     exit 1
 }
 
@@ -145,6 +115,35 @@ if ( Get-Command $PythonToolManager -ErrorAction SilentlyContinue ) {
 }
 else {
     Write-Warning "$PythonToolManager is not installed. Please install Python and pipx before running this script."
+    exit 1
+}
+
+## Install Python dependencies
+if ( Get-Command $PythonPkgManager -ErrorAction SilentlyContinue ) {
+    foreach ($PythonPkg in $PythonDependencies ) {
+        if ($PythonPkgManager -eq "uv") {
+            try {
+                uv tool install $PythonPkg
+            }
+            catch {
+                Write-Error "Error installing Python dependency '$PythonPkg'. Details: $($Exception.Message)"
+            }
+        }
+        else {
+            try {
+                python -m pip install $PythonPkg
+            }
+            catch {
+                Write-Error "Error installing Python dependency '$PythonPkg'. Details: $($Exception.Message)"
+                Write-Host "Retrying $PythonPkg install with python -m pip"
+
+                python -m pip install $PythonPkg
+            }
+        }
+    }
+}
+else {
+    Write-Warning "$PythonPkgManager is not installed. Please install Python and pip before running this script."
     exit 1
 }
 
