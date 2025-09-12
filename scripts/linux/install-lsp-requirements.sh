@@ -18,6 +18,7 @@ NPM_DEPENDENCIES=(
     "yaml-language-server"
     "textlint"
     "write-good"
+    "prettier"
     # "@ansible/ansible-language-server"
     # "css-language-server"
     # "cssmodules-language-server"
@@ -31,7 +32,7 @@ NPM_DEPENDENCIES=(
 ## Define Python dependencies
 PYTHON_DEPENDENCIES=(
     "nginx-language-server"
-    "pyyaml>=6.0.2"
+    "pynvim"
     "ruff"
     "ruff-lsp"
     "salt-lsp"
@@ -40,40 +41,126 @@ PYTHON_DEPENDENCIES=(
     "proselint"
 )
 
+## Define Python tools (installed with uv tool install or pipx)
+PYTHON_TOOL_DEPENDENCIES=(
+    "pyyaml"
+)
+
+## Define Rust/Cargo dependencies
+CARGO_DEPENDENCIES=(
+    "stylua"
+)
+
+## Define Go dependencies
+GO_DEPENDENCIES=(
+    "mvdan.cc/sh/v3/cmd/shfmt@latest"
+    "github.com/rhysd/actionlint/cmd/actionlint@latest"
+)
+
 ## Determine Python package manager
 if command -v uv >/dev/null 2>&1; then
     echo "Using uv for Python dependencies"
     PYTHON_PKG_MANAGER="uv"
+    $PYTHON_TOOL_MANAGER="uv"
 else
     echo "Using pip for Python dependencies"
     PYTHON_PKG_MANAGER="pip"
+    PYTHON_TOOL_MANAGER="pipx"
 fi
 
 ## Install NPM dependencies
-for pkg in "${NPM_DEPENDENCIES[@]}"; do
-    ## Skip commented dependencies
-    [[ "$pkg" =~ ^# ]] && continue
-    echo "Installing NPM package: $pkg"
-    if ! npm install -g "$pkg"; then
-        echo "Error installing NPM dependency '$pkg'" >&2
-    fi
-done
+if command -v npm >/dev/null 2>&1; then
+    for pkg in "${NPM_DEPENDENCIES[@]}"; do
+        ## Skip commented dependencies
+        [[ "$pkg" =~ ^# ]] && continue
+        echo "Installing NPM package: $pkg"
+        if ! npm install -g "$pkg"; then
+            echo "Error installing NPM dependency '$pkg'" >&2
+        fi
+    done
+else
+    echo "NPM is not installed. Please install Node.js and NPM, then re-run the script." >&2
+    exit 1
+fi
 
 ## Install Python dependencies
-for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
-    ## Skip commented dependencies
-    [[ "$pkg" =~ ^# ]] && continue
-    echo "Installing Python package: $pkg"
-    if [[ "$PYTHON_PKG_MANAGER" == "uv" ]]; then
-        if ! uv tool install "$pkg"; then
-            echo "Error installing Python dependency '$pkg'" >&2
-        fi
-    else
-        if ! pip install "$pkg"; then
-            echo "Error installing Python dependency '$pkg'" >&2
-            echo "Retrying $pkg install with python -m pip"
+if command -v $PYTHON_PKG_MANAGER >/dev/null 2>&1; then
+    for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
+        ## Skip commented dependencies
+        [[ "$pkg" =~ ^# ]] && continue
+        echo "Installing Python package: $pkg"
+        if [[ "$PYTHON_PKG_MANAGER" == "uv" ]]; then
+            if ! uv tool install "$pkg"; then
+                echo "Error installing Python dependency '$pkg'" >&2
+            fi
+        else
+            echo "Installing Python dependency with pip: $pkg"
+            if ! pip install "$pkg"; then
+                echo "Error installing Python dependency '$pkg'" >&2
+                echo "Retrying $pkg install with python -m pip"
 
-            python -m pip install $pkg
+                python -m pip install $pkg
+            fi
         fi
-    fi
-done
+    done
+else
+    echo "$PYTHON_PKG_MANAGER is not installed. Please install it and re-run the script." >&2
+    exit 1
+fi
+
+if command -v $PYTHON_TOOL_MANAGER >/dev/null 2>&1; then
+    for pkg in "${PYTHON_TOOL_DEPENDENCIES[@]}"; do
+        ## Skip commented dependencies
+        [[ "$pkg" =~ ^# ]] && continue
+        
+        echo "Installing Python tool package: $pkg"
+        if [[ "$PYTHON_TOOL_MANAGER" == "uv" ]]; then
+            if ! uv tool install "$pkg"; then
+                echo "Error installing Python tool dependency '$pkg'" >&2
+            fi
+        else
+            echo "Installing Python tool dependency with pipx: $pkg"
+            
+            if ! pipx install "$pkg"; then
+                echo "Error installing Python tool dependency '$pkg'" >&2
+                echo "Retrying $pkg install with python -m pipx"
+
+                python -m pipx install $pkg
+            fi
+        fi
+    done
+else
+    echo "$PYTHON_TOOL_MANAGER is not installed. Please install it and re-run the script." >&2
+    exit 1
+fi
+
+## Install Go dependencies
+if command -v go >/dev/null 2>&1; then
+    for pkg in "${GO_DEPENDENCIES[@]}"; do
+        ## Skip commented dependencies
+        [[ "$pkg" =~ ^# ]] && continue
+        
+        echo "Installing Go package: $pkg"
+        if ! go install "$pkg"; then
+            echo "Error installing Go dependency '$pkg'" >&2
+        fi
+    done
+else
+    echo "Go is not installed, skipping Go dependencies installation"
+    exit 0
+fi
+
+## Install Cargo dependencies
+if command -v cargo >/dev/null 2>&1; then
+    for pkg in "${CARGO_DEPENDENCIES[@]}"; do
+        ## Skip commented dependencies
+        [[ "$pkg" =~ ^# ]] && continue
+        echo "Installing Cargo package: $pkg"
+        if ! cargo install "$pkg"; then
+            echo "Error installing Cargo dependency '$pkg'" >&2
+        fi
+    done
+else
+    echo "Cargo is not installed, skipping Cargo dependencies installation"
+    exit 0
+fi
