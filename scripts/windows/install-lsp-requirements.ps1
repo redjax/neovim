@@ -14,7 +14,10 @@ $NpmDependencies = @(
     "yaml-language-server",
     "markdownlint",
     "markdownlint-cli2",
-    "prettier"
+    "prettier",
+    "stylelint",
+    "write-good",
+    "sql-formatter"
     # "@ansible/ansible-language-server",
     # "css-language-server",
     # "cssmodules-language-server",
@@ -34,7 +37,12 @@ $PythonDependencies = @(
     "ruff-lsp",
     "salt-lsp",
     "sqruff",
-    "cmake-language-server"
+    "cmake-language-server",
+    "mdformat",
+    "ansible-lint",
+    "yamlfix",
+    "sqlfmt",
+    "sqlformat"
 )
 
 ## Define Python tools (installed with uv tool install or pipx)
@@ -47,8 +55,10 @@ $CargoDependencies = @(
 
 ## Define Go dependencies
 $GoDependencies = @(
-    "mvdan.cc/sh/v3/cmd/shfmt@latest"
-    "github.com/rhysd/actionlint/cmd/actionlint@latest"
+    "mvdan.cc/sh/v3/cmd/shfmt@latest",
+    "github.com/rhysd/actionlint/cmd/actionlint@latest",
+    "github.com/incu6us/goimports-reviser/v3@latest",
+    "github.com/google/yamlfmt/cmd/yamlfmt@latest"
 )
 
 if ( Get-Command "uv" ) {
