@@ -45,7 +45,7 @@ for profile in "${PROFILES[@]}"; do
   export NVIM_APPNAME="$profile"
 
   ## Run nvim headless with lazy operations
-  nvim --headless -c "Lazy sync" -c "Lazy clean" -c "qa"
+  nvim --headless '+Lazy! sync' '+Lazy! clean' +qa
 
   if [[ $? -ne 0 ]]; then
     echo "Failed to update lockfiles for $profile"
