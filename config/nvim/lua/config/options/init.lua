@@ -18,3 +18,5 @@ require('config.options.terminal')
 require('config.options.ui')
 -- Window settings
 require('config.options.window')
+-- Whitespace trimming & newline on save
+require('config.options.whitespace')
