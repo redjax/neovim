@@ -17,10 +17,6 @@
             "name": "Nvim Packages"
         },
         {
-            "path": "../config/nvim-shared",
-            "name": "Shared Nvim Config Root"
-        },
-        {
             "path": "../config/nvim",
             "name": "Nvim Config Root"
         }
