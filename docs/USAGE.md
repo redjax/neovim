@@ -28,6 +28,8 @@ I use the [Lazy package manager](https://www.lazyvim.org) to handle installing &
 
 You will occasionally see a message about plugins that need to be updated. You can update the plugins using either `:Lazy update`, or `:Lazy` and then press `U`.
 
+You can also use one of the `lazy-sync` scripts ([Windows: `lazy-sync.ps1`](../scripts/windows/lazy-sync.ps1), [Linux](../scripts/linux/lazy-sync.sh)) to iterate over all of the profiles, running `nvim --headless '+Lazy! sync' '+Lazy! clean' +qa` for each one to automate update/cleanup steps.
+
 ## Updating Neovim Configuration
 
 To pull new changes, `cd` to wherever you cloned this repository and run a `git fetch ; git pull`. Then, relaunch Neovim.
