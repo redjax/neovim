@@ -1,9 +1,11 @@
 <#
 .SYNOPSIS
-    Updates Neovim plugin lockfiles.
+    Synchronize Neovim's Lazy plugin manager plugins.
 
 .DESCRIPTION
     Iterates over predefined list of profiles (or user provided) and updates plugin lockfiles.
+
+    You can run this to update the lazy lockfiles for all your profiles, or the first time after installing the Neovim configs in this repo to initialize your plugins.
 
 .PARAMETER Profile
     Profiles to update. Default is "nvim" and "nvim-work".
