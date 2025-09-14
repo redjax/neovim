@@ -16,7 +16,7 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory. Can be provided multiple times.")]
-    [string[]]$Profile = @(),
+    [string[]]$Profile = @()
 )
 
 function Show-Usage {
