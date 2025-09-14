@@ -49,7 +49,7 @@ foreach ( $profile in $profiles ) {
     $env:NVIM_APPNAME = $profile
 
     ## Run lazy sync and clean
-    $proc = Start-Process -FilePath "nvim" -ArgumentList "--headless", "-c", "Lazy sync", "-c", "Lazy clean", "-c", "qa" -NoNewWindow -Wait -PassThru
+    $proc = Start-Process -FilePath "nvim" -ArgumentList "--headless", "'+Lazy! sync'", "'+Lazy! clean'", "+qa" -NoNewWindow -Wait -PassThru
 
     if ( $proc.ExitCode -ne 0 ) {
         Write-Warning "Failed to update lockfiles for profile: $profile"
