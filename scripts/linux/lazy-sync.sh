@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+##
+# Synchronize Neovim's Lazy plugin manager plugins.
+#
+# You can run this to update the lazy lockfiles for all your profiles,
+# or the first time after installing the Neovim configs in this repo
+# to initialize your plugins.
+##
+
 if ! command -v nvim &>/dev/null; then
     echo "Neovim is not installed"
     exit 1
