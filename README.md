@@ -49,6 +49,13 @@ Each time a release is created, it will contain .zip archives of each configurat
 - (Optional) Change the [neovim configuration](./config/) to use by setting the `NVIM_APPNAME` var.
   - Read [Switching profiles](./docs/USAGE.md#switching-profiles) to learn how to use the `$NVIM_APPNAME` environment variable.
 
+> [!NOTE]
+> You can also run `nvim --headless '+Lazy! sync' '+Lazy! clean' +qa` to automatically run a Sync and Clean operation, then quit Neovim.
+> The `--headless` flag will prevent the main `neovim` window from opening, instead showing you the output as log lines.
+>
+> There is a script for [Windows](./scripts/windows/lazy-sync.ps1) and [Linux](./scripts/linux/lazy-sync.sh) that will run this operation
+> for the [`nvim`](./config/nvim/) and [`nvim-work`](./config/nvim-work/) profiles, or you can pass 1 or more `-p/--profile <profile-name>` to customize which lockfiles are updated.
+
 ## Usage
 
 *[View usage documentation](./docs/USAGE.md)*
