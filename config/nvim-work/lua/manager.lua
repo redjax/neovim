@@ -9,7 +9,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local specs = {
-  { import = "plugins" },
+  { import = "plugins.lazy" },
   { import = "themes" },
   { import = "lsp.plugins.mason" },
   { import = "lsp.plugins.signature" },
