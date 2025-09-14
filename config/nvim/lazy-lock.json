@@ -83,6 +83,7 @@
   "one_monokai": { "branch": "main", "commit": "047a0239831458866945d5c2d111ff1d282d1966" },
   "onedark": { "branch": "master", "commit": "de495fabe171d48aed5525f002d14414efcecbb2" },
   "onedarkpro": { "branch": "main", "commit": "cdd4d1d1ce734170a61766ffd2fb68f40165e188" },
+  "output-panel.nvim": { "branch": "main", "commit": "9979f9988acb35fd8e699d8b1fbc7aa17c9d8148" },
   "oxocarbon": { "branch": "main", "commit": "9f85f6090322f39b11ae04a343d4eb9d12a86897" },
   "palenightfall": { "branch": "main", "commit": "25a1e7d43256834a671174e5d83edb57f7bec1e0" },
   "papercolor": { "branch": "master", "commit": "0cfe64ffb24c21a6101b5f994ca342a74c977aef" },
