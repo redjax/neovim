@@ -13,10 +13,6 @@
 			"name": "Neovim Configs"
 		},
 		{
-			"path": "../config/nvim-shared",
-			"name": "Shared Config"
-		},
-		{
 			"path": "../config/nvim",
 			"name": "Default Config"
 		},
