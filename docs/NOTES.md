@@ -18,9 +18,6 @@
 
 ## Configure LSP (Language Server)
 
-> [!WARNING]
-> This section is out of date with the way I handle language servers now. You can check the [shared LSP config](./config/nvim-shared/lua/nvim-shared/lsp/) to see how LSPs are managed by configs in this repository.
-
 Configuring a language server (LSP) with Lazy and Mason is pretty simple. [Find a language server here](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md), for example the [`marksman` Markdown LSP](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#marksman).
 
 In your [`init.lua`](./config/nvim/init.lua), find the line that begins with `require('lazy').setup({`. Within that function, find the section that begins with the comment `-- Main LSP Configuration`. In that section, in the `config = function()` function, find the variable `local servers = {`.
