@@ -70,7 +70,7 @@ GO_DEPENDENCIES=(
 if command -v uv >/dev/null 2>&1; then
     echo "Using uv for Python dependencies"
     PYTHON_PKG_MANAGER="uv"
-    $PYTHON_TOOL_MANAGER="uv"
+    PYTHON_TOOL_MANAGER="uv"
 else
     echo "Using pip for Python dependencies"
     PYTHON_PKG_MANAGER="pip"
