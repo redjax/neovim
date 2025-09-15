@@ -18,7 +18,7 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$false, HelpMessage = "Name of neovim configuration to install from the config/ directory. Can be provided multiple times.")]
-    [string[]]$Profile = @()
+    [string[]]$ProfileName = @()
 )
 
 function Show-Usage {
@@ -36,25 +36,26 @@ if ( -not ( Get-Command nvim -ErrorAction SilentlyContinue ) ) {
 $defaultProfiles = @("nvim", "nvim-work")
 
 ## Use user-provided profiles if given, otherwise defaults
-if ( $Profile.Count -gt 0 ) {
-    $profiles = $Profile
+if ( $ProfileName.Count -gt 0 ) {
+    $profiles = $ProfileName
 } else {
     $profiles = $defaultProfiles
 }
 
 Write-Host "Using profiles: $($profiles -join ', ')"
 
-foreach ( $profile in $profiles ) {
-    Write-Host "Processing profile: $profile"
+foreach ( $pName in $profiles ) {
+    Write-Host "Processing profile: $pName"
 
-    ## Set environment variable for this iteration
-    $env:NVIM_APPNAME = $profile
+    # Set the environment variable for the nvim process in the current session.
+    $env:NVIM_APPNAME = $pName
 
-    ## Run lazy sync and clean
-    $proc = Start-Process -FilePath "nvim" -ArgumentList "--headless", "'+Lazy! sync'", "'+Lazy! clean'", "+qa" -NoNewWindow -Wait -PassThru
+    # Run nvim directly in the current console. Its output will appear here.
+    nvim --headless "+Lazy! sync" "+Lazy! clean" "+qa"
 
-    if ( $proc.ExitCode -ne 0 ) {
-        Write-Warning "Failed to update lockfiles for profile: $profile"
+    # Check the exit code of the last command.
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to update lockfiles for profile: $pName"
         continue
     }
 
