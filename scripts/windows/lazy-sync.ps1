@@ -51,7 +51,7 @@ foreach ( $pName in $profiles ) {
     $env:NVIM_APPNAME = $pName
 
     # Run nvim directly in the current console. Its output will appear here.
-    nvim --headless "+Lazy! sync" "+Lazy! clean" "+qa"
+    nvim --headless "+Lazy! sync" "+Lazy! clean" "+Lazy! update" "+qa"
 
     # Check the exit code of the last command.
     if ($LASTEXITCODE -ne 0) {
