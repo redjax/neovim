@@ -1,26 +1,10 @@
 -- Themery https://github.com/zaldih/themery.nvim
 
 local theme_menu_items = {
-    "aura-dark",
-    "aura-dark-soft-text",
-    "aura-soft-dark",
-    "aura-soft-dark-soft-text",
-    "ayu",
-    "catppuccin-frappe",
-    "catppuccin-macchiato",
-    "catppuccin-mocha",
-    "dracula",
-    "edge",
-    "ef-owl",
-    "ef-winter",
     "eldritch",
-    -- "everforest",
-    "horizon-extended",
     "kanagawa-dragon",
     "kanagawa-lotus",
     "kanagawa-wave",
-    "monokai",
-    "moonfly",
     "nekonight-arcdark",
     "nekonight-aurora",
     "nekonight-day",
@@ -44,20 +28,10 @@ local theme_menu_items = {
     "nekonight-storm",
     "nekonight-synthwave",
     "nekonight-zenburn",
-    "nightfly",
-    "nordic",
-    "onedark",
     "one_monokai",
-    -- "onedarkpro",
     "oxocarbon",
-    "PaperColor",
-    "palenightfall",
-    "penumbra",
-    "tokyonight-moon",
-    "tokyonight-night",
-    "vscode_modern",
-    "zenburn",
-    "zephyrium"
+    "poimandres",
+    "vscode_modern"
 }
 
 return {
