@@ -64,6 +64,7 @@ GO_DEPENDENCIES=(
     "github.com/rhysd/actionlint/cmd/actionlint@latest"
     "github.com/incu6us/goimports-reviser/v3@latest"
     "github.com/google/yamlfmt/cmd/yamlfmt@latest"
+    "github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
 )
 
 ## Determine Python package manager
