@@ -58,7 +58,8 @@ $GoDependencies = @(
     "mvdan.cc/sh/v3/cmd/shfmt@latest",
     "github.com/rhysd/actionlint/cmd/actionlint@latest",
     "github.com/incu6us/goimports-reviser/v3@latest",
-    "github.com/google/yamlfmt/cmd/yamlfmt@latest"
+    "github.com/google/yamlfmt/cmd/yamlfmt@latest",
+    "github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
 )
 
 if ( Get-Command "uv" ) {
