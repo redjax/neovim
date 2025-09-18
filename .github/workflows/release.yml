@@ -1,17 +1,26 @@
 ---
-## Manually trigger pipeline to create a release with .zip archives of Neovim configurations
+## Manually trigger pipeline to create a release with .zip and .tar.gz archives of Neovim configurations
 #
-#  This pipeline creates .zip files in a release for every Neovim configuration in the config/ directory.
-#  It simply bumps the patch version (v0.0.X) each time.
+#  This pipeline creates .zip and .tar.gz files in a release for every Neovim configuration in the config/ directory.
+#  You can choose to bump major (vX.0.0), minor (v0.X.0), or patch (v0.0.X) versions.
 #
-#  To create a new major (vX.0.0) or minor (v0.X.0) release, manually create a new .0 tag in the repository.
-#  For example, to move from v0.0.X to v0.1.X, create a tag v0.1.0. You can do this in Github, or create
-#  the tag locally with: git tag v0.1.0 && git push origin v0.1.0
+#  Each archive contains the configuration files structured so they can be extracted directly
+#  to ~/.config/nvim (Linux/macOS) or %USERPROFILE%\AppData\Local\nvim (Windows).
 name: Manual Release
 
 on:
-  ## Trigger workflow manualy
+  ## Trigger workflow manually with version bump type selection
   workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
 
 permissions:
   contents: write
@@ -24,75 +33,174 @@ jobs:
       ## Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      ## Setup Python in pipeline
-      - name: Set up Python (for version parsing)
+      ## Setup Python for version parsing
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: '3.x'
 
-      ## Get the latest tag for version bump
+      ## Get the latest tag for version calculation
       - name: Get latest tag
         id: get_tag
         run: |
           git fetch --tags
           LATEST_TAG=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          
+          ## If no tags exist, start with v0.0.0
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.0"
+          fi
+          
           echo "Latest tag: $LATEST_TAG"
           echo "latest_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
 
-      ## Bump patch version (v0.0.X -> v0.0.X+1)
-      - name: Bump patch version
-        id: bump_version
+      ## Calculate new version based on input parameter
+      - name: Calculate new version
+        id: new_version
         run: |
           LATEST="${{ steps.get_tag.outputs.latest_tag }}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST#v}"
-          NEW_TAG="v$MAJOR.$MINOR.$((PATCH + 1))"
-          echo "New tag: $NEW_TAG"
+          
+          case "${{ github.event.inputs.version_bump }}" in
+            major)
+              NEW_TAG="v$((MAJOR + 1)).0.0"
+              ;;
+            minor)
+              NEW_TAG="v$MAJOR.$((MINOR + 1)).0"
+              ;;
+            patch)
+              NEW_TAG="v$MAJOR.$MINOR.$((PATCH + 1))"
+              ;;
+            *)
+              echo "Invalid version bump type: ${{ github.event.inputs.version_bump }}"
+              exit 1
+              ;;
+          esac
+          
+          echo "Bumping from $LATEST to $NEW_TAG (type: ${{ github.event.inputs.version_bump }})"
           echo "new_tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
 
-      ## Create .zip archives for each neovim configuration in the config/ directory.
-      #  Each archive will have a directory nvim/ at the root, which can be copied/extracted to
-      #  the path your OS looks for Neovim configurations in. For example, on Linux, ~/.config/nvim,
-      #  and on Windows, %USERPROFILE%\AppData\Local\nvim
-      - name: Create zip files
-        id: zip_configs
+      ## Discover available Neovim configurations
+      - name: Discover configurations
+        id: discover_configs
         run: |
-          mkdir -p release-assets
-          VERSION="${{ steps.bump_version.outputs.new_tag }}"
-
+          CONFIGS=""
+          echo "Available configurations:"
+          
           for dir in config/*/; do
-            name=$(basename "$dir")
-            zipname="${name}-${VERSION}.zip"
-
-            # Create temp/nvim/ and copy contents into it
-            mkdir -p temp/nvim
-            cp -r "$dir"/* temp/nvim/
-
-            # Zip the contents so the archive contains only a 'nvim/' folder
-            (
-              cd temp
-              zip -r "../release-assets/${zipname}" nvim -x "*.DS_Store"
-            )
-
-            # Clean up temp for next iteration
-            rm -rf temp
+            if [ -d "$dir" ]; then
+              name=$(basename "$dir")
+              echo "  - $name"
+              if [ -z "$CONFIGS" ]; then
+                CONFIGS="$name"
+              else
+                CONFIGS="$CONFIGS,$name"
+              fi
+            fi
           done
 
-      ## Create new git tag with patch version, i.e. v0.0.X -> v0.0.X+1
-      #  This creates the tag in Github.
-      - name: Create Git tag
+          echo "configs=$CONFIGS" >> "$GITHUB_OUTPUT"
+
+      ## Create archives for each configuration
+      - name: Create release archives
+        id: create_archives
         run: |
+          mkdir -p release-assets
+          VERSION="${{ steps.new_version.outputs.new_tag }}"
+          
+          echo "Creating archives for version: $VERSION"
+          echo ""
+          
+          IFS=',' read -ra CONFIG_ARRAY <<< "${{ steps.discover_configs.outputs.configs }}"
+          for config in "${CONFIG_ARRAY[@]}"; do
+            echo "Processing configuration: $config"
+            
+            config_dir="config/$config"
+            if [ ! -d "$config_dir" ]; then
+              echo "  Warning: Directory $config_dir not found, skipping..."
+              continue
+            fi
+            
+            ## File names for archives
+            zip_name="${config}-${VERSION}.zip"
+            tar_name="${config}-${VERSION}.tar.gz"
+            
+            echo "  Creating: $zip_name"
+            echo "  Creating: $tar_name"
+            
+            ## Create temporary directory structure
+            temp_dir="temp-$config"
+            mkdir -p "$temp_dir/nvim"
+            
+            ## Copy configuration files to temp/nvim/
+            cp -r "$config_dir"/* "$temp_dir/nvim/"
+            
+            ## Create ZIP archive
+            (
+              cd "$temp_dir"
+              zip -r "../release-assets/$zip_name" nvim -x "*.DS_Store" "*.git*"
+            )
+            
+            ## Create TAR.GZ archive
+            (
+              cd "$temp_dir"
+              tar --exclude="*.DS_Store" --exclude="*.git*" -czf "../release-assets/$tar_name" nvim
+            )
+            
+            ## Clean up temp directory
+            rm -rf "$temp_dir"
+            
+            echo "  ✓ Archives created successfully"
+            echo ""
+          done
+          
+          echo "Archive creation completed!"
+          echo ""
+          echo "Created files:"
+          ls -la release-assets/
+
+      ## Create and push new Git tag
+      - name: Create and push Git tag
+        run: |
+          NEW_TAG="${{ steps.new_version.outputs.new_tag }}"
+          echo "Creating and pushing tag: $NEW_TAG"
+          
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag "${{ steps.bump_version.outputs.new_tag }}"
-          git push origin "${{ steps.bump_version.outputs.new_tag }}"
+          
+          git tag "$NEW_TAG" -m "Release $NEW_TAG"
+          git push origin "$NEW_TAG"
 
-      ## Create release from the new tag and autogenerate release notes
+      ## Create GitHub release with all archives
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.bump_version.outputs.new_tag }}
-          name: Release ${{ steps.bump_version.outputs.new_tag }}
+          tag_name: ${{ steps.new_version.outputs.new_tag }}
+          name: Release ${{ steps.new_version.outputs.new_tag }}
+          body: |
+            ## Neovim Configuration Release ${{ steps.new_version.outputs.new_tag }}
+            
+            This release contains packaged Neovim configurations ready for installation.
+            
+            ### Available Configurations
+            ${{ steps.discover_configs.outputs.configs }}
+            
+            ### Installation Instructions
+            
+            1. Download the archive for your desired configuration
+            2. Extract the archive to get the `nvim/` folder
+            3. Place the `nvim/` folder in your configuration directory:
+               - **Linux/macOS**: `~/.config/nvim`
+               - **Windows**: `%USERPROFILE%\AppData\Local\nvim`
+            
+            ### Archive Formats
+            - `.zip` files: Compatible with all platforms, recommended for Windows
+            - `.tar.gz` files: Compressed format, recommended for Linux/macOS
+            
+            Both formats contain identical configuration files.
           generate_release_notes: true
           token: ${{ secrets.RELEASE_TOKEN }}
-          files: release-assets/*.zip
+          files: release-assets/*
