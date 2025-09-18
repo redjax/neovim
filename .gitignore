@@ -13,3 +13,10 @@ dist/
 !*.example.*
 
 witch*
+
+## Ignore Lazy lockfile. I am using these configurations
+#  across multiple machines & OSes, and there are constant
+#  updates and conflicts because of this. Letting each machine
+#  manage its own lockfile independently seems like the best way
+lazy-lock.json
+
