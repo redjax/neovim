@@ -147,7 +147,7 @@ jobs:
             ## Create TAR.GZ archive
             (
               cd "$temp_dir"
-              tar -czf "../release-assets/$tar_name" nvim --exclude="*.DS_Store" --exclude="*.git*"
+              tar --exclude="*.DS_Store" --exclude="*.git*" -czf "../release-assets/$tar_name" nvim
             )
             
             ## Clean up temp directory
