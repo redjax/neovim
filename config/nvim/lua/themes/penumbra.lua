@@ -3,7 +3,7 @@
 return {
     "Allianaab2m/penumbra.nvim",
     name = "penumbra",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     opts = {
         -- Example options (uncomment and adjust as desired)

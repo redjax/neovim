@@ -3,7 +3,7 @@
 return {
     "gmr458/vscode_modern_theme.nvim",
     name = "vscode_modern",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     config = function()
         require("vscode_modern").setup({

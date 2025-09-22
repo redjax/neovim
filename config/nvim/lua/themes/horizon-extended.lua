@@ -3,7 +3,7 @@
 return { 
     "lancewilhelm/horizon-extended.nvim",
     name = "horizon-extended",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     init = function()
         -- Options: 'neo', 'beam', 'ray'

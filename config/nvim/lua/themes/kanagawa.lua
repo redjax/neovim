@@ -3,7 +3,7 @@
 return {
     "rebelot/kanagawa.nvim",
     name = "kanagawa",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     config = function()
         require('kanagawa').setup({

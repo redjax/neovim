@@ -3,6 +3,6 @@
 return {
     'AlexvZyl/nordic.nvim',
     name = "nordic",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

@@ -3,6 +3,6 @@
 return {
     "jnurmine/Zenburn",
     name = "zenburn",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

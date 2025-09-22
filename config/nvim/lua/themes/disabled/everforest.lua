@@ -3,6 +3,6 @@
 return {
     "sainnhe/everforest",
     name = "everforest",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

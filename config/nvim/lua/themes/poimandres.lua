@@ -2,7 +2,7 @@
 
 return { 
   'olivercederborg/poimandres.nvim',
-  lazy = false,
+  lazy = true,  -- Let Themery manage loading
   priority = 1000,
   config = function()
     require('poimandres').setup {

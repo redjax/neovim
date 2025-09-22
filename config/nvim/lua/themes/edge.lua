@@ -3,7 +3,7 @@
 return {
     "sainnhe/edge",
     name = "edge",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     init = function()
         -- Options: aura, neon, aura_dim, light

@@ -3,7 +3,7 @@
 return {
   "titanzero/zephyrium",
   priority = 1000,
-  lazy = false,
+  lazy = true,  -- Let Themery manage loading
   config = function()
   end,
 }
