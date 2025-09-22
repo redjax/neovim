@@ -3,7 +3,7 @@ return {
   {
     "daltonmenezes/aura-theme",
     name = "aura-theme",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     config = function(plugin)
       vim.opt.rtp:append(plugin.dir .. "/packages/neovim")
@@ -75,7 +75,7 @@ return {
   {
     "eldritch-theme/eldritch.nvim",
     name = "eldritch",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     opts = {},
     config = function()
@@ -138,7 +138,7 @@ return {
   {
     "olimorris/onedarkpro.nvim",
     name = "onedarkpro",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
   },
 
@@ -146,7 +146,7 @@ return {
   {
     "cpea2506/one_monokai.nvim",
     name = "one_monokai",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     opts = {},
     config = function()
@@ -192,7 +192,7 @@ return {
   {
     "neko-night/nvim",
     priority = 1000,
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     config = function()
     end,
   },
@@ -259,7 +259,7 @@ return {
   {
     "gmr458/vscode_modern_theme.nvim",
     name = "vscode_modern",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     config = function()
         require("vscode_modern").setup({
