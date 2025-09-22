@@ -3,6 +3,6 @@
 return {
     "catppuccin/nvim",
     name = "catppuccin",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

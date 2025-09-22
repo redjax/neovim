@@ -3,6 +3,6 @@
 return {
     "olimorris/onedarkpro.nvim",
     name = "onedarkpro",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

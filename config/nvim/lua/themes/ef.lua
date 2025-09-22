@@ -3,7 +3,7 @@
 return {
     "oonamo/ef-themes.nvim",
     name = "ef",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     config = function()
         require("ef-themes").setup({

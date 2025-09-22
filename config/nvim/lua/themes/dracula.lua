@@ -3,6 +3,6 @@
 return {
     "Mofiqul/dracula.nvim",
     name = "dracula",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

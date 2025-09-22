@@ -3,6 +3,6 @@
 return {
     "JoosepAlviste/palenightfall.nvim",
     name = "palenightfall",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

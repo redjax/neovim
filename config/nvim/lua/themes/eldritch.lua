@@ -3,7 +3,7 @@
 return {
   "eldritch-theme/eldritch.nvim",
   name = "eldritch",
-  lazy = false,
+  lazy = true,  -- Let Themery manage loading
   priority = 1000,
   opts = {},
   config = function()

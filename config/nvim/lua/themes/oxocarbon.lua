@@ -3,6 +3,6 @@
 return {
     "nyoom-engineering/oxocarbon.nvim",
     name = "oxocarbon",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
 }

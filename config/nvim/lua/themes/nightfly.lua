@@ -3,7 +3,7 @@
 return {
     "bluz71/vim-nightfly-colors",
     name = "nightfly",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     config = function()
         -- Optional: set nightfly options here

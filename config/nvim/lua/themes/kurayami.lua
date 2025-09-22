@@ -3,7 +3,7 @@
 return {
    "kevinm6/kurayami.nvim",
    event = "VimEnter",
-   lazy = false,
+   lazy = true,  -- Let Themery manage loading
    priority = 1000,                  
    config = function()        
    end,
