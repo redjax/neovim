@@ -34,7 +34,7 @@ return {
         quickfile = { enabled = true }, -- https://github.com/folke/snacks.nvim/blob/main/docs/quickfile.md
         scope = { enabled = true }, -- https://github.com/folke/snacks.nvim/blob/main/docs/scope.md
         scratch = { enabled = false}, -- https://github.com/folke/snacks.nvim/blob/main/docs/scratch.md
-        scroll = { enabled = true }, -- https://github.com/folke/snacks.nvim/blob/main/docs/scroll.md
+        scroll = { enabled = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/scroll.md
         statuscolumn = { enabled = true }, -- https://github.com/folke/snacks.nvim/blob/main/docs/statuscolumn.md
         terminal = { enabled = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/terminal.md
         toggle = { enableed = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/toggle.md
@@ -44,3 +44,4 @@ return {
         zen = { enabled = false } -- https://github.com/folke/snacks.nvim/blob/main/docs/zen.md
     },
 }
+
