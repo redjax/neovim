@@ -1,3 +1,26 @@
+-- Themery theme picker configuration
+-- List of available themes that will be automatically converted to Themery format
+local theme_menu_items = {
+  "catppuccin-mocha",
+  "catppuccin-macchiato",
+  "catppuccin-frappe",
+  "catppuccin-latte",
+  "dracula",
+  "gruvbox",
+  "kanagawa-dragon",
+  "kanagawa-lotus",
+  "kanagawa-wave",
+  "nightfly",
+  "nord",
+  "onedark",
+  "oxocarbon",
+  "palenight",
+  "tokyonight",
+  "tokyonight-storm", 
+  "tokyonight-moon",
+  "tokyonight-day",
+}
+
 return {
   -- Themery - Theme picker plugin
   {
@@ -7,85 +30,7 @@ return {
     cmd = "Themery",
     config = function()
       require("themery").setup({
-        themes = {
-          {
-            name = "Gruvbox Dark",
-            colorscheme = "gruvbox",
-            before = [[
-              vim.o.background = "dark"
-            ]],
-          },
-          {
-            name = "Gruvbox Light",
-            colorscheme = "gruvbox",
-            before = [[
-              vim.o.background = "light"
-            ]],
-          },
-          {
-            name = "Tokyo Night",
-            colorscheme = "tokyonight",
-          },
-          {
-            name = "Tokyo Night Storm", 
-            colorscheme = "tokyonight-storm",
-          },
-          {
-            name = "Tokyo Night Moon",
-            colorscheme = "tokyonight-moon",
-          },
-          {
-            name = "Tokyo Night Day",
-            colorscheme = "tokyonight-day",
-          },
-          {
-            name = "Catppuccin Mocha",
-            colorscheme = "catppuccin-mocha",
-          },
-          {
-            name = "Catppuccin Macchiato",
-            colorscheme = "catppuccin-macchiato",
-          },
-          {
-            name = "Catppuccin Frappe",
-            colorscheme = "catppuccin-frappe",
-          },
-          {
-            name = "Catppuccin Latte",
-            colorscheme = "catppuccin-latte",
-          },
-          {
-            name = "One Dark",
-            colorscheme = "onedark",
-          },
-          {
-            name = "Kanagawa",
-            colorscheme = "kanagawa",
-          },
-          {
-            name = "Nord",
-            colorscheme = "nord",
-          },
-          {
-            name = "Dracula",
-            colorscheme = "dracula",
-          },
-          {
-            name = "Nightfly",
-            colorscheme = "nightfly",
-          },
-          {
-            name = "Palenight",
-            colorscheme = "palenight",
-          },
-          {
-            name = "Oxocarbon",
-            colorscheme = "oxocarbon",
-            before = [[
-              vim.opt.background = "dark"
-            ]],
-          },
-        },
+        themes = theme_menu_items,
         livePreview = true,
       })
     end,
