@@ -3,7 +3,8 @@
 return {
     "folke/snacks.nvim",
     priority = 1000,
-    lazy = false,
+    lazy = false, -- Keep this eager for dashboard/core features
+    event = "VimEnter", -- But load after Vim starts
     dependencies = {
         "echasnovski/mini.icons",
         "nvim-tree/nvim-web-devicons",
