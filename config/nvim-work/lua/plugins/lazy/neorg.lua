@@ -8,6 +8,8 @@ return {
   },
   {
     "nvim-neorg/neorg",
+    lazy = false,  -- Load immediately to ensure keybindings are available
+    priority = 1000,  -- High priority loading
     dependencies = {
       "luarocks.nvim",
       "nvim-telescope/telescope.nvim",          -- keep if you later re-enable integrations
