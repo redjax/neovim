@@ -36,6 +36,9 @@ local theme_menu_items = {
 
 return {
     "zaldih/themery.nvim",
+    lazy = false,  -- Load immediately so it's always available
+    priority = 1000,  -- Load early
+    cmd = "Themery",  -- Also load on command
     config = function()
         require("themery").setup({
             themes = theme_menu_items,
