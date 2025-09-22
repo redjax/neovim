@@ -2,7 +2,7 @@
 
 return {
     "nvim-tree/nvim-web-devicons",
-    lazy = false,
+    -- Remove lazy = false, let it load when needed by other plugins
     priority = 900,
     config = function()
       require("nvim-web-devicons").setup({

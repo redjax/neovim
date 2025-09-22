@@ -51,6 +51,30 @@ table.insert(specs, { import = "lsp.bundle", opts = { ensure_installed = servers
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = specs,
+  defaults = {
+    lazy = true, -- Make plugins lazy by default
+    version = false,
+  },
   change_detection = { notify = false },
-  checker = { enabled = true },
+  checker = { enabled = true, notify = false },
+  performance = {
+    cache = {
+      enabled = true,
+    },
+    reset_packpath = true,
+    rtp = {
+      reset = true,
+      -- Disable unused runtime plugins for faster startup
+      disabled_plugins = {
+        "gzip",
+        -- "matchit",
+        -- "matchparen", 
+        -- "netrwPlugin",
+        "tarPlugin",
+        "tohtml",
+        "tutor",
+        "zipPlugin",
+      },
+    },
+  },
 })
