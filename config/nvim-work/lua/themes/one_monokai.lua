@@ -3,7 +3,7 @@
 return {
     "cpea2506/one_monokai.nvim",
     name = "one_monokai",
-    lazy = false,
+    lazy = true,  -- Let Themery manage loading
     priority = 1000,
     opts = {},
     config = function()

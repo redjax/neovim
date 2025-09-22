@@ -1,4 +1,8 @@
--- Poimandres theme https://github.com/olivercederborg/poimandres.nvim
+--return {
+  "olivercederborg/poimandres.nvim",
+  name = "poimandres",
+  lazy = true,  -- Let Themery manage loading
+  priority = 1000,andres theme https://github.com/olivercederborg/poimandres.nvim
 
 return { 
   'olivercederborg/poimandres.nvim',
