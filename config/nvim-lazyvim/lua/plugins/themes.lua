@@ -3,8 +3,8 @@ return {
   {
     "daltonmenezes/aura-theme",
     name = "aura-theme",
-    lazy = true,  -- Let Themery manage loading
-    priority = 1000,
+    lazy = false,  -- Must load immediately for special rtp setup
+    priority = 999,  -- Load before Themery but allow themes to be available
     config = function(plugin)
       vim.opt.rtp:append(plugin.dir .. "/packages/neovim")
     end
