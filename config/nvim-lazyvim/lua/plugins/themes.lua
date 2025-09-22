@@ -1,4 +1,15 @@
 return {
+  -- Aura
+  {
+    "daltonmenezes/aura-theme",
+    name = "aura-theme",
+    lazy = false,
+    priority = 1000,
+    config = function(plugin)
+      vim.opt.rtp:append(plugin.dir .. "/packages/neovim")
+    end
+  },
+
   -- Gruvbox (already added in your colorscheme.lua)
   { "ellisonleao/gruvbox.nvim" },
   
@@ -59,28 +70,95 @@ return {
       },
     },
   },
+
+  -- Eldritch
+  {
+    "eldritch-theme/eldritch.nvim",
+    name = "eldritch",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+    config = function()
+      require("eldritch").setup({
+          -- palette = "default", -- This option is deprecated. Use `vim.cmd[[colorscheme eldritch-dark]]` instead.
+          transparent = false, -- Enable this to disable setting the background color
+          terminal_colors = true, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
+          styles = {
+              -- Style to be applied to different syntax groups
+              -- Value is any valid attr-list value for `:help nvim_set_hl`
+              comments = { italic = true },
+              keywords = { italic = true },
+              functions = {},
+              variables = {},
+              -- Background styles. Can be "dark", "transparent" or "normal"
+              sidebars = "dark", -- style for sidebars, see below
+              floats = "dark", -- style for floating windows
+          },
+          sidebars = { "qf", "help" }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
+          hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
+          dim_inactive = false, -- dims inactive windows, transparent must be false for this to work
+          lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
+  
+          --- You can override specific color groups to use other groups or a hex color
+          --- function will be called with a ColorScheme table
+          ---@param colors ColorScheme
+          on_colors = function(colors) end,
+  
+          --- You can override specific highlights to use other groups or a hex color
+          --- function will be called with a Highlights and ColorScheme table
+          ---@param highlights Highlights
+          ---@param colors ColorScheme
+          on_highlights = function(highlights, colors) end,
+          })
+    end
+  },
   
   -- One Dark
+--   {
+--     "navarasu/onedark.nvim",
+--     priority = 1000,
+--     opts = {
+--       style = "dark", -- dark, darker, cool, deep, warm, warmer, light
+--       transparent = false,
+--       term_colors = true,
+--       ending_tildes = false,
+--       cmp_itemkind_reverse = false,
+--       code_style = {
+--         comments = "italic",
+--         keywords = "none",
+--         functions = "none",
+--         strings = "none",
+--         variables = "none",
+--       },
+--       lualine = {
+--         transparent = false,
+--       },
+--     },
+--   },
   {
-    "navarasu/onedark.nvim",
+    "olimorris/onedarkpro.nvim",
+    name = "onedarkpro",
+    lazy = false,
     priority = 1000,
-    opts = {
-      style = "dark", -- dark, darker, cool, deep, warm, warmer, light
-      transparent = false,
-      term_colors = true,
-      ending_tildes = false,
-      cmp_itemkind_reverse = false,
-      code_style = {
-        comments = "italic",
-        keywords = "none",
-        functions = "none",
-        strings = "none",
-        variables = "none",
-      },
-      lualine = {
-        transparent = false,
-      },
-    },
+  },
+
+  -- One Monokai
+  {
+    "cpea2506/one_monokai.nvim",
+    name = "one_monokai",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+    config = function()
+        require("one_monokai").setup({
+            transparent = false,
+            colors = {},
+            highlights = function(colors)
+                return {}
+            end,
+            italics = true,
+        })
+    end
   },
   
   -- Kanagawa
@@ -108,6 +186,15 @@ return {
         light = "lotus",
       },
     },
+  },
+
+  -- Neko-Night
+  {
+    "neko-night/nvim",
+    priority = 1000,
+    lazy = false,
+    config = function()
+    end,
   },
   
   -- Nord
@@ -167,4 +254,19 @@ return {
       vim.opt.background = "dark" -- set this to dark or light
     end,
   },
+
+  -- VSCode Modern
+  {
+    "gmr458/vscode_modern_theme.nvim",
+    name = "vscode_modern",
+    lazy = false,
+    priority = 1000,
+    config = function()
+        require("vscode_modern").setup({
+            cursorline = true,
+            transparent_background = false,
+            nvim_tree_darker = true,
+        })
+    end,
+  }
 }
