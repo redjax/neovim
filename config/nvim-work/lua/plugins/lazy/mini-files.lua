@@ -28,12 +28,12 @@ return {
     },
   },
   config = function()
-    -- Setup mini.files with custom mappings
+    -- Setup mini.files with default mappings
     require("mini.files").setup({
-      mappings = {
-        -- Go to parent directory with 'L'
-        go_in_plus = "L",
-      },
+      -- Using default mappings:
+      -- 'l' or '<Right>' to enter directory/open file
+      -- 'h' or '<Left>' to go to parent directory
+      -- 'j'/'k' or '<Down>'/'<Up>' to navigate
     })
   end,
 }
