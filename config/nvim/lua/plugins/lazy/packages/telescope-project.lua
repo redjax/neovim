@@ -58,6 +58,20 @@ return {
                     search_by = {"title", "path"}, -- Search by both title and path
                     sync_with_nvim_tree = false, -- Set to true if you use nvim-tree
                     ignore_missing_dirs = true,  -- Don't error on missing directories
+                    display_type = "full",   -- Show full project information
+                    
+                    -- Enable showing manually added projects
+                    -- This ensures both auto-discovered and manually added projects are shown
+                    project_files = { 
+                        ".git",
+                        ".project",
+                        "package.json",
+                        "Cargo.toml",
+                        "pyproject.toml",
+                        "requirements.txt",
+                        ".nvim-project",
+                        "go.mod"
+                    },
                     
                     -- Custom actions when project is selected
                     on_project_selected = function(prompt_bufnr)
@@ -117,6 +131,29 @@ return {
         vim.keymap.set('n', '<leader>pc', function()
             local project_actions = require("telescope._extensions.project.actions")
             project_actions.add_project_cwd()
+            print("Added project: " .. vim.fn.getcwd())
         end, { desc = 'Add current directory as project' })
+        
+        -- Debug: Show all stored projects
+        vim.keymap.set('n', '<leader>pd', function()
+            local data_path = vim.fn.stdpath("data")
+            local project_file = data_path .. "/telescope-project.json"
+            if vim.fn.filereadable(project_file) == 1 then
+                local projects = vim.fn.json_decode(vim.fn.readfile(project_file))
+                print("Stored projects:")
+                for path, data in pairs(projects) do
+                    print("  " .. path .. " (" .. (data.title or "no title") .. ")")
+                end
+            else
+                print("No project file found at: " .. project_file)
+            end
+        end, { desc = 'Debug: Show all stored projects' })
+        
+        -- Force refresh projects
+        vim.keymap.set('n', '<leader>pr', function()
+            -- Clear cache and reload extension
+            require('telescope').load_extension('project')
+            print("Project cache refreshed")
+        end, { desc = 'Refresh project list' })
     end,
 }
