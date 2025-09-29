@@ -3,13 +3,13 @@
 return {
   {
     "vhyrro/luarocks.nvim",
-    priority = 1000, -- Loads before other plugins
+    priority = 1000, -- Load before neorg
     config = true,   -- Runs require("luarocks-nvim").setup()
   },
   {
     "nvim-neorg/neorg",
-    lazy = false,  -- Load immediately to ensure keybindings are available
-    priority = 1000,  -- High priority loading
+    lazy = false, -- Load immediately so keybindings are always available
+    priority = 999,  -- Load after luarocks but before most other plugins
     dependencies = {
       "luarocks.nvim",
       "nvim-telescope/telescope.nvim",          -- keep if you later re-enable integrations

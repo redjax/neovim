@@ -3,8 +3,7 @@
 return {
     "matbme/JABS.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    -- "VeryLazy", "BufWinEnter" or "VimEnter" as you prefer
-    event = "VimEnter",
+    event = "VeryLazy", -- Changed from "VimEnter" to avoid conflict with startify
     config = function()
       require("jabs").setup({
         -- {"center", "center"}, {"right", "bottom"}, etc.
