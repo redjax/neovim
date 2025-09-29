@@ -16,7 +16,7 @@ return {
         animate = { enabled = true },  -- https://github.com/folke/snacks.nvim/blob/main/docs/animate.md
         bigfile = { enabled = true }, -- https://github.com/folke/snacks.nvim/blob/main/docs/bigfile.md
         bufdelete = { enabled = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/bufdelete.md
-        dashboard = { enabled = true }, -- https://github.com/folke/snacks.nvim/blob/main/docs/dashboard.md
+        dashboard = { enabled = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/dashboard.md
         debug = { enabled = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/debug.md
         dim = { enabled = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/dim.md
         explorer = { enabled = false }, -- https://github.com/folke/snacks.nvim/blob/main/docs/explorer.md
