@@ -4,3 +4,7 @@
 
 -- Disable LazyVim import order check (we know what we're doing with modular plugins)
 vim.g.lazyvim_check_order = false
+
+-- Line numbers: Use absolute numbers instead of relative
+vim.opt.number = true          -- Enable line numbers
+vim.opt.relativenumber = false -- Disable relative line numbers (LazyVim default is true)
