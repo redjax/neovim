@@ -11,7 +11,10 @@ local server_tool_requirements = {
   -- npm-based servers
   ansiblels = "ansible",
   azure_pipelines_ls = "ansible",
-  bashls = "bash",
+  bashls = function()
+    -- Bash LSP is useful if we have bash or any shell
+    return has("bash") or has("sh") or has("zsh")
+  end,
   css_variables = "npm",
   cssls = "npm",
   cssmodules_ls = "npm",
@@ -40,7 +43,10 @@ local server_tool_requirements = {
   lua_ls = "lua",
   marksman = "cargo",
   postgres_lsp = "psql",
-  powershell_es = "pwsh",
+  powershell_es = function() 
+    -- PowerShell is available if we have pwsh or powershell
+    return has("pwsh") or has("powershell")
+  end,
   superhtml = nil,
   tflint = "tflint",
 
@@ -106,9 +112,18 @@ local cached_servers = nil
 
 local function server_tool_available(server)
   local required_tool = server_tool_requirements[server]
+  
+  -- No requirement means always available
   if not required_tool then
     return true
   end
+  
+  -- If it's a function, call it to check availability
+  if type(required_tool) == "function" then
+    return required_tool()
+  end
+  
+  -- Otherwise check if the tool executable exists
   return has(required_tool)
 end
 
