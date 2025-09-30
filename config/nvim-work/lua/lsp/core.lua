@@ -82,6 +82,14 @@ function M.setup(ensure_installed)
           on_attach = M.on_attach,
         }
       end,
+      ["powershell_es"] = function()
+        local powershell_config = require("lsp.servers.powershell").powershell_es()
+        if powershell_config then
+          powershell_config.capabilities = M.capabilities
+          powershell_config.on_attach = M.on_attach
+          require("lspconfig").powershell_es.setup(powershell_config)
+        end
+      end,
       ["pyright"] = function()
         require("lspconfig").pyright.setup {
           settings = {
