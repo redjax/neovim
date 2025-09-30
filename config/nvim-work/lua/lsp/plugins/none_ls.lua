@@ -6,129 +6,97 @@ return {
   config = function()
     local null_ls = require("null-ls")
 
+    -- Helper function to check if a tool is available
+    local function has_tool(tool)
+      return vim.fn.executable(tool) == 1
+    end
+
+    -- Build sources list based on available tools
+    local sources = {}
+
+    -- Always available built-ins (no external dependencies)
+    table.insert(sources, null_ls.builtins.hover.dictionary)
+    table.insert(sources, null_ls.builtins.completion.spell)
+
+    -- Conditionally add tools based on availability
+    if has_tool("stylua") then
+      table.insert(sources, null_ls.builtins.formatting.stylua)
+    end
+
+    if has_tool("prettier") then
+      table.insert(sources, null_ls.builtins.formatting.prettier)
+    end
+
+    if has_tool("actionlint") then
+      table.insert(sources, null_ls.builtins.diagnostics.actionlint)
+    end
+
+    if has_tool("shfmt") then
+      table.insert(sources, null_ls.builtins.formatting.shfmt)
+    end
+
+    if has_tool("shellcheck") then
+      table.insert(sources, null_ls.builtins.diagnostics.shellcheck)
+    end
+
+    -- Markdown tools (only if available)
+    if has_tool("markdownlint") then
+      table.insert(sources, null_ls.builtins.diagnostics.markdownlint)
+    end
+
+    if has_tool("textlint") then
+      table.insert(sources, null_ls.builtins.diagnostics.textlint)
+    end
+
+    if has_tool("proselint") then
+      table.insert(sources, null_ls.builtins.diagnostics.proselint)
+    end
+
+    -- Python tools
+    if has_tool("black") then
+      table.insert(sources, null_ls.builtins.formatting.black)
+    end
+
+    if has_tool("isort") then
+      table.insert(sources, null_ls.builtins.formatting.isort)
+    end
+
+    -- Go tools
+    if has_tool("gofmt") then
+      table.insert(sources, null_ls.builtins.formatting.gofmt)
+    end
+
+    if has_tool("goimports") then
+      table.insert(sources, null_ls.builtins.formatting.goimports)
+    end
+
+    if has_tool("golangci-lint") then
+      table.insert(sources, null_ls.builtins.diagnostics.golangci_lint)
+    end
+
+    -- YAML tools
+    if has_tool("yamllint") then
+      table.insert(sources, null_ls.builtins.diagnostics.yamllint)
+    end
+
+    -- Terraform tools
+    if has_tool("terraform") then
+      table.insert(sources, null_ls.builtins.formatting.terraform_fmt)
+      table.insert(sources, null_ls.builtins.diagnostics.terraform_validate)
+    end
+
+    if has_tool("tflint") then
+      table.insert(sources, null_ls.builtins.diagnostics.tflint)
+    end
+
+    -- SQL tools
+    if has_tool("sqlfmt") then
+      table.insert(sources, null_ls.builtins.formatting.sqlfmt)
+    end
+
     null_ls.setup({
-      sources = {
-        -- Misc
-        null_ls.builtins.hover.dictionary,
-        null_ls.builtins.hover.printenv,
-
-        -- Formatters
-        null_ls.builtins.formatting.stylua,
-        null_ls.builtins.formatting.prettier,
-        null_ls.builtins.formatting.treefmt,
-
-        -- Stylelint
-        null_ls.builtins.formatting.stylelint,
-
-        -- Completion/snippets/spelling
-        null_ls.builtins.completion.luasnip,
-        null_ls.builtins.completion.nvim_snippets,
-        null_ls.builtins.completion.spell,
-
-        -- GitHub Actions
-        null_ls.builtins.diagnostics.actionlint,
-
-        -- Shell
-        null_ls.builtins.formatting.shfmt,
-        null_ls.builtins.formatting.shellharden,
-
-        -- Markdown
-        null_ls.builtins.diagnostics.alex,
-        null_ls.builtins.diagnostics.markdownlint,
-        null_ls.builtins.diagnostics.markdownlint_cli2,
-        null_ls.builtins.diagnostics.textlint,
-        null_ls.builtins.formatting.mdformat,
-        null_ls.builtins.formatting.remark,
-        null_ls.builtins.formatting.textlint,
-
-        -- Ansible
-        null_ls.builtins.diagnostics.ansiblelint,
-
-        -- Django
-        null_ls.builtins.diagnostics.djlint,
-        null_ls.builtins.formatting.djhtml,
-
-        -- .env
-        null_ls.builtins.diagnostics.dotenv_linter,
-
-        -- Go
-        null_ls.builtins.code_actions.gomodifytags,
-        null_ls.builtins.diagnostics.golangci_lint,
-        null_ls.builtins.diagnostics.staticcheck,
-        null_ls.builtins.formatting.gofmt,
-        null_ls.builtins.formatting.goimports,
-        null_ls.builtins.formatting.goimports_reviser,
-        null_ls.builtins.formatting.golines,
-
-        -- Python
-        null_ls.builtins.formatting.isort,
-        null_ls.builtins.formatting.black,
-        null_ls.builtins.formatting.pyink,
-
-        -- Nix
-        null_ls.builtins.diagnostics.statix,
-        null_ls.builtins.diagnostics.deadnix,
-        null_ls.builtins.formatting.alejandra,
-        null_ls.builtins.formatting.nixfmt,
-        null_ls.builtins.formatting.nixpkgs_fmt,
-        null_ls.builtins.formatting.nix_flake_fmt,
-
-        -- Git commit messages
-        null_ls.builtins.diagnostics.gitlint,
-
-        -- HCL
-        null_ls.builtins.formatting.hclfmt,
-
-        -- Opentofu
-        null_ls.builtins.diagnostics.opentofu_validate,
-        null_ls.builtins.formatting.opentofu_fmt,
-
-        -- Terraform
-        null_ls.builtins.diagnostics.terraform_validate,
-        null_ls.builtins.diagnostics.terragrunt_validate,
-        null_ls.builtins.diagnostics.tfsec,
-        null_ls.builtins.formatting.terraform_fmt,
-        null_ls.builtins.formatting.terragrunt_fmt,
-
-        -- Prose
-        null_ls.builtins.diagnostics.proselint,
-        null_ls.builtins.diagnostics.write_good,
-
-        -- Salt
-        null_ls.builtins.diagnostics.saltlint,
-
-        -- JSON
-        null_ls.builtins.diagnostics.spectral,
-
-        -- YAML
-        null_ls.builtins.diagnostics.yamllint,
-        null_ls.builtins.formatting.yamlfix,
-        null_ls.builtins.formatting.yamlfmt,
-
-        -- SQL
-        null_ls.builtins.diagnostics.sqruff,
-        null_ls.builtins.formatting.pg_format,
-        null_ls.builtins.formatting.sqlfmt,
-        null_ls.builtins.formatting.sqlformat,
-        null_ls.builtins.formatting.sql_formatter,
-
-        -- CSS
-        null_ls.builtins.diagnostics.stylelint,
-
-        -- HTML/XML/etc.
-        null_ls.builtins.diagnostics.tidy,
-        null_ls.builtins.formatting.htmlbeautifier,
-        null_ls.builtins.formatting.xmllint,
-
-        -- C#
-        null_ls.builtins.formatting.csharpier,
-
-        -- NGINX
-        null_ls.builtins.formatting.nginx_beautifier,
-
-        -- NodeJS
-        null_ls.builtins.formatting.npm_groovy_lint,
-      },
+      sources = sources,
+      debug = false, -- Set to true if you want to see debug info
     })
   end,
 }

@@ -54,24 +54,28 @@ function M.setup(ensure_installed)
   require("mason-lspconfig").setup({
     ensure_installed = ensure_installed,
     handlers = {
-      -- default handler
+      -- default handler using modern vim.lsp.config API
       function(server_name)
-        require("lspconfig")[server_name].setup {
+        vim.lsp.config[server_name] = {
           capabilities = M.capabilities,
           on_attach = M.on_attach,
+          root_dir = vim.fs.root,
+          single_file_support = true,
         }
       end,
       ["sqls"] = function()
-        require("lspconfig").sqls.setup {
+        vim.lsp.config.sqls = {
           on_attach = function(client, bufnr)
             require('sqls').on_attach(client, bufnr)
             M.on_attach(client, bufnr)
           end,
           capabilities = M.capabilities,
+          root_dir = vim.fs.root,
+          single_file_support = true,
         }
       end,
       ["lua_ls"] = function()
-        require("lspconfig").lua_ls.setup {
+        vim.lsp.config.lua_ls = {
           settings = {
             Lua = {
               diagnostics = { globals = { "vim" } },
@@ -80,18 +84,25 @@ function M.setup(ensure_installed)
           },
           capabilities = M.capabilities,
           on_attach = M.on_attach,
+          root_dir = vim.fs.root,
+          single_file_support = true,
         }
       end,
       ["powershell_es"] = function()
-        local powershell_config = require("lsp.servers.powershell").powershell_es()
-        if powershell_config then
-          powershell_config.capabilities = M.capabilities
-          powershell_config.on_attach = M.on_attach
-          require("lspconfig").powershell_es.setup(powershell_config)
+        local powershell_servers = require("lsp.servers.powershell")
+        if powershell_servers and powershell_servers.settings then
+          vim.lsp.config.powershell_es = {
+            settings = powershell_servers.settings.powershell,
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            filetypes = powershell_servers.filetypes,
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
         end
       end,
       ["pyright"] = function()
-        require("lspconfig").pyright.setup {
+        vim.lsp.config.pyright = {
           settings = {
             python = {
               analysis = {
@@ -101,10 +112,12 @@ function M.setup(ensure_installed)
           },
           capabilities = M.capabilities,
           on_attach = M.on_attach,
+          root_dir = vim.fs.root,
+          single_file_support = true,
         }
       end,
       ["gopls"] = function()
-        require("lspconfig").gopls.setup {
+        vim.lsp.config.gopls = {
           settings = {
             gopls = {
               analyses = {
@@ -116,10 +129,12 @@ function M.setup(ensure_installed)
           },
           capabilities = M.capabilities,
           on_attach = M.on_attach,
+          root_dir = vim.fs.root,
+          single_file_support = true,
         }
       end,
       ["yamlls"] = function()
-        require("lspconfig").yamlls.setup {
+        vim.lsp.config.yamlls = {
           settings = {
             yaml = {
               schemas = require('schemastore').yaml.schemas(),
@@ -128,6 +143,8 @@ function M.setup(ensure_installed)
           },
           capabilities = M.capabilities,
           on_attach = M.on_attach,
+          root_dir = vim.fs.root,
+          single_file_support = true,
         }
       end,
     },

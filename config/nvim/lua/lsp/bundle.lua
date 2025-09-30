@@ -13,11 +13,33 @@ return {
       "nvimtools/none-ls.nvim",
     },
     config = function()
-      local auto_servers = require("lsp.auto_servers")
-      local ensure_installed = auto_servers.get and auto_servers.get() or {}
+      local lsp_auto_servers = require("lsp.lsp-auto-servers")
+      local ensure_installed = lsp_auto_servers.get and lsp_auto_servers.get() or {}
 
       -- Call your core setup function with the dynamic server list
       require("lsp.core").setup(ensure_installed)
+
+      -- Load and apply enhanced server configurations
+      local server_configs = lsp_auto_servers.load_server_configs()
+      
+      -- Apply enhanced configurations for specific servers using modern vim.lsp.config API
+      for server_name, config in pairs(server_configs) do
+        if config.settings then
+          -- Find the actual LSP server names for this configuration
+          if config.servers then
+            for _, server in ipairs(config.servers) do
+              if vim.tbl_contains(ensure_installed, server) then
+                vim.lsp.config[server] = {
+                  settings = config.settings[server] or config.settings,
+                  filetypes = config.filetypes,
+                  root_dir = vim.fs.root,
+                  single_file_support = true,
+                }
+              end
+            end
+          end
+        end
+      end
 
       -- Setup signature if present
       local signature = require("lsp.plugins.signature")
