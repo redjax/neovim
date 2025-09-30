@@ -1,30 +1,13 @@
 return {
     "mason-org/mason.nvim",
     opts = function(_, opts)
-        -- Detect platform
-        local is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1
+        -- Use the LSP auto servers to get comprehensive tool list
+        local lsp_auto_servers = require("lsp.lsp-auto-servers")
+        local mason_tools = lsp_auto_servers.get_mason_tools()
         
-        -- Base tools for all platforms
-        local base_tools = {
-            "stylua",
-            "shellcheck",
-            "shfmt",
-            "flake8",
-            "bash-language-server", -- Bash LSP for all platforms
-        }
+        -- Ensure we have the tools needed
+        opts.ensure_installed = mason_tools
         
-        -- Windows-specific tools
-        local windows_tools = {
-            "powershell-editor-services", -- PowerShell LSP
-        }
-        
-        -- Combine tools based on platform
-        local ensure_installed = base_tools
-        if is_windows then
-            vim.list_extend(ensure_installed, windows_tools)
-        end
-        
-        opts.ensure_installed = ensure_installed
         return opts
     end,
 }
