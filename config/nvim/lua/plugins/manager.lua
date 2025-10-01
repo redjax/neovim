@@ -12,7 +12,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Base specs
 local specs = {
-  { import = "plugins.lazy.packages" },
+  { import = "plugins.lazy" },
   { import = "themes" },
   { import = "lsp.plugins.mason" },
   { import = "lsp.plugins.signature" },
@@ -24,10 +24,10 @@ local specs = {
 local servers = {
   -- Base servers
   "lua_ls",
-  "marksman", 
+  "marksman",
   "powershell_es",
   "tflint",
-  
+
   -- NPM servers
   "azure_pipelines_ls",
   "bashls",
@@ -38,10 +38,10 @@ local servers = {
   "pyright",
   "sqlls",
   "yamlls",
-  
+
   -- .NET servers
   "bicep",
-  
+
   -- Go servers
   "golangci_lint_ls",
   "gopls",
@@ -71,7 +71,7 @@ require("lazy").setup({
       disabled_plugins = {
         "gzip",
         -- "matchit",
-        -- "matchparen", 
+        -- "matchparen",
         -- "netrwPlugin",
         "tarPlugin",
         "tohtml",
@@ -81,3 +81,4 @@ require("lazy").setup({
     },
   },
 })
+
