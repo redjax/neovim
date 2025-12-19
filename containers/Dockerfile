@@ -125,6 +125,11 @@ RUN source ~/.nvm/nvm.sh && \
     npm --version && \
     ./scripts/linux/install-lsp-requirements.sh
 
+## Ensure directories exist for copying later
+RUN mkdir -p /home/nvimuser/.local/share/nvim \
+    /home/nvimuser/.local/state/nvim \
+    /home/nvimuser/go/bin
+
 ## Initialize lazy.nvim plugins for the specified config
 ## Use the config name from build arg
 RUN export NVIM_APPNAME="${CONFIG_NAME}" && \
@@ -146,6 +151,7 @@ COPY --from=builder /home/nvimuser/.config /home/nvimuser/.config
 ## Copy neovim data (lazy plugins, etc)
 COPY --from=builder /home/nvimuser/.local/share/nvim /home/nvimuser/.local/share/nvim
 COPY --from=builder /home/nvimuser/.local/state/nvim /home/nvimuser/.local/state/nvim
+COPY --from=builder /home/nvimuser/.local/bin /home/nvimuser/.local/bin
 
 ## Copy installed LSP servers and tools
 COPY --from=builder /home/nvimuser/.nvm /home/nvimuser/.nvm
