@@ -58,6 +58,11 @@ ENV PATH="${CARGO_HOME}/bin:${PATH}"
 RUN ln -sf /usr/local/bin/python3 /usr/local/bin/python && \
     ln -sf /usr/local/bin/pip3 /usr/local/bin/pip
 
+## Install pipx for Python tool management
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install pipx && \
+    python3 -m pipx ensurepath
+
 ## Create a non-root user
 RUN useradd -ms /bin/bash nvimuser && \
     echo "nvimuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
@@ -78,10 +83,12 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | ba
 ## Set up environment for nvm
 RUN echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc && \
-    echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.bashrc
+    echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.bashrc && \
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
-## Set login shell for all RUN commands to load nvm
-SHELL ["/bin/bash", "-l", "-c"]
+## Ensure pipx path is available for nvimuser
+RUN mkdir -p /home/nvimuser/.local/bin && \
+    python3 -m pipx ensurepath
 
 ## Set login shell for all RUN commands to load nvm
 SHELL ["/bin/bash", "-l", "-c"]
