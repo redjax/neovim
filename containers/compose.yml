@@ -6,13 +6,25 @@ services:
       dockerfile: containers/Dockerfile
       args:
         CONFIG_NAME: ${CONFIG_NAME:-nvim}
-    image: redjax-nvim
-    container_name: redjax-nvim
-    env_file:
-      - .env
+        PYTHON_IMG_TAG: ${PYTHON_IMG_TAG:-3.12-slim}
+        GO_IMG_TAG: ${GO_IMG_TAG:-1.21}
+        RUST_IMG_TAG: ${RUST_IMG_TAG:-latest}
+      target: runtime
+    image: neovim-test:${CONFIG_NAME:-nvim}
+    container_name: neovim-test-${CONFIG_NAME:-nvim}
     environment:
       - CONTAINER_ENV=1
       - CONFIG_NAME=${CONFIG_NAME:-nvim}
+      - NVIM_APPNAME=${CONFIG_NAME:-nvim}
     working_dir: /home/nvimuser/neovim
+    volumes:
+      ## Optional: Mount your local config for live editing
+      # - ../config/${CONFIG_NAME:-nvim}:/home/nvimuser/.config/${CONFIG_NAME:-nvim}
+      ## Mount a persistent volume for plugin data
+      - nvim-data:/home/nvimuser/.local/share/nvim
     tty: true
     stdin_open: true
+    command: /bin/bash
+
+volumes:
+  nvim-data:
