@@ -1,11 +1,14 @@
 -- LazyVim configuration and imports
 -- This file ensures proper import order as required by LazyVim
+-- NOTE: Language extras are already lazy-loaded by filetype automatically
+-- They won't slow down startup - they only load when you open files of that type
 
 return {
   -- Note: lazyvim.plugins is imported in lua/config/lazy.lua
   -- We only need to import extras here, in the correct order
   
   -- Import LazyVim language extras
+  -- These lazy-load automatically when you open files of the respective type
   { import = "lazyvim.plugins.extras.lang.typescript" },
   { import = "lazyvim.plugins.extras.lang.json" },
   { import = "lazyvim.plugins.extras.lang.python" },
