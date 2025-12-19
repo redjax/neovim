@@ -56,7 +56,7 @@ require("lazy").setup({
     version = false,
   },
   change_detection = { notify = false },
-  checker = { enabled = true, notify = false },
+  checker = { enabled = true, notify = false, frequency = 86400 },
   performance = {
     cache = {
       enabled = true,
