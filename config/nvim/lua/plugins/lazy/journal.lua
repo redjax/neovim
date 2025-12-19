@@ -70,13 +70,12 @@ local function extract_summary(file_path)
   -- Extract bullet points (lines starting with - or *)
   local bullets = {}
   for line in summary_content:gmatch("[^\r\n]+") do
-    local trimmed = line:match("^%s*(.-)%s*$")
-    if trimmed:match("^[-*]%s+") and trimmed ~= "- " and trimmed ~= "* " then
-      -- Clean up the bullet point
-      local bullet = trimmed:gsub("^[-*]%s+", "")
-      if bullet and bullet ~= "" then
-        table.insert(bullets, bullet)
-      end
+    -- Match lines with bullets, but preserve indentation
+    local indentation, bullet_marker, content = line:match("^(%s*)([-*])%s+(.+)$")
+    if content and content ~= "" then
+      -- Preserve the indentation and reconstruct the bullet point
+      local full_bullet = indentation .. bullet_marker .. " " .. content
+      table.insert(bullets, full_bullet)
     end
   end
   
@@ -128,7 +127,8 @@ local function generate_weekly_journal(weekly_summaries)
     if bullets and #bullets > 0 then
       summary_content = summary_content .. "### " .. day_name .. "\n\n"
       for _, bullet in ipairs(bullets) do
-        summary_content = summary_content .. "- " .. bullet .. "\n"
+        -- Bullet already contains formatting and indentation, just add it
+        summary_content = summary_content .. bullet .. "\n"
         table.insert(all_bullets, bullet)  -- Add to full summary
       end
       summary_content = summary_content .. "\n"
@@ -139,7 +139,8 @@ local function generate_weekly_journal(weekly_summaries)
   if #all_bullets > 0 then
     summary_content = summary_content .. "### Full Summary\n\n"
     for _, bullet in ipairs(all_bullets) do
-      summary_content = summary_content .. "- " .. bullet .. "\n"
+      -- Bullet already contains formatting and indentation, just add it
+      summary_content = summary_content .. bullet .. "\n"
     end
     summary_content = summary_content .. "\n"
   end

@@ -16,5 +16,7 @@ return {
       },
     })
   end,
-  event = "VeryLazy",  -- load when needed
+  keys = {
+    { ";", mode = "n" },
+  },
 }

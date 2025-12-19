@@ -2,8 +2,11 @@
 
 return {
   "gbprod/yanky.nvim",
-  -- "VeryLazy" or "BufReadPre" if you want it earlier
-  event = "VeryLazy",
+  keys = {
+    { "p", mode = { "n", "x" } },
+    { "P", mode = { "n", "x" } },
+    { "<leader>p", desc = "Yank History" },
+  },
   dependencies = { "nvim-telescope/telescope.nvim" },
   opts = {
     -- You can customize options here, or leave empty for sensible defaults
