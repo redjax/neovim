@@ -7,6 +7,14 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
+-- Disable autoformat for certain filetypes
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "sql", "terraform" },
+	callback = function()
+		vim.b.autoformat = false
+	end,
+})
+
 -- Re-open documents at last known position
 vim.api.nvim_create_autocmd("BufRead", {
 	callback = function(opts)
