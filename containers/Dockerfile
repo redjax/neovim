@@ -111,7 +111,12 @@ RUN ./scripts/linux/install.sh --symlink --build-dir "${BUILD_DIR}"
 RUN nvim --version
 
 ## Install LSP servers and formatters
-RUN ./scripts/linux/install-lsp-requirements.sh
+## Explicitly source nvm to ensure npm is available
+RUN source ~/.nvm/nvm.sh && \
+    source ~/.bashrc && \
+    node --version && \
+    npm --version && \
+    ./scripts/linux/install-lsp-requirements.sh
 
 ## Initialize lazy.nvim plugins for the specified config
 ## Use the config name from build arg
