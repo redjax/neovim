@@ -1,4 +1,9 @@
 -- Go language enhancements https://github.com/olexsmir/gopher.nvim
+-- Only loads if Go is installed
+
+if vim.fn.executable("go") == 0 then
+  return {}
+end
 
 return {
   "olexsmir/gopher.nvim",

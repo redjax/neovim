@@ -1,4 +1,9 @@
 -- Go language support https://github.com/ray-x/go.nvim
+-- Only loads if Go is installed
+
+if vim.fn.executable("go") == 0 then
+  return {}
+end
 
 return {
   "ray-x/go.nvim",
