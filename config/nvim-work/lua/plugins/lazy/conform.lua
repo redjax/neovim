@@ -102,11 +102,6 @@ return {
         }
       end,
       
-      -- Format after save for async formatters
-      format_after_save = {
-        lsp_format = "fallback",
-      },
-      
       -- Log level for debugging
       log_level = vim.log.levels.WARN,
       
