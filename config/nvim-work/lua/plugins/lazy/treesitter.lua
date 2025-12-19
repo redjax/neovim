@@ -73,6 +73,8 @@ return {
                 "tmux",
                 "toml",
                 "typescript",
+                "vim",
+                "vimdoc",
                 "vue",
                 "xml",
                 "yaml",
