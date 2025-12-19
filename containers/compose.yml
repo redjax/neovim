@@ -24,7 +24,8 @@ services:
       - nvim-data:/home/nvimuser/.local/share/nvim
     tty: true
     stdin_open: true
-    command: /bin/bash
+    ## Keep container running for exec access
+    command: sleep infinity
 
 volumes:
   nvim-data:
