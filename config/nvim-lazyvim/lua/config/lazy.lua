@@ -31,6 +31,11 @@ require("lazy").setup({
   },
   -- Remove default colorscheme to let Themery manage it
   -- install = { colorscheme = { "tokyonight", "habamax" } },
+  -- Enable luarocks support for plugins like neorg
+  rocks = {
+    enabled = true,
+    hererocks = false, -- use system luarocks instead of bundled
+  },
   checker = {
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update
