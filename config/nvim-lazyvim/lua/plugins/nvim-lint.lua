@@ -68,7 +68,7 @@ return {
     
     -- Go
     if has_tool("golangci-lint") then
-      lint.linters_by_ft.go = { "golangci-lint" }
+      lint.linters_by_ft.go = { "golangcilint" }
     end
     
     -- Terraform

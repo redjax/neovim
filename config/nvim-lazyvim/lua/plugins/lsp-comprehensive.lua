@@ -117,6 +117,12 @@ return {
             usePlaceholders = true,
             completeUnimported = true,
             directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
+            -- Environment settings
+            env = {
+              GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
+              GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
+            },
+            allowModfileModifications = true,
           },
         },
       }
