@@ -70,7 +70,7 @@ return {
         
         -- Go
         if has_tool("golangci-lint") then
-            lint.linters_by_ft.go = { "golangci-lint" }
+            lint.linters_by_ft.go = { "golangcilint" }
         elseif has_tool("staticcheck") then
             lint.linters_by_ft.go = { "staticcheck" }
         elseif has_tool("revive") then

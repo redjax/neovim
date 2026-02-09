@@ -125,6 +125,19 @@ function M.setup(ensure_installed)
                 shadow = true,
               },
               staticcheck = true,
+              -- Environment settings to prevent path issues
+              env = {
+                GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
+                GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
+              },
+              -- Allow opening single files without workspace
+              allowModfileModifications = true,
+              -- Improve workspace folder handling
+              directoryFilters = {
+                "-**/node_modules",
+                "-**/.git",
+                "-**/vendor",
+              },
             },
           },
           capabilities = M.capabilities,
