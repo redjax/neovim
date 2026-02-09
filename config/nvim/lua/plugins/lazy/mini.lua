@@ -4,6 +4,7 @@ return {
     "echasnovski/mini.nvim",
     -- Use `version = false` for latest (main branch). Use `version = '*'` for stable.
     version = "*",
+    event = "VeryLazy",
     config = function()
         -- Add mini modules you want
         -- \ All modules: https://github.com/echasnovski/mini.nvim/tree/main#modules
@@ -24,8 +25,8 @@ return {
         require('mini.keymap').setup()
         -- Surround text objects
         require('mini.surround').setup()
-        -- Autopairs
-        require('mini.pairs').setup()
+        -- Autopairs - DISABLED in favor of autoclose.nvim
+        -- require('mini.pairs').setup()
         -- Commenting
         require('mini.comment').setup()
         -- Visualize & work with indent scope
