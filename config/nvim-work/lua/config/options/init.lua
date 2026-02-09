@@ -20,6 +20,8 @@ require('config.options.ui')
 require('config.options.window')
 -- Whitespace trimming & newline on save
 require('config.options.whitespace')
+-- Autocmds for LSP and filetype-specific behavior
+require('config.options.autocmds')
 
 -- Performance optimizations
 vim.opt.updatetime = 250       -- Faster completion and CursorHold events

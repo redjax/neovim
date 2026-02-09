@@ -125,6 +125,17 @@ function M.setup(ensure_installed)
                 shadow = true,
               },
               staticcheck = true,
+              -- Environment settings
+              env = {
+                GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
+                GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
+              },
+              allowModfileModifications = true,
+              directoryFilters = {
+                "-**/node_modules",
+                "-**/.git",
+                "-**/vendor",
+              },
             },
           },
           capabilities = M.capabilities,
