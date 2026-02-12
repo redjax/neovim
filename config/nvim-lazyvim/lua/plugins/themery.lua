@@ -30,7 +30,8 @@ return {
   -- Themery - Theme picker plugin
   {
     "zaldih/themery.nvim",
-    lazy = true,  -- Only load when command is invoked
+    lazy = false,  -- Load at startup to restore saved theme
+    priority = 1002,  -- Load after themes but before other plugins
     cmd = "Themery",
     config = function()
       require("themery").setup({
