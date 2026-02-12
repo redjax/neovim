@@ -15,6 +15,7 @@ local specs = {
   { import = "plugins.lazy" },
   { import = "themes" },
   { import = "lsp.plugins.mason" },
+  { import = "lsp.plugins.mason-tool-installer" },
   { import = "lsp.plugins.signature" },
   { import = "lsp.plugins.none_ls" },
   { import = "lsp.dap" },
