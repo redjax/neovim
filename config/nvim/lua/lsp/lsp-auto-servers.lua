@@ -100,7 +100,7 @@ M.defaults = {
   specialized = {
     "postgres_lsp",
     "tflint",
-    "superhtml",
+    -- "superhtml",  -- Requires xz-utils system dependency, not cross-platform
   }
 }
 

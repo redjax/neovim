@@ -64,7 +64,7 @@ return {
                 "scss",
                 "sql",
                 "ssh_config",
-                "superhtml",
+                -- "superhtml",  -- Requires xz-utils system dependency
                 "svelte",
                 "terraform",
                 "tmux",

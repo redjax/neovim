@@ -43,14 +43,7 @@ function M.setup(ensure_installed)
   -- fidget for progress
   require("fidget").setup({})
 
-  -- mason + mason-lspconfig (no automatic global install beyond provided list)
-  require("mason").setup({
-    registries = {
-      'github:mason-org/mason-registry',
-      'github:crashdummyy/mason-registry',
-    },
-  })
-
+  -- mason-lspconfig (mason itself is set up via plugin spec with opts)
   require("mason-lspconfig").setup({
     ensure_installed = ensure_installed,
     handlers = {
