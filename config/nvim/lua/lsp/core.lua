@@ -116,13 +116,12 @@ function M.setup(ensure_installed)
               analyses = {
                 unusedparams = true,
                 shadow = true,
+                nilness = true,
+                unusedwrite = true,
+                useany = true,
               },
               staticcheck = true,
-              -- Environment settings to prevent path issues
-              env = {
-                GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
-                GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
-              },
+              gofumpt = true,
               -- Allow opening single files without workspace
               allowModfileModifications = true,
               -- Improve workspace folder handling
@@ -131,9 +130,22 @@ function M.setup(ensure_installed)
                 "-**/.git",
                 "-**/vendor",
               },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
             },
           },
-          capabilities = M.capabilities,
+          capabilities = vim.tbl_deep_extend(
+            "force",
+            M.capabilities,
+            { offsetEncoding = { "utf-8", "utf-16" } }
+          ),
           on_attach = M.on_attach,
           root_dir = vim.fs.root,
           single_file_support = true,
