@@ -3,7 +3,7 @@ return {
   {
     "daltonmenezes/aura-theme",
     name = "aura-theme",
-    lazy = true,  -- Lazy load - only when colorscheme is requested
+    lazy = false,  -- Load immediately so Themery can find colorschemes
     priority = 999,
     config = function(plugin)
       vim.opt.rtp:append(plugin.dir .. "/packages/neovim")
@@ -16,7 +16,7 @@ return {
   -- Tokyo Night
   {
     "folke/tokyonight.nvim",
-    lazy = true,  -- Let Themery manage loading
+    lazy = false,  -- Load immediately for Themery
     priority = 1000,
     opts = {
       style = "night", -- storm, moon, night, day
@@ -75,7 +75,7 @@ return {
   {
     "eldritch-theme/eldritch.nvim",
     name = "eldritch",
-    lazy = true,  -- Let Themery manage loading
+    lazy = false,  -- Load immediately for Themery
     priority = 1000,
     opts = {},
     config = function()
@@ -138,7 +138,7 @@ return {
   {
     "olimorris/onedarkpro.nvim",
     name = "onedarkpro",
-    lazy = true,  -- Let Themery manage loading
+    lazy = false,  -- Load immediately for Themery
     priority = 1000,
   },
 
@@ -146,7 +146,7 @@ return {
   {
     "cpea2506/one_monokai.nvim",
     name = "one_monokai",
-    lazy = true,  -- Let Themery manage loading
+    lazy = false,  -- Load immediately for Themery
     priority = 1000,
     opts = {},
     config = function()
@@ -248,7 +248,7 @@ return {
   -- Oxocarbon
   {
     "nyoom-engineering/oxocarbon.nvim",
-    lazy = true,  -- Let Themery manage loading
+    lazy = false,  -- Load immediately for Themery
     priority = 1000,
     config = function()
       vim.opt.background = "dark" -- set this to dark or light
@@ -259,7 +259,7 @@ return {
   {
     "gmr458/vscode_modern_theme.nvim",
     name = "vscode_modern",
-    lazy = true,  -- Let Themery manage loading
+    lazy = false,  -- Load immediately for Themery
     priority = 1000,
     config = function()
         require("vscode_modern").setup({
