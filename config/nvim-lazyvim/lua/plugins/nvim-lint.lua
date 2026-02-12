@@ -66,10 +66,12 @@ return {
       })
     end
     
-    -- Go
-    if has_tool("golangci-lint") then
-      lint.linters_by_ft.go = { "golangcilint" }
-    end
+    -- Go: Rely on gopls LSP for linting (VSCode-style)
+    -- golangci-lint is better suited for CI/CD pipelines
+    -- Uncomment below if you want golangci-lint in the editor:
+    -- if has_tool("golangci-lint") then
+    --   lint.linters_by_ft.go = { "golangcilint" }
+    -- end
     
     -- Terraform
     if has_tool("tflint") then
@@ -79,7 +81,7 @@ return {
     -- Auto-lint on specific events
     local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
     
-    vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+    vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
       group = lint_augroup,
       callback = function()
         lint.try_lint()

@@ -68,12 +68,14 @@ return {
             })
         end
         
-        -- Go
-        if has_tool("golangci-lint") then
-            lint.linters_by_ft.go = { "golangcilint" }
-        elseif has_tool("staticcheck") then
-            lint.linters_by_ft.go = { "staticcheck" }
-        end
+        -- Go: Rely on gopls LSP for linting (VSCode-style)
+        -- golangci-lint is better suited for CI/CD pipelines
+        -- Uncomment below if you want golangci-lint in the editor:
+        -- if has_tool("golangci-lint") then
+        --     lint.linters_by_ft.go = { "golangcilint" }
+        -- elseif has_tool("staticcheck") then
+        --     lint.linters_by_ft.go = { "staticcheck" }
+        -- end
         
         -- Terraform
         if has_tool("tflint") then

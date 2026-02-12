@@ -3,19 +3,16 @@
 return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+    lazy = false,
+    priority = 100,
     config = function()
-        -- Add .norg parser for Neorg
-        local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-        parser_config.norg = {
-          install_info = {
-            url = "https://github.com/nvim-neorg/tree-sitter-norg", -- Add parser repo
-            files = { "src/parser.c", "src/scanner.cc" },
-            branch = "main",
-          },
-          filetype = "norg" -- Associate parser with .norg files
-        }
-
-        require("nvim-treesitter.configs").setup({
+        -- Safely load treesitter config
+        local status_ok, configs = pcall(require, "nvim-treesitter.configs")
+        if not status_ok then
+            return
+        end
+        
+        configs.setup({
             -- Add languages supported by Treesitter
             --   https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
             ensure_installed = {
@@ -67,7 +64,7 @@ return {
                 "scss",
                 "sql",
                 "ssh_config",
-                "superhtml",
+                -- "superhtml",  -- Requires xz-utils system dependency
                 "svelte",
                 "terraform",
                 "tmux",
@@ -89,18 +86,8 @@ return {
             },
         })
   
-        -- Add the custom templ parser
-        local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-        parser_config.templ = {
-            install_info = {
-                url = "https://github.com/vrischmann/tree-sitter-templ.git",
-                files = { "src/parser.c", "src/scanner.c" },
-                branch = "master",
-            },
-        }
-        -- Register templ parser
+        -- Register templ filetype (parser installed via ensure_installed or auto_install)
         vim.treesitter.language.register("templ", "templ")
 
     end
 }
-  

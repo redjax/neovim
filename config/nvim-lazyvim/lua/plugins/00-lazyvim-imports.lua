@@ -33,9 +33,6 @@ end
 if has("go") then
   table.insert(imports, { import = "lazyvim.plugins.extras.lang.go" })
 end
-if has("go") then
-  table.insert(imports, { import = "lazyvim.plugins.extras.lang.go" })
-end
 
 -- Import LazyVim tool extras (conditional on node/npm for prettier and eslint)
 if has("node") or has("npm") then

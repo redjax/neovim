@@ -60,7 +60,7 @@ M.defaults = {
     "marksman",
     "postgres_lsp",
     "powershell_es",
-    "superhtml",
+    -- "superhtml",  -- Requires xz-utils system dependency, not cross-platform
     "tflint",
   },
   dotnet = {
