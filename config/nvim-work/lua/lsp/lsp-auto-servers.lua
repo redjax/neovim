@@ -77,13 +77,14 @@ M.defaults = {
     "pyright",
     "gopls",
     "rust_analyzer",
-    "dockerls",
     "terraformls",
     "bicep",
     "sqlls",
     "marksman", -- Moved to conditional since it requires cargo
   },
   npm = {
+    "dockerls",  -- Dockerfile LSP doesn't need Docker runtime
+    "docker_compose_language_service",  -- Docker Compose LSP
     "eslint",
     "html",
     "cssls",

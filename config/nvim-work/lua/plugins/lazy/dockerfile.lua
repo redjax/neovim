@@ -3,7 +3,7 @@
 
 return {
   "ekalinin/Dockerfile.vim",
-  ft = { "dockerfile" },
+  ft = { "dockerfile", "Dockerfile" },  -- Support both cases
   init = function()
     -- Completely disable the plugin's indentation before it loads
     vim.g.dockerfile_indent = 0
