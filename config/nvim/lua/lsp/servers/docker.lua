@@ -28,8 +28,15 @@ return {
     },
     docker_compose_language_service = {
       -- Docker Compose LSP settings
-      settings = {},
+      settings = {
+        compose = {
+          -- Enable validation and completion
+          validation = true,
+          completion = true,
+          hover = true,
+        },
+      },
     },
   },
-  filetypes = { "dockerfile", "docker-compose" },
+  filetypes = { "dockerfile", "yaml.docker-compose" },
 }
