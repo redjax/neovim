@@ -23,10 +23,10 @@ return {
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "dockerfile",
       callback = function()
-        -- Use 4 spaces for indentation (Docker convention)
-        vim.bo.shiftwidth = 4
-        vim.bo.tabstop = 4
-        vim.bo.softtabstop = 4
+        -- Use 2 spaces for indentation
+        vim.bo.shiftwidth = 2
+        vim.bo.tabstop = 2
+        vim.bo.softtabstop = 2
         vim.bo.expandtab = true
         
         -- Enable format on save for Dockerfiles
