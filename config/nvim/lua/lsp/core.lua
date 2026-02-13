@@ -165,6 +165,33 @@ function M.setup(ensure_installed)
           single_file_support = true,
         }
       end,
+      ["dockerls"] = function()
+        local docker_servers = require("lsp.servers.docker")
+        if docker_servers and docker_servers.settings and docker_servers.settings.dockerls then
+          vim.lsp.config.dockerls = {
+            settings = docker_servers.settings.dockerls.settings,
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        else
+          vim.lsp.config.dockerls = {
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        end
+      end,
+      ["docker_compose_language_service"] = function()
+        vim.lsp.config.docker_compose_language_service = {
+          capabilities = M.capabilities,
+          on_attach = M.on_attach,
+          root_dir = vim.fs.root,
+          single_file_support = true,
+        }
+      end,
     },
   })
 

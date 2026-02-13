@@ -41,6 +41,52 @@ return {
         -- Docker
         if has_tool("hadolint") then
             lint.linters_by_ft.dockerfile = { "hadolint" }
+            
+            -- Configure hadolint for stricter checking (VSCode-like)
+            lint.linters.hadolint = {
+                cmd = "hadolint",
+                stdin = true,
+                args = {
+                    "--format", "json",
+                    "-",  -- Read from stdin
+                },
+                stream = "stdout",
+                ignore_exitcode = true,
+                parser = function(output, bufnr)
+                    local diagnostics = {}
+                    local ok, decoded = pcall(vim.json.decode, output)
+                    if not ok or not decoded then
+                        return diagnostics
+                    end
+                    
+                    for _, item in ipairs(decoded) do
+                        -- Map hadolint severity to vim diagnostic severity
+                        local severity = vim.diagnostic.severity.INFO
+                        if item.level == "error" then
+                            severity = vim.diagnostic.severity.ERROR
+                        elseif item.level == "warning" then
+                            severity = vim.diagnostic.severity.WARN
+                        elseif item.level == "info" then
+                            severity = vim.diagnostic.severity.INFO
+                        elseif item.level == "style" then
+                            severity = vim.diagnostic.severity.HINT
+                        end
+                        
+                        table.insert(diagnostics, {
+                            lnum = (item.line or 1) - 1,
+                            col = (item.column or 1) - 1,
+                            end_lnum = (item.line or 1) - 1,
+                            end_col = (item.column or 1),
+                            severity = severity,
+                            source = "hadolint",
+                            message = string.format("%s (%s)", item.message, item.code),
+                            code = item.code,
+                        })
+                    end
+                    
+                    return diagnostics
+                end,
+            }
         end
         
         -- YAML

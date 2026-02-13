@@ -8,7 +8,19 @@ return {
         docker = {
           languageserver = {
             formatter = {
-              ignoreMultilineInstructions = true,
+              ignoreMultilineInstructions = false,  -- Enable multi-line formatting
+            },
+            diagnostics = {
+              -- Enable additional diagnostics
+              deprecatedMaintainer = true,
+              directiveCasing = true,
+              emptyContinuationLine = true,
+              instructionCasing = "uppercase",  -- Enforce uppercase instructions
+              instructionCmdMultiple = true,
+              instructionEntrypointMultiple = true,
+              instructionHealthcheckMultiple = true,
+              instructionJSONInSingleQuotes = true,
+              instructionWorkdirRelative = true,
             },
           },
         },
