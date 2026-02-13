@@ -9,7 +9,16 @@ return {
         
         -- Helper function to check if a tool is available
         local function has_tool(tool)
-            return vim.fn.executable(tool) == 1
+            -- Check system PATH
+            if vim.fn.executable(tool) == 1 then
+                return true
+            end
+            -- Check Mason bin directory
+            local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/" .. tool
+            if vim.fn.executable(mason_bin) == 1 then
+                return true
+            end
+            return false
         end
         
         -- Configure linters by filetype (only if tools are available)
@@ -39,20 +48,29 @@ return {
         end
         
         -- Docker
-        if has_tool("hadolint") then
-            lint.linters_by_ft.dockerfile = { "hadolint" }
-            
-            -- Configure hadolint for stricter checking (VSCode-like)
-            lint.linters.hadolint = {
-                cmd = "hadolint",
-                stdin = true,
-                args = {
-                    "--format", "json",
-                    "-",  -- Read from stdin
-                },
-                stream = "stdout",
-                ignore_exitcode = true,
-                parser = function(output, bufnr)
+        lint.linters_by_ft.dockerfile = { "hadolint" }
+        
+        -- Debug: Print what we're setting up
+        vim.schedule(function()
+            if lint.linters_by_ft.dockerfile then
+                local linters = table.concat(lint.linters_by_ft.dockerfile, ", ")
+                vim.notify("Dockerfile linters configured: " .. linters, vim.log.levels.DEBUG)
+            end
+        end)
+        
+        -- Configure hadolint for stricter checking (VSCode-like)
+        -- Use full path to Mason's hadolint
+        local mason_hadolint = vim.fn.stdpath("data") .. "/mason/bin/hadolint"
+        lint.linters.hadolint = {
+            cmd = has_tool("hadolint") and "hadolint" or mason_hadolint,
+            stdin = true,
+            args = {
+                "--format", "json",
+                "-",  -- Read from stdin
+            },
+            stream = "stdout",
+            ignore_exitcode = true,
+            parser = function(output, bufnr)
                     local diagnostics = {}
                     local ok, decoded = pcall(vim.json.decode, output)
                     if not ok or not decoded then
@@ -87,7 +105,6 @@ return {
                     return diagnostics
                 end,
             }
-        end
         
         -- YAML
         if has_tool("yamllint") then
@@ -182,7 +199,26 @@ return {
                     return
                 end
                 
+                -- Debug output for dockerfile
+                if vim.bo.filetype == "dockerfile" then
+                    vim.schedule(function()
+                        vim.notify("Auto-linting dockerfile triggered", vim.log.levels.DEBUG)
+                    end)
+                end
+                
                 lint.try_lint()
+            end,
+        })
+        
+        -- Also lint on FileType event (when filetype is set)
+        vim.api.nvim_create_autocmd("FileType", {
+            group = lint_augroup,
+            pattern = "dockerfile",
+            callback = function()
+                vim.schedule(function()
+                    lint.try_lint()
+                    vim.notify("Dockerfile linting triggered on FileType event", vim.log.levels.DEBUG)
+                end)
             end,
         })
         
