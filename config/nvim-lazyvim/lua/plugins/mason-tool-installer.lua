@@ -82,13 +82,12 @@ return {
       end
 
       -- === Docker/Container Tools ===
-      if has("docker") then
-        vim.list_extend(tools, {
-          "dockerfile-language-server",
-          "docker-compose-language-service",
-          "hadolint",
-        })
-      end
+      -- Install Docker LSP tools even without Docker runtime (you can still edit Dockerfiles)
+      vim.list_extend(tools, {
+        "dockerfile-language-server",
+        "docker-compose-language-service",
+        "hadolint",
+      })
 
       -- === Infrastructure as Code ===
       if has("terraform") then
