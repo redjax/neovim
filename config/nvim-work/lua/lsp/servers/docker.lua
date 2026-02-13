@@ -7,7 +7,7 @@ return {
   config = function()
     return {
       dockerls = {
-        filetypes = { "dockerfile" },
+        filetypes = { "dockerfile", "Dockerfile" },  -- Support both cases
         settings = {
           docker = {
             languageserver = {

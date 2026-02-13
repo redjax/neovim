@@ -47,8 +47,9 @@ return {
             lint.linters_by_ft.typescriptreact = { "eslint" }
         end
         
-        -- Docker
+        -- Docker (support both cases)
         lint.linters_by_ft.dockerfile = { "hadolint" }
+        lint.linters_by_ft.Dockerfile = { "hadolint" }
         
         -- Configure hadolint for stricter checking (VSCode-like)
         local mason_hadolint = vim.fn.stdpath("data") .. "/mason/bin/hadolint"

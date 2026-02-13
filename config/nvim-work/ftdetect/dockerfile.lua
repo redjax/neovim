@@ -14,7 +14,9 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
     "*.containerfile",
   },
   callback = function()
-    vim.bo.filetype = "dockerfile"
+    vim.schedule(function()
+      vim.bo.filetype = "dockerfile"
+    end)
   end,
 })
 

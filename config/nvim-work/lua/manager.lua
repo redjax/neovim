@@ -45,18 +45,13 @@ if has("node") or has("npm") then
   vim.list_extend(servers, {
     "azure_pipelines_ls",
     "gh_actions_ls",
+    "docker_compose_language_service",  -- Doesn't need Docker runtime
+    "dockerls",                         -- Doesn't need Docker runtime
   })
 end
 
 if has("bash") or has("sh") then
   table.insert(servers, "bashls")
-end
-
-if has("docker") then
-  vim.list_extend(servers, {
-    "docker_compose_language_service",
-    "dockerls",
-  })
 end
 
 if has("python") or has("python3") then
