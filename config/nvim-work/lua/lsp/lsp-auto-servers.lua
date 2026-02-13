@@ -14,7 +14,8 @@ local server_tool_requirements = {
   bashls = function()
     return has("bash") or has("sh") or has("zsh")
   end,
-  dockerls = "docker",
+  dockerls = "npm",
+  docker_compose_language_service = "npm",
   gopls = "go",
   lua_ls = "lua",
   marksman = function()

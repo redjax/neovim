@@ -63,8 +63,8 @@ return {
         -- SQL
         sql = { "sqlfmt" },
         
-        -- Docker
-        dockerfile = { "dockerls" },
+        -- Docker (uses LSP formatter, hadolint for linting via nvim-lint)
+        -- dockerfile = {},  -- LSP handles formatting
         
         -- C/C++
         c = { "clang_format" },

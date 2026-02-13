@@ -9,7 +9,16 @@ return {
     
     -- Helper function to check if a tool is available
     local function has_tool(tool)
-      return vim.fn.executable(tool) == 1
+      -- Check system PATH
+      if vim.fn.executable(tool) == 1 then
+        return true
+      end
+      -- Check Mason bin directory
+      local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/" .. tool
+      if vim.fn.executable(mason_bin) == 1 then
+        return true
+      end
+      return false
     end
     
     -- Configure linters by filetype (only if tools are available)
@@ -37,9 +46,53 @@ return {
     end
     
     -- Docker
-    if has_tool("hadolint") then
-      lint.linters_by_ft.dockerfile = { "hadolint" }
-    end
+    lint.linters_by_ft.dockerfile = { "hadolint" }
+    
+    -- Configure hadolint for stricter checking (VSCode-like)
+    local mason_hadolint = vim.fn.stdpath("data") .. "/mason/bin/hadolint"
+    lint.linters.hadolint = {
+      cmd = has_tool("hadolint") and "hadolint" or mason_hadolint,
+      stdin = true,
+      args = {
+        "--format", "json",
+        "-",
+      },
+      stream = "stdout",
+      ignore_exitcode = true,
+      parser = function(output, bufnr)
+        local diagnostics = {}
+        local ok, decoded = pcall(vim.json.decode, output)
+        if not ok or not decoded then
+          return diagnostics
+        end
+        
+        for _, item in ipairs(decoded) do
+          local severity = vim.diagnostic.severity.INFO
+          if item.level == "error" then
+            severity = vim.diagnostic.severity.ERROR
+          elseif item.level == "warning" then
+            severity = vim.diagnostic.severity.WARN
+          elseif item.level == "info" then
+            severity = vim.diagnostic.severity.INFO
+          elseif item.level == "style" then
+            severity = vim.diagnostic.severity.HINT
+          end
+          
+          table.insert(diagnostics, {
+            lnum = (item.line or 1) - 1,
+            col = (item.column or 1) - 1,
+            end_lnum = (item.line or 1) - 1,
+            end_col = (item.column or 1),
+            severity = severity,
+            source = "hadolint",
+            message = string.format("%s (%s)", item.message, item.code),
+            code = item.code,
+          })
+        end
+        
+        return diagnostics
+      end,
+    }
     
     -- YAML
     if has_tool("yamllint") then

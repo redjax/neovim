@@ -8,7 +8,19 @@ return {
         docker = {
           languageserver = {
             formatter = {
-              ignoreMultilineInstructions = true,
+              ignoreMultilineInstructions = false,  -- Enable multi-line formatting
+            },
+            diagnostics = {
+              -- Enable additional diagnostics
+              deprecatedMaintainer = true,
+              directiveCasing = true,
+              emptyContinuationLine = true,
+              instructionCasing = "uppercase",  -- Enforce uppercase instructions
+              instructionCmdMultiple = true,
+              instructionEntrypointMultiple = true,
+              instructionHealthcheckMultiple = true,
+              instructionJSONInSingleQuotes = true,
+              instructionWorkdirRelative = true,
             },
           },
         },
@@ -16,8 +28,15 @@ return {
     },
     docker_compose_language_service = {
       -- Docker Compose LSP settings
-      settings = {},
+      settings = {
+        compose = {
+          -- Enable validation and completion
+          validation = true,
+          completion = true,
+          hover = true,
+        },
+      },
     },
   },
-  filetypes = { "dockerfile", "docker-compose" },
+  filetypes = { "dockerfile", "yaml.docker-compose" },
 }
