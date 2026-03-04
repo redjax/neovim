@@ -103,6 +103,11 @@ echo ""
 
 for cmd in "${_cmds[@]}"; do
   echo "Command: $cmd"
+  
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    echo "[DRY RUN] Would execute: $cmd"
+    continue
+  fi
 
   "$cmd"
   if [[ $? -ne 0 ]]; then
