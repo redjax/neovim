@@ -104,6 +104,9 @@ return {
     -- Go LSP (enhanced configuration)
     if has("go") then
       opts.servers.gopls = {
+        capabilities = {
+          offsetEncoding = { "utf-8", "utf-16" },
+        },
         settings = {
           gopls = {
             analyses = {
@@ -111,12 +114,29 @@ return {
               shadow = true,
               fieldalignment = true,
               nilness = true,
+              unusedwrite = true,
+              useany = true,
             },
             staticcheck = true,
             gofumpt = true,
             usePlaceholders = true,
             completeUnimported = true,
+            hints = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              compositeLiteralTypes = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
+            },
             directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
+            -- Environment settings
+            env = {
+              GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
+              GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
+            },
+            allowModfileModifications = true,
           },
         },
       }

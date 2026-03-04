@@ -17,13 +17,35 @@ return {
     -- Go LSP (only when Go is available)
     if has("go") then
       opts.servers.gopls = {
+        capabilities = {
+          offsetEncoding = { "utf-8", "utf-16" },
+        },
         settings = {
           gopls = {
             analyses = {
               unusedparams = true,
               shadow = true,
+              nilness = true,
+              unusedwrite = true,
+              useany = true,
             },
             staticcheck = true,
+            gofumpt = true,
+            hints = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              compositeLiteralTypes = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
+            },
+            -- Environment settings
+            env = {
+              GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
+              GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
+            },
+            allowModfileModifications = true,
           },
         },
       }

@@ -63,8 +63,8 @@ return {
         -- SQL
         sql = { "sqlfmt" },
         
-        -- Docker
-        dockerfile = { "dockerls" },
+        -- Docker (uses LSP formatter, hadolint for linting via nvim-lint)
+        -- dockerfile = {},  -- LSP handles formatting
         
         -- C/C++
         c = { "clang_format" },
@@ -101,11 +101,6 @@ return {
           lsp_format = "fallback",
         }
       end,
-      
-      -- Format after save for async formatters
-      format_after_save = {
-        lsp_format = "fallback",
-      },
       
       -- Log level for debugging
       log_level = vim.log.levels.WARN,

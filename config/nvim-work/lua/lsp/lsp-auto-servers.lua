@@ -14,7 +14,8 @@ local server_tool_requirements = {
   bashls = function()
     return has("bash") or has("sh") or has("zsh")
   end,
-  dockerls = "docker",
+  dockerls = "npm",
+  docker_compose_language_service = "npm",
   gopls = "go",
   lua_ls = "lua",
   marksman = function()
@@ -76,13 +77,14 @@ M.defaults = {
     "pyright",
     "gopls",
     "rust_analyzer",
-    "dockerls",
     "terraformls",
     "bicep",
     "sqlls",
     "marksman", -- Moved to conditional since it requires cargo
   },
   npm = {
+    "dockerls",  -- Dockerfile LSP doesn't need Docker runtime
+    "docker_compose_language_service",  -- Docker Compose LSP
     "eslint",
     "html",
     "cssls",
@@ -100,7 +102,7 @@ M.defaults = {
   specialized = {
     "postgres_lsp",
     "tflint",
-    "superhtml",
+    -- "superhtml",  -- Requires xz-utils system dependency, not cross-platform
   }
 }
 

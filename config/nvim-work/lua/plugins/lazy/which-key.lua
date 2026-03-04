@@ -121,14 +121,15 @@ return {
       },
       debug = false,
     },
-    keys = {
-      {
-        "<leader>?",
-        function()
-          require("which-key").show({ global = false })
-        end,
-        desc = "Buffer Local Keymaps (which-key)",
-      },
-    },
+    -- Manual loading causes recursion in which-key v3
+    -- keys = {
+    --   {
+    --     "<leader>?",
+    --     function()
+    --       require("which-key").show({ global = false })
+    --     end,
+    --     desc = "Buffer Local Keymaps (which-key)",
+    --   },
+    -- },
   }
   

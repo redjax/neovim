@@ -2,6 +2,7 @@
 
 return {
     "code-biscuits/nvim-biscuits",
+    enabled = false, -- Disabled: incompatible with modern nvim-treesitter (ts_utils deprecated)
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     -- "VeryLazy", or "BufReadPost" if you want it to load on file open
     event = "VeryLazy",

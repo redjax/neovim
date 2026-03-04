@@ -22,19 +22,17 @@ return {
       -- Load and apply enhanced server configurations
       local server_configs = lsp_auto_servers.load_server_configs()
       
-      -- Apply enhanced configurations for specific servers using modern vim.lsp.config API
+      -- Merge enhanced configurations (settings only, preserving handler configs)
       for server_name, config in pairs(server_configs) do
         if config.settings then
-          -- Find the actual LSP server names for this configuration
           if config.servers then
             for _, server in ipairs(config.servers) do
               if vim.tbl_contains(ensure_installed, server) then
-                vim.lsp.config[server] = {
+                -- Only merge settings, don't touch filetypes/capabilities/on_attach from handlers
+                local existing = vim.lsp.config[server] or {}
+                vim.lsp.config[server] = vim.tbl_deep_extend("force", existing, {
                   settings = config.settings[server] or config.settings,
-                  filetypes = config.filetypes,
-                  root_dir = vim.fs.root,
-                  single_file_support = true,
-                }
+                })
               end
             end
           end

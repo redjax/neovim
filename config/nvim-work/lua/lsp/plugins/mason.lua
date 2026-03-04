@@ -1,5 +1,7 @@
 return {
     "mason-org/mason.nvim",
+    cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUpdate" },
+    lazy = false,
     opts = function(_, opts)
         -- Use the LSP auto servers to get comprehensive tool list
         local lsp_auto_servers = require("lsp.lsp-auto-servers")

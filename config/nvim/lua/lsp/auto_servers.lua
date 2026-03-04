@@ -18,8 +18,8 @@ local server_tool_requirements = {
   css_variables = "npm",
   cssls = "npm",
   cssmodules_ls = "npm",
-  docker_compose_language_service = "docker",
-  dockerls = "docker",
+  docker_compose_language_service = "npm",
+  dockerls = "npm",
   eslint = "node",
   gh_actions_ls = "npm",
   html = "npm",
@@ -60,7 +60,7 @@ M.defaults = {
     "marksman",
     "postgres_lsp",
     "powershell_es",
-    "superhtml",
+    -- "superhtml",  -- Requires xz-utils system dependency, not cross-platform
     "tflint",
   },
   dotnet = {

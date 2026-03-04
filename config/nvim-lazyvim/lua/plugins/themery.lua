@@ -1,62 +1,37 @@
 -- Themery theme picker configuration
--- List of available themes that will be automatically converted to Themery format
+-- Reduced list of most commonly used themes for better performance
+-- You can re-add more themes if needed, but this improves startup time significantly
 local theme_menu_items = {
-  "aura-dark",
-  "aura-dark-soft-text",
-  "aura-soft-dark",
-  "aura-soft-dark-soft-text",
-  "catppuccin-mocha",
-  "catppuccin-macchiato",
-  "catppuccin-frappe",
-  "catppuccin-latte",
-  "dracula",
-  "eldritch",
-  "gruvbox",
-  "kanagawa-dragon",
-  "kanagawa-lotus",
-  "kanagawa-wave",
-  "nekonight-arcdark",
-  "nekonight-aurora",
-  "nekonight-day",
-  "nekonight-deep-ocean",
-  "nekonight-doom-one",
-  "nekonight-dracula",
-  "nekonight-dracula-at-night",
-  "nekonight-fire-obsidian",
-  "nekonight-material-theme",
-  "nekonight-moon",
-  "nekonight-moonlight",
-  "nekonight-nord",
-  "nekonight-onedark-deep",
-  "nekonight-shades-of-purple",
-  "nekonight-shades-of-purple-dark",
-  "nekonight-night",
-  "nekonight-noctis-uva",
-  "nekonight-palenight",
-  "nekonight-sky-blue",
-  "nekonight-space",
-  "nekonight-storm",
-  "nekonight-synthwave",
-  "nekonight-zenburn",
-  "nightfly",
-  "nord",
-  "onedark",
-  "one_monokai",
-  "oxocarbon",
-  "palenight",
-  "tokyonight",
-  "tokyonight-storm", 
-  "tokyonight-moon",
-  "tokyonight-day",
-  "vscode_modern",
+  -- Aura variants
+  { name = "Aura Dark", colorscheme = "aura-dark" },
+  { name = "Aura Soft Dark", colorscheme = "aura-soft-dark" },
+  
+  -- Catppuccin variants
+  { name = "Catppuccin Mocha", colorscheme = "catppuccin-mocha" },
+  { name = "Catppuccin Macchiato", colorscheme = "catppuccin-macchiato" },
+  
+  -- Popular themes
+  { name = "Dracula", colorscheme = "dracula" },
+  { name = "Eldritch", colorscheme = "eldritch" },
+  { name = "Gruvbox", colorscheme = "gruvbox" },
+  { name = "Kanagawa Wave", colorscheme = "kanagawa-wave" },
+  { name = "Nightfly", colorscheme = "nightfly" },
+  { name = "Nord", colorscheme = "nord" },
+  { name = "OneDark", colorscheme = "onedark" },
+  { name = "One Monokai", colorscheme = "one_monokai" },
+  { name = "Oxocarbon", colorscheme = "oxocarbon" },
+  { name = "Tokyo Night", colorscheme = "tokyonight" },
+  { name = "Tokyo Night Storm", colorscheme = "tokyonight-storm" },
+  { name = "Tokyo Night Moon", colorscheme = "tokyonight-moon" },
+  { name = "VSCode Modern", colorscheme = "vscode_modern" },
 }
 
 return {
   -- Themery - Theme picker plugin
   {
     "zaldih/themery.nvim",
-    lazy = false,  -- Load immediately
-    priority = 1001,  -- Higher priority than themes (1000) to load first
+    lazy = false,  -- Load at startup to restore saved theme
+    priority = 999,  -- Load AFTER themes (which have priority 1000)
     cmd = "Themery",
     config = function()
       require("themery").setup({

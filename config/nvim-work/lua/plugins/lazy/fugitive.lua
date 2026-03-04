@@ -3,7 +3,11 @@
 return {
     "tpope/vim-fugitive",
     -- Default: "VeryLazy". "BufReadPre" if you want it loaded earlier
-    event = "VeryLazy",
+    cmd = { "Git", "G", "Gdiffsplit", "Gread", "Gwrite", "Ggrep", "GMove", "GDelete", "GBrowse" },
+    keys = {
+        { "<leader>gs", desc = "Git status (Fugitive)" },
+        { "<leader>gd", desc = "Git diff (Fugitive)" },
+    },
 
     -- Fugitive keybinds
     config = function()

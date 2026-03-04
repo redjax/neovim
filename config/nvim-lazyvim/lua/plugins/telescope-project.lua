@@ -5,7 +5,13 @@ return {
     dependencies = {
         'nvim-telescope/telescope.nvim',
     },
-    event = "VeryLazy", -- Load after startup
+    keys = {  -- Only load when these keys are pressed
+      { "<leader>fp", desc = "Find Projects" },
+      { "<C-p>", desc = "Find Projects (Ctrl-P)" },
+      { "<leader>fP", desc = "Find Projects (detailed)" },
+      { "<leader>pc", desc = "Add current directory as project" },
+      { "<leader>pd", desc = "Debug: Show all stored projects" },
+    },
     config = function()
         -- Load the extension
         require('telescope').load_extension('project')
@@ -14,26 +20,20 @@ return {
         require('telescope').setup({
             extensions = {
                 project = {
-                    -- Dynamic base directories that work across OSes
-                    base_dirs = (function()
+                    -- Simplified base directories - defer scanning to when actually needed
+                    -- This prevents slow filesystem checks at startup
+                    base_dirs = function()
                         local dirs = {}
                         local home = vim.fn.expand('~')
                         
-                        -- Common project directories that might exist
+                        -- Only check a few most common directories instead of 10+
                         local potential_dirs = {
                             'projects',
                             'dev',
-                            'work',
                             'code',
-                            'src',
-                            'repos',
-                            'git',
-                            'Documents/projects',
-                            'Documents/dev',
-                            'Documents/code',
                         }
                         
-                        -- Check which directories actually exist
+                        -- Quick check without blocking startup
                         for _, dir in ipairs(potential_dirs) do
                             local full_path = home .. '/' .. dir
                             if vim.fn.isdirectory(full_path) == 1 then
@@ -44,14 +44,8 @@ return {
                         -- Always include current working directory
                         table.insert(dirs, vim.fn.getcwd())
                         
-                        -- Add config directory (cross-platform)
-                        local config_dir = vim.fn.stdpath('config')
-                        if config_dir then
-                            table.insert(dirs, vim.fn.fnamemodify(config_dir, ':h')) -- Parent of config dir
-                        end
-                        
                         return dirs
-                    end)(),
+                    end,
                     hidden_files = false,    -- Don't show hidden files by default
                     theme = "dropdown",      -- Use dropdown theme for cleaner look
                     order_by = "recent",     -- Order by most recently used

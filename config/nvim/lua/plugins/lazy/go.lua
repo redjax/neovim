@@ -1,4 +1,9 @@
 -- Go language support https://github.com/ray-x/go.nvim
+-- Only loads if Go is installed
+
+if vim.fn.executable("go") == 0 then
+  return {}
+end
 
 return {
   "ray-x/go.nvim",
@@ -14,9 +19,9 @@ return {
       tag_transform = false,
       test_dir = "",
       comment_placeholder = "",
-      lsp_cfg = true,     -- use default gopls setup
-      lsp_on_attach = true,
-      lsp_keymaps = true,
+      lsp_cfg = false,     -- disable go.nvim's LSP config (we configure it ourselves)
+      lsp_on_attach = false, -- we handle on_attach in lsp/core.lua
+      lsp_keymaps = false, -- we define our own keymaps
       lsp_codelens = true,
       dap_debug = true,
       dap_debug_keymap = true,

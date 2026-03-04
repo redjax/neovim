@@ -5,7 +5,13 @@ return {
     dependencies = {
         'nvim-telescope/telescope.nvim',
     },
-    event = "VeryLazy", -- Load after startup
+    keys = {
+      { "<leader>fp", desc = "Find Projects" },
+      { "<C-p>", desc = "Find Projects (Ctrl-P)" },
+      { "<leader>fP", desc = "Find Projects (detailed)" },
+      { "<leader>pc", desc = "Add current directory as project" },
+      { "<leader>pd", desc = "Debug: Show all stored projects" },
+    },
     config = function()
         -- Load the extension
         require('telescope').load_extension('project')

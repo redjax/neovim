@@ -125,6 +125,17 @@ function M.setup(ensure_installed)
                 shadow = true,
               },
               staticcheck = true,
+              -- Environment settings
+              env = {
+                GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
+                GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
+              },
+              allowModfileModifications = true,
+              directoryFilters = {
+                "-**/node_modules",
+                "-**/.git",
+                "-**/vendor",
+              },
             },
           },
           capabilities = M.capabilities,
@@ -146,6 +157,48 @@ function M.setup(ensure_installed)
           root_dir = vim.fs.root,
           single_file_support = true,
         }
+      end,
+      ["dockerls"] = function()
+        local docker_servers = require("lsp.servers.docker")
+        if docker_servers and docker_servers.settings and docker_servers.settings.dockerls then
+          vim.lsp.config.dockerls = {
+            settings = docker_servers.settings.dockerls.settings,
+            filetypes = { "dockerfile", "Dockerfile" },
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        else
+          vim.lsp.config.dockerls = {
+            filetypes = { "dockerfile", "Dockerfile" },
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        end
+      end,
+      ["docker_compose_language_service"] = function()
+        local docker_servers = require("lsp.servers.docker")
+        if docker_servers and docker_servers.settings and docker_servers.settings.docker_compose_language_service then
+          vim.lsp.config.docker_compose_language_service = {
+            settings = docker_servers.settings.docker_compose_language_service.settings,
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            filetypes = { "yaml.docker-compose" },
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        else
+          vim.lsp.config.docker_compose_language_service = {
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            filetypes = { "yaml.docker-compose" },
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        end
       end,
     },
   })

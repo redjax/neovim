@@ -2,7 +2,7 @@
 
 return {
     "mateuszwieloch/automkdir.nvim",
-    lazy = false,
+    event = "BufWritePre",  -- Only load when about to write a file
     config = function()
         require("automkdir").setup({
             blacklist = {

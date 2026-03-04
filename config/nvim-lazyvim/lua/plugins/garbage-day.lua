@@ -3,7 +3,7 @@
 return {
     "zeioth/garbage-day.nvim",
     dependencies = "neovim/nvim-lspconfig",
-    event = "VeryLazy",
+    event = "LspAttach",  -- Only load when LSP attaches, not on VeryLazy
     opts = {
         aggressive_mode = false, -- Stop all LSP clients except current buffer
         excluded_lsp_clients = {}, -- null-ls, jdtls, marksman, lua_ls

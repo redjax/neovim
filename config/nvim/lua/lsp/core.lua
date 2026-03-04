@@ -43,14 +43,7 @@ function M.setup(ensure_installed)
   -- fidget for progress
   require("fidget").setup({})
 
-  -- mason + mason-lspconfig (no automatic global install beyond provided list)
-  require("mason").setup({
-    registries = {
-      'github:mason-org/mason-registry',
-      'github:crashdummyy/mason-registry',
-    },
-  })
-
+  -- mason-lspconfig (mason itself is set up via plugin spec with opts)
   require("mason-lspconfig").setup({
     ensure_installed = ensure_installed,
     handlers = {
@@ -123,11 +116,36 @@ function M.setup(ensure_installed)
               analyses = {
                 unusedparams = true,
                 shadow = true,
+                nilness = true,
+                unusedwrite = true,
+                useany = true,
               },
               staticcheck = true,
+              gofumpt = true,
+              -- Allow opening single files without workspace
+              allowModfileModifications = true,
+              -- Improve workspace folder handling
+              directoryFilters = {
+                "-**/node_modules",
+                "-**/.git",
+                "-**/vendor",
+              },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
             },
           },
-          capabilities = M.capabilities,
+          capabilities = vim.tbl_deep_extend(
+            "force",
+            M.capabilities,
+            { offsetEncoding = { "utf-8", "utf-16" } }
+          ),
           on_attach = M.on_attach,
           root_dir = vim.fs.root,
           single_file_support = true,
@@ -146,6 +164,46 @@ function M.setup(ensure_installed)
           root_dir = vim.fs.root,
           single_file_support = true,
         }
+      end,
+      ["dockerls"] = function()
+        local docker_servers = require("lsp.servers.docker")
+        if docker_servers and docker_servers.settings and docker_servers.settings.dockerls then
+          vim.lsp.config.dockerls = {
+            settings = docker_servers.settings.dockerls.settings,
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        else
+          vim.lsp.config.dockerls = {
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        end
+      end,
+      ["docker_compose_language_service"] = function()
+        local docker_servers = require("lsp.servers.docker")
+        if docker_servers and docker_servers.settings and docker_servers.settings.docker_compose_language_service then
+          vim.lsp.config.docker_compose_language_service = {
+            settings = docker_servers.settings.docker_compose_language_service.settings,
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            filetypes = { "yaml.docker-compose" },
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        else
+          vim.lsp.config.docker_compose_language_service = {
+            capabilities = M.capabilities,
+            on_attach = M.on_attach,
+            filetypes = { "yaml.docker-compose" },
+            root_dir = vim.fs.root,
+            single_file_support = true,
+          }
+        end
       end,
     },
   })

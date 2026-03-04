@@ -82,30 +82,6 @@ return {
       },
     },
     
-    -- Format on save configuration
-    format_on_save = function(bufnr)
-      -- Disable with a global or buffer-local variable
-      if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-        return
-      end
-      
-      -- Disable for certain filetypes
-      local disable_filetypes = { "sql", "terraform" }
-      if vim.tbl_contains(disable_filetypes, vim.bo[bufnr].filetype) then
-        return
-      end
-      
-      return {
-        timeout_ms = 500,
-        lsp_format = "fallback",
-      }
-    end,
-    
-    -- Format after save for async formatters
-    format_after_save = {
-      lsp_format = "fallback",
-    },
-    
     -- Log level for debugging
     log_level = vim.log.levels.WARN,
     
