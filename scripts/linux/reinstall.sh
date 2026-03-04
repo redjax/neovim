@@ -82,6 +82,25 @@ _cmds=(
   "${SCRIPTS_DIR}/lazy-sync.sh"
 )
 
+## Validate all scripts exist and are executable
+echo ""
+echo "Validating required scripts..."
+for cmd in "${_cmds[@]}"; do
+  if [[ ! -f "$cmd" ]]; then
+    echo "[ERROR] Script does not exist: $cmd"
+    exit 1
+  fi
+  
+  if [[ ! -x "$cmd" ]]; then
+    echo "[ERROR] Script is not executable: $cmd"
+    echo "  Run: chmod +x $cmd"
+    exit 1
+  fi
+  
+  echo "  $cmd"
+done
+echo ""
+
 for cmd in "${_cmds[@]}"; do
   echo "Command: $cmd"
 
