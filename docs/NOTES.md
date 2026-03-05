@@ -27,20 +27,20 @@ Configure your LSPs Within the `local servers = {}` mapping, referencing existin
 For example, the `marksman` default config looks like:
 
 * `cmd` :
-> `{ "marksman", "server" }`
+> `{ "marksman" }`
 * `filetypes` :
 > `{ "markdown", "markdown.mdx" }`
-* `root_markers` :
-> `{ ".marksman.toml", ".git" }`
+* `single_file_support` :
+> `true`
 
 To configure a new LSP with Mason, you just need to add some setup instructions:
 
 ```lua
 -- Markdown https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#marksman
-marksman =  {
-  cmd = { "marksman", "server" },
+marksman = {
+  cmd = { "marksman" },
   filetypes = { "markdown", "markdown.mdx" },
-  root_markers = { ".marksman.toml", ".git" }
+  single_file_support = true,
 },
 ```
 
