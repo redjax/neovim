@@ -75,6 +75,7 @@ local theme_menu_items = {
     theme("PaperColor", "PaperColor", "papercolor"),
     theme("Palenightfall", "palenightfall", "palenightfall"),
     theme("Penumbra", "penumbra", "penumbra"),
+    theme("Poimandres", "poimandres", "poimandres.nvim"),
     theme("Tokyo Night Moon", "tokyonight-moon", "tokyonight"),
     theme("Tokyo Night Night", "tokyonight-night", "tokyonight"),
     theme("Vague", "vague", "vague.nvim"),
