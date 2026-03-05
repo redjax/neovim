@@ -1,10 +1,19 @@
 -- Themery https://github.com/zaldih/themery.nvim
 
 local theme_menu_items = {
+    "bluloco-dark",
+    "bluloco-light",
+    "carbonfox",
+    "dawnfox",
+    "dayfox",
+    "duskfox",
     "eldritch",
     "kanagawa-dragon",
     "kanagawa-lotus",
     "kanagawa-wave",
+    "modus_operandi",
+    "modus_vivendi",
+    "moonfly",
     "nekonight-arcdark",
     "nekonight-aurora",
     "nekonight-day",
@@ -28,9 +37,14 @@ local theme_menu_items = {
     "nekonight-storm",
     "nekonight-synthwave",
     "nekonight-zenburn",
+    "nightfox",
+    "nordfox",
     "one_monokai",
     "oxocarbon",
     "poimandres",
+    "rusty",
+    "terafox",
+    "vague",
     "vscode_modern"
 }
 

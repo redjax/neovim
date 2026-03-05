@@ -6,6 +6,10 @@ local theme_menu_items = {
   { name = "Aura Dark", colorscheme = "aura-dark" },
   { name = "Aura Soft Dark", colorscheme = "aura-soft-dark" },
   
+  -- Bluloco variants
+  { name = "Bluloco Dark", colorscheme = "bluloco-dark" },
+  { name = "Bluloco Light", colorscheme = "bluloco-light" },
+  
   -- Catppuccin variants
   { name = "Catppuccin Mocha", colorscheme = "catppuccin-mocha" },
   { name = "Catppuccin Macchiato", colorscheme = "catppuccin-macchiato" },
@@ -15,14 +19,32 @@ local theme_menu_items = {
   { name = "Eldritch", colorscheme = "eldritch" },
   { name = "Gruvbox", colorscheme = "gruvbox" },
   { name = "Kanagawa Wave", colorscheme = "kanagawa-wave" },
+  
+  -- Modus themes
+  { name = "Modus Operandi", colorscheme = "modus_operandi" },
+  { name = "Modus Vivendi", colorscheme = "modus_vivendi" },
+  
+  { name = "Moonfly", colorscheme = "moonfly" },
   { name = "Nightfly", colorscheme = "nightfly" },
+  
+  -- Nightfox variants
+  { name = "Nightfox", colorscheme = "nightfox" },
+  { name = "Carbonfox", colorscheme = "carbonfox" },
+  { name = "Dawnfox", colorscheme = "dawnfox" },
+  { name = "Dayfox", colorscheme = "dayfox" },
+  { name = "Duskfox", colorscheme = "duskfox" },
+  { name = "Nordfox", colorscheme = "nordfox" },
+  { name = "Terafox", colorscheme = "terafox" },
+  
   { name = "Nord", colorscheme = "nord" },
   { name = "OneDark", colorscheme = "onedark" },
   { name = "One Monokai", colorscheme = "one_monokai" },
   { name = "Oxocarbon", colorscheme = "oxocarbon" },
+  { name = "Rusty", colorscheme = "rusty" },
   { name = "Tokyo Night", colorscheme = "tokyonight" },
   { name = "Tokyo Night Storm", colorscheme = "tokyonight-storm" },
   { name = "Tokyo Night Moon", colorscheme = "tokyonight-moon" },
+  { name = "Vague", colorscheme = "vague" },
   { name = "VSCode Modern", colorscheme = "vscode_modern" },
 }
 

@@ -3,5 +3,5 @@
 return {
     "bluz71/vim-moonfly-colors",
     lazy = true,  -- Let Themery manage loading
-    priority = 1000
+    priority = 1000,
 }
