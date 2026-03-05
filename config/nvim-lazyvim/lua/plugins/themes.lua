@@ -268,5 +268,98 @@ return {
             nvim_tree_darker = true,
         })
     end,
-  }
+  },
+
+  -- Nightfox
+  {
+    "EdenEast/nightfox.nvim",
+    lazy = false,  -- Load immediately for Themery
+    priority = 1000,
+    opts = {
+      terminal_colors = false,
+    },
+    config = function()
+      require("nightfox").setup({
+        terminal_colors = false,
+      })
+    end,
+  },
+
+  -- Bluloco
+  {
+    "uloco/bluloco.nvim",
+    lazy = false,  -- Load immediately for Themery
+    priority = 1000,
+    dependencies = { "rktjmp/lush.nvim" },
+    config = function()
+      require("bluloco").setup({
+        style = "dark", -- "auto" | "dark" | "light"
+        transparent = false,
+        italics = false,
+        terminal = vim.fn.has("gui_running") == 1,
+        guicursor = true,
+      })
+    end,
+  },
+
+  -- Modus Themes
+  {
+    "miikanissi/modus-themes.nvim",
+    lazy = false,  -- Load immediately for Themery
+    priority = 1000,
+    config = function()
+      require("modus-themes").setup({
+        -- Configuration options
+        variant = "auto", -- Theme comes in four variants `auto`, `modus_operandi`, `modus_vivendi`, `modus_operandi_tinted`, `modus_vivendi_tinted`
+        transparent = false,
+        dim_inactive = false,
+        styles = {
+          comments = { italic = true },
+          keywords = { italic = true },
+          functions = {},
+          variables = {},
+        },
+      })
+    end,
+  },
+
+  -- Vague
+  {
+    "vague-theme/vague.nvim",
+    lazy = false,  -- Load immediately for Themery
+    priority = 1000,
+    config = function()
+      require("vague").setup()
+    end,
+  },
+
+  -- Poimandres
+  {
+    "olivercederborg/poimandres.nvim",
+    lazy = false,  -- Load immediately for Themery
+    priority = 1000,
+    config = function()
+      require("poimandres").setup({
+        bold_vert_split = false,
+        dim_nc_background = false,
+        disable_background = false,
+        disable_float_background = false,
+        disable_italics = false,
+      })
+    end,
+  },
+
+  -- Rusty
+  {
+    "armannikoyan/rusty",
+    lazy = false,  -- Load immediately for Themery
+    priority = 1000,
+  },
+
+  -- Moonfly
+  {
+    "bluz71/vim-moonfly-colors",
+    lazy = false,  -- Load immediately for Themery
+    priority = 1000,
+  },
 }
