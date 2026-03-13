@@ -40,9 +40,6 @@ return {
       yml = { "prettier" },
       markdown = { "prettier" },
       
-      -- Go
-      go = { "gofumpt", "goimports" },
-      
       -- Rust
       rust = { "rustfmt" },
       

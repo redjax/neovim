@@ -40,11 +40,6 @@ return {
               parameterNames = true,
               rangeVariableTypes = true,
             },
-            -- Environment settings
-            env = {
-              GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
-              GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
-            },
             allowModfileModifications = true,
           },
         },
