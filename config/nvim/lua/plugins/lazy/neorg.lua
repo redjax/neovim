@@ -185,30 +185,34 @@ return {
         local info = get_week_info()
         local journal_file = info.week_dir .. "/" .. info.day .. ".norg"
 
-        vim.cmd("Neorg workspace orgfiles")
         vim.fn.mkdir(info.week_dir, "p")
-        vim.cmd("edit " .. journal_file)
 
+        -- Defer to avoid completion plugin context race
         vim.schedule(function()
-          local buf = vim.api.nvim_get_current_buf()
-          if vim.bo[buf].filetype ~= "norg" then
-            return
-          end
+          vim.cmd("Neorg workspace orgfiles")
+          vim.cmd("edit " .. vim.fn.fnameescape(journal_file))
 
-          local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-          local is_blank = true
-          for _, l in ipairs(lines) do
-            if l:match("%S") then
-              is_blank = false
-              break
+          vim.schedule(function()
+            local buf = vim.api.nvim_get_current_buf()
+            if vim.bo[buf].filetype ~= "norg" then
+              return
             end
-          end
 
-          if is_blank then
-            local heading = "* " .. os.date("%Y-%m-%d (%A)")
-            vim.api.nvim_buf_set_lines(buf, 0, -1, false, { heading, "", "" })
-            vim.api.nvim_win_set_cursor(0, { 3, 0 })
-          end
+            local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+            local is_blank = true
+            for _, l in ipairs(lines) do
+              if l:match("%S") then
+                is_blank = false
+                break
+              end
+            end
+
+            if is_blank then
+              local heading = "* " .. os.date("%Y-%m-%d (%A)")
+              vim.api.nvim_buf_set_lines(buf, 0, -1, false, { heading, "", "" })
+              vim.api.nvim_win_set_cursor(0, { 3, 0 })
+            end
+          end)
         end)
 
         print("Journal: " .. info.month_name .. " Week " .. info.week .. ", Day " .. info.day)
