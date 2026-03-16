@@ -34,7 +34,7 @@ require("lazy").setup({
   -- Enable luarocks support for plugins like neorg
   rocks = {
     enabled = true,
-    hererocks = false, -- use system luarocks instead of bundled
+    hererocks = vim.fn.executable("luarocks") ~= 1, -- fallback to hererocks if system luarocks not installed
   },
   checker = {
     enabled = true, -- check for plugin updates periodically

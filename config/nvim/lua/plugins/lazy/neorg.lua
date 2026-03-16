@@ -9,6 +9,7 @@ local function get_week_info()
 
   local first_of_month = os.time{year=year, month=today.month, day=1}
   local first_wday = os.date("*t", first_of_month).wday
+  -- Adjust for Monday start
   local first_monday = (first_wday == 1) and 7 or first_wday - 1
   local week_of_month = math.ceil((today.day + first_monday - 1) / 7)
 
@@ -30,6 +31,7 @@ end
 local function convert_neorg_to_markdown(line)
   local converted = line
 
+  -- Convert headers (most asterisks first)
   for level = 6, 1, -1 do
     local stars = string.rep("%*", level)
     local pattern = "^" .. stars .. "%s+(.+)"
@@ -39,6 +41,7 @@ local function convert_neorg_to_markdown(line)
     end
   end
 
+  -- Convert list items (dashes)
   if string.match(converted, "^%-+%s+") then
     for level = 10, 1, -1 do
       local dashes = string.rep("-", level)
@@ -51,14 +54,17 @@ local function convert_neorg_to_markdown(line)
     end
   end
 
+  -- Bold: *word*
   converted = string.gsub(converted, "(%s)%*([^%*%s][^%*]-)%*(%s)", "%1**%2**%3")
   converted = string.gsub(converted, "^%*([^%*%s][^%*]-)%*(%s)", "**%1**%2")
   converted = string.gsub(converted, "(%s)%*([^%*%s][^%*]-)%*$", "%1**%2**")
 
+  -- Italic: /word/ (not paths)
   converted = string.gsub(converted, "(%s)/([^/%s][^/]-)/(%s)", "%1*%2*%3")
   converted = string.gsub(converted, "^/([^/%s][^/]-)/(%s)", "*%1*%2")
   converted = string.gsub(converted, "(%s)/([^/%s][^/]-)/$", "%1*%2*")
 
+  -- Links: {text}[url]
   converted = string.gsub(converted, "{([^}]+)}%[([^%]]+)%]", "[%1](%2)")
 
   return converted
@@ -68,7 +74,7 @@ return {
   {
     "nvim-neorg/neorg",
     lazy = false,
-    version = false,
+    version = false, -- Track latest commit; semver releases can lag behind
     rocks = { "lua-utils.nvim", "pathlib.nvim" },
     -- Auto-compile norg treesitter parsers on install/update
     build = function(plugin)
@@ -108,10 +114,10 @@ return {
       require("neorg").setup({
         load = {
           ["core.defaults"] = {},
-          ["core.concealer"] = {},
-          ["core.export"] = {},
-          ["core.export.markdown"] = {},
-          ["core.dirman"] = {
+          ["core.concealer"] = {},            -- Icons & LaTeX support
+          ["core.export"] = {},               -- Export .norg files
+          ["core.export.markdown"] = {},      -- Export to Markdown
+          ["core.dirman"] = {                 -- Workspace management
             config = {
               workspaces = {
                 orgfiles = "~/.orgfiles",
@@ -121,11 +127,11 @@ return {
               default_workspace = "orgfiles",
             },
           },
-          ["core.esupports.metagen"] = {},
-          ["core.summary"] = {},
+          ["core.esupports.metagen"] = {},    -- Autogenerate metadata
+          ["core.summary"] = {},              -- Structured workspace summaries
           ["core.journal"] = {
             config = {
-              strategy = "nested",
+              strategy = "nested",            -- year/month/day directory hierarchy
             },
           },
           ["core.keybinds"] = {
@@ -133,17 +139,28 @@ return {
               default_keybinds = true,
 
               hook = function(keybinds)
+                -- Unmap conflicting defaults
                 keybinds.unmap("norg", "n", "<localleader>cm")
                 keybinds.unmap("norg", "n", "gO")
                 keybinds.unmap("norg", "n", "gT")
                 keybinds.unmap("norg", "n", "<localleader>tj")
 
+                -- Remap TOC
                 keybinds.map("norg", "n", "gT", "<cmd>Neorg toc<CR>")
+
+                -- Magnify code block
                 keybinds.map("norg", "n", "<localleader>cx", "<Plug>(neorg.looking-glass.magnify-code-block)")
+
+                -- Journal placeholder (handled by global keymap below)
                 keybinds.map("norg", "n", "<localleader>tj", function() end)
+
+                -- Toggle concealer icons
                 keybinds.map("norg", "n", "<localleader>ic", "<cmd>Neorg toggle-concealer<CR>")
+
+                -- Open default workspace
                 keybinds.map("norg", "n", "<localleader>wo", "<cmd>Neorg workspace orgfiles<CR>")
 
+                -- Register with which-key if available
                 local ok, wk = pcall(require, "which-key")
                 if ok and wk.add then
                   wk.add({
@@ -163,7 +180,7 @@ return {
         },
       })
 
-      -- Journal: open today's entry
+      -- Journal: open today's entry (year/month/week/day structure)
       vim.keymap.set("n", "<localleader>tj", function()
         local info = get_week_info()
         local journal_file = info.week_dir .. "/" .. info.day .. ".norg"
@@ -174,12 +191,17 @@ return {
 
         vim.schedule(function()
           local buf = vim.api.nvim_get_current_buf()
-          if vim.bo[buf].filetype ~= "norg" then return end
+          if vim.bo[buf].filetype ~= "norg" then
+            return
+          end
 
           local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
           local is_blank = true
           for _, l in ipairs(lines) do
-            if l:match("%S") then is_blank = false; break end
+            if l:match("%S") then
+              is_blank = false
+              break
+            end
           end
 
           if is_blank then

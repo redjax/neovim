@@ -53,7 +53,6 @@ return {
                 "markdown",
                 "nginx",
                 "nix",
-                "norg",
                 "php",
                 "powershell",
                 "properties",
