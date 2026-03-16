@@ -15,11 +15,10 @@ return {
     opts.servers = opts.servers or {}
     
     -- Go LSP (only when Go is available)
+    -- Deep-merge with LazyVim Go extra's gopls config to preserve its root_dir,
+    -- workspace filters, and setup function that are required for proper initialization.
     if has("go") then
-      opts.servers.gopls = {
-        capabilities = {
-          offsetEncoding = { "utf-8", "utf-16" },
-        },
+      opts.servers.gopls = vim.tbl_deep_extend("force", opts.servers.gopls or {}, {
         settings = {
           gopls = {
             analyses = {
@@ -40,15 +39,10 @@ return {
               parameterNames = true,
               rangeVariableTypes = true,
             },
-            -- Environment settings
-            env = {
-              GOPATH = vim.env.GOPATH or vim.fn.expand("~/go"),
-              GOROOT = vim.env.GOROOT or vim.fn.expand("~/.go"),
-            },
             allowModfileModifications = true,
           },
         },
-      }
+      })
     end
     
     -- Rust LSP (only when Cargo is available)
