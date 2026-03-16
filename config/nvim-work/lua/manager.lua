@@ -88,6 +88,10 @@ require("lazy").setup({
     lazy = true, -- Make plugins lazy by default
     version = false,
   },
+  rocks = {
+    enabled = true,
+    hererocks = vim.fn.executable("luarocks") ~= 1, -- fallback to hererocks if system luarocks not installed
+  },
   change_detection = { notify = false },
   checker = { enabled = true, notify = false, frequency = 86400 },
   performance = {

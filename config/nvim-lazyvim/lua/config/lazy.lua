@@ -31,6 +31,11 @@ require("lazy").setup({
   },
   -- Remove default colorscheme to let Themery manage it
   -- install = { colorscheme = { "tokyonight", "habamax" } },
+  -- Enable luarocks support for plugins like neorg
+  rocks = {
+    enabled = true,
+    hererocks = vim.fn.executable("luarocks") ~= 1, -- fallback to hererocks if system luarocks not installed
+  },
   checker = {
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update
