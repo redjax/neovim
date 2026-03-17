@@ -16,7 +16,7 @@ if ($Help) {
     Write-Host "  -ConfigName   Neovim config to test (default: nvim)"
     Write-Host "                Options: nvim, nvim-lazyvim, nvim-work, nvim-noplugins, nvim-kickstart"
     Write-Host "  -BaseImage    Docker base image / distro (default: debian:stable-slim)"
-    Write-Host "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base, alpine:3.21"
+    Write-Host "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base"
     Write-Host "  -Help         Show this help message and exit"
     Write-Host ""
     Write-Host "Examples:"
