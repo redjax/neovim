@@ -499,7 +499,7 @@ function symlink-config() {
     ## Symlink discovered configurations
     for conf in "${REPO_CONFIGS[@]}"; do
         ## Get absolute path to config file
-        abs_path=$(cd "./config/$conf" && pwd)
+        abs_path=$(cd "${CWD}/config/$conf" && pwd)
         
         if [[ $DEBUG -eq 1 ]]; then
             echo "[DEBUG] Config absolute path: $abs_path"
@@ -594,7 +594,7 @@ function detect_repo_configs() {
     )
     echo "Getting configurations from path: ${CWD}/config/" >&2
 
-    for _conf in config/*; do
+    for _conf in "${CWD}"/config/*; do
     if [ -d "$_conf" ]; then
         if [[ $DEBUG -eq 1 ]]; then
             echo "[DEBUG] Adding config: $_conf" >&2
