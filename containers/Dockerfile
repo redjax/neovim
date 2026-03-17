@@ -13,7 +13,7 @@ FROM rust:${RUST_IMG_TAG} AS rust-base
 ## so the install scripts run exactly like they would on a host.
 ##
 ## Set BASE_IMAGE to test different distros:
-##   debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base, alpine:3.21
+##   debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base
 ## -----------------------------------------------------------
 FROM ${BASE_IMAGE}
 
@@ -40,9 +40,6 @@ RUN set -e; \
         pacman -Syu --noconfirm ca-certificates curl git sudo unzip wget bash \
             python python-pip && \
         pacman -Scc --noconfirm; \
-    elif command -v apk >/dev/null 2>&1; then \
-        apk add --no-cache ca-certificates curl git sudo unzip wget bash shadow \
-            python3 py3-pip; \
     else \
         echo "ERROR: Unsupported base image — no known package manager found"; \
         exit 1; \

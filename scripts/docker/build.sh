@@ -3,7 +3,7 @@
 ## Build Neovim configuration Docker image
 ## Usage: ./scripts/docker/build.sh [OPTIONS] [config-name] [base-image]
 ##   config-name: nvim, nvim-lazyvim, nvim-work, nvim-noplugins, nvim-kickstart (default: nvim)
-##   base-image:  debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base, alpine:3.21 (default: debian:stable-slim)
+##   base-image:  debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base (default: debian:stable-slim)
 
 set -e
 
@@ -16,7 +16,7 @@ usage() {
     echo "  config-name   Neovim config to test (default: nvim)"
     echo "                Options: nvim, nvim-lazyvim, nvim-work, nvim-noplugins, nvim-kickstart"
     echo "  base-image    Docker base image / distro (default: debian:stable-slim)"
-    echo "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base, alpine:3.21"
+    echo "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base"
     echo ""
     echo "Options:"
     echo "  -h, --help    Show this help message and exit"
