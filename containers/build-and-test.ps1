@@ -2,9 +2,30 @@
 # Usage: .\build-and-test.ps1 [config-name] [base-image]
 
 param(
+    [switch]$Help,
     [string]$ConfigName = "nvim",
     [string]$BaseImage = "debian:stable-slim"
 )
+
+if ($Help) {
+    Write-Host "Usage: .\build-and-test.ps1 [-Help] [-ConfigName <name>] [-BaseImage <image>]"
+    Write-Host ""
+    Write-Host "Build and test Neovim configurations in Docker."
+    Write-Host ""
+    Write-Host "Parameters:"
+    Write-Host "  -ConfigName   Neovim config to test (default: nvim)"
+    Write-Host "                Options: nvim, nvim-lazyvim, nvim-work, nvim-noplugins, nvim-kickstart"
+    Write-Host "  -BaseImage    Docker base image / distro (default: debian:stable-slim)"
+    Write-Host "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base, alpine:3.21"
+    Write-Host "  -Help         Show this help message and exit"
+    Write-Host ""
+    Write-Host "Examples:"
+    Write-Host "  .\build-and-test.ps1                                                # Build nvim on debian:stable-slim"
+    Write-Host "  .\build-and-test.ps1 -ConfigName nvim-lazyvim                       # Build nvim-lazyvim on debian:stable-slim"
+    Write-Host "  .\build-and-test.ps1 -ConfigName nvim -BaseImage ubuntu:24.04       # Build nvim on Ubuntu 24.04"
+    Write-Host "  .\build-and-test.ps1 -ConfigName nvim-work -BaseImage fedora:42     # Build nvim-work on Fedora 42"
+    exit 0
+}
 
 $ErrorActionPreference = "Stop"
 
