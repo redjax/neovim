@@ -19,24 +19,28 @@ FROM ${BASE_IMAGE}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-## Bootstrap: install the bare minimum (curl, git, sudo, bash) so the
-## install scripts can take over. Detects the package manager automatically.
+## Bootstrap: install the bare minimum (curl, git, sudo, bash, openssl libs)
+## so the install scripts can take over. Detects the package manager automatically.
+## OpenSSL libs are needed because the Python binaries copied from python-base
+## are linked against them, and different distros place them at different paths.
 RUN set -e; \
     if command -v apt-get >/dev/null 2>&1; then \
         apt-get update && apt-get install -y --no-install-recommends \
-            ca-certificates curl git sudo unzip wget bash && \
+            ca-certificates curl git sudo unzip wget bash libssl-dev && \
         rm -rf /var/lib/apt/lists/*; \
     elif command -v dnf >/dev/null 2>&1; then \
-        dnf install -y ca-certificates curl git sudo unzip wget bash && \
+        dnf install -y ca-certificates curl git sudo unzip wget bash \
+            openssl-devel openssl-libs && \
         dnf clean all; \
     elif command -v yum >/dev/null 2>&1; then \
-        yum install -y ca-certificates curl git sudo unzip wget bash && \
+        yum install -y ca-certificates curl git sudo unzip wget bash \
+            openssl-devel openssl-libs && \
         yum clean all; \
     elif command -v pacman >/dev/null 2>&1; then \
-        pacman -Syu --noconfirm ca-certificates curl git sudo unzip wget bash && \
+        pacman -Syu --noconfirm ca-certificates curl git sudo unzip wget bash openssl && \
         pacman -Scc --noconfirm; \
     elif command -v apk >/dev/null 2>&1; then \
-        apk add --no-cache ca-certificates curl git sudo unzip wget bash shadow; \
+        apk add --no-cache ca-certificates curl git sudo unzip wget bash shadow openssl-dev; \
     else \
         echo "ERROR: Unsupported base image — no known package manager found"; \
         exit 1; \
