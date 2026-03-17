@@ -2,24 +2,28 @@
 
 return {
   "sQVe/sort.nvim",
+  cmd = "Sort",
+  keys = {
+    { "go", desc = "Sort operator" },
+    { "go", desc = "Sort selection", mode = "v" },
+  },
   config = function()
     require("sort").setup({
-      -- Delimiter priority order for automatic detection
       delimiters = { ",", "|", ";", ":", "s", "t" },
-      natural_sort = true,      -- Enable natural sorting (number-aware)
-      ignore_case = false,      -- Case-sensitive sorting by default
+      natural_sort = true,
+      ignore_case = false,
       whitespace = {
         alignment_threshold = 3,
       },
       mappings = {
-        operator = "go",         -- Operator mapping (normal mode)
+        operator = "go",
         textobject = {
-          inner = "io",          -- Inner text object for sortable region
-          around = "ao",         -- Around text object for sortable region
+          inner = "io",
+          around = "ao",
         },
         motion = {
-          next_delimiter = "]o", -- Jump to next delimiter
-          prev_delimiter = "[o", -- Jump to previous delimiter
+          next_delimiter = "]o",
+          prev_delimiter = "[o",
         },
       },
     })
