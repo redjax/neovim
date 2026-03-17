@@ -35,10 +35,6 @@ return {
       table.insert(sources, null_ls.builtins.formatting.shfmt)
     end
 
-    if has_tool("shellcheck") then
-      table.insert(sources, null_ls.builtins.diagnostics.shellcheck)
-    end
-
     -- Markdown tools (only if available)
     if has_tool("markdownlint") then
       table.insert(sources, null_ls.builtins.diagnostics.markdownlint)
