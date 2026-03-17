@@ -7,6 +7,37 @@
 
 set -e
 
+usage() {
+    echo "Usage: $(basename "$0") [OPTIONS] [config-name] [base-image]"
+    echo ""
+    echo "Build and test Neovim configurations in Docker."
+    echo ""
+    echo "Arguments:"
+    echo "  config-name   Neovim config to test (default: nvim)"
+    echo "                Options: nvim, nvim-lazyvim, nvim-work, nvim-noplugins, nvim-kickstart"
+    echo "  base-image    Docker base image / distro (default: debian:stable-slim)"
+    echo "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base, alpine:3.21"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help    Show this help message and exit"
+    echo ""
+    echo "Examples:"
+    echo "  $(basename "$0")                              # Build nvim on debian:stable-slim"
+    echo "  $(basename "$0") nvim-lazyvim                 # Build nvim-lazyvim on debian:stable-slim"
+    echo "  $(basename "$0") nvim ubuntu:24.04            # Build nvim on Ubuntu 24.04"
+    echo "  $(basename "$0") nvim-work fedora:42          # Build nvim-work on Fedora 42"
+}
+
+## Check for help flag
+for arg in "$@"; do
+    case "$arg" in
+        -h|--help)
+            usage
+            exit 0
+            ;;
+    esac
+done
+
 CONFIG_NAME="${1:-nvim}"
 BASE_IMAGE="${2:-debian:stable-slim}"
 BASE_IMAGE_TAG="${BASE_IMAGE%%:*}"
