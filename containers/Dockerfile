@@ -1,55 +1,60 @@
 ARG PYTHON_IMG_TAG=${PYTHON_IMG_TAG:-3.13-slim}
 ARG GO_IMG_TAG=${GO_IMG_TAG:-1.25.5}
 ARG RUST_IMG_TAG=${RUST_IMG_TAG:-latest}
+ARG BASE_IMAGE=${BASE_IMAGE:-debian:stable-slim}
 
-## Language runtime base images
+## Language runtime base images (for copying toolchains)
 FROM python:${PYTHON_IMG_TAG} AS python-base
 FROM golang:${GO_IMG_TAG} AS go-base
 FROM rust:${RUST_IMG_TAG} AS rust-base
 
-## Main base image with system dependencies
-FROM debian:stable-slim AS base
+## -----------------------------------------------------------
+## Single-stage build: simulates a fresh install on a target distro
+## so the install scripts run exactly like they would on a host.
+##
+## Set BASE_IMAGE to test different distros:
+##   debian:stable-slim, ubuntu:24.04, fedora:41, archlinux:base, alpine:3.21
+## -----------------------------------------------------------
+FROM ${BASE_IMAGE}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates \
-    curl \
-    git \
-    sudo \
-    unzip \
-    build-essential \
-    ripgrep \
-    fd-find \
-    fzf \
-    xclip \
-    libssl-dev \
-    fontconfig \
-    wget \
-    ninja-build \
-    gettext \
-    libtool \
-    libtool-bin \
-    autoconf \
-    automake \
-    cmake \
-    g++ \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+## Bootstrap: install the bare minimum (curl, git, sudo, bash) so the
+## install scripts can take over. Detects the package manager automatically.
+RUN set -e; \
+    if command -v apt-get >/dev/null 2>&1; then \
+        apt-get update && apt-get install -y --no-install-recommends \
+            ca-certificates curl git sudo unzip wget bash && \
+        rm -rf /var/lib/apt/lists/*; \
+    elif command -v dnf >/dev/null 2>&1; then \
+        dnf install -y ca-certificates curl git sudo unzip wget bash && \
+        dnf clean all; \
+    elif command -v yum >/dev/null 2>&1; then \
+        yum install -y ca-certificates curl git sudo unzip wget bash && \
+        yum clean all; \
+    elif command -v pacman >/dev/null 2>&1; then \
+        pacman -Syu --noconfirm ca-certificates curl git sudo unzip wget bash && \
+        pacman -Scc --noconfirm; \
+    elif command -v apk >/dev/null 2>&1; then \
+        apk add --no-cache ca-certificates curl git sudo unzip wget bash shadow; \
+    else \
+        echo "ERROR: Unsupported base image — no known package manager found"; \
+        exit 1; \
+    fi
 
-## Copy Python from python-base
-COPY --from=python-base /usr/local /usr/local
-
-## Copy Go from go-base
+## Copy language toolchains so LSP requirement scripts can use them
+## Copy Python selectively (COPY /usr/local /usr/local breaks on distros
+## where /usr/local/sbin is a symlink, e.g. Fedora)
+COPY --from=python-base /usr/local/bin/ /usr/local/bin/
+COPY --from=python-base /usr/local/lib/ /usr/local/lib/
+COPY --from=python-base /usr/local/include/ /usr/local/include/
 COPY --from=go-base /usr/local/go /usr/local/go
+COPY --from=rust-base /usr/local/cargo /usr/local/cargo
+COPY --from=rust-base /usr/local/rustup /usr/local/rustup
+
 ENV PATH="/usr/local/go/bin:${PATH}"
 ENV GOPATH="/home/nvimuser/go"
 ENV PATH="${GOPATH}/bin:${PATH}"
-
-## Copy Rust from rust-base  
-COPY --from=rust-base /usr/local/cargo /usr/local/cargo
-COPY --from=rust-base /usr/local/rustup /usr/local/rustup
 ENV RUSTUP_HOME="/usr/local/rustup"
 ENV CARGO_HOME="/usr/local/cargo"
 ENV PATH="${CARGO_HOME}/bin:${PATH}"
@@ -58,18 +63,18 @@ ENV PATH="${CARGO_HOME}/bin:${PATH}"
 RUN ln -sf /usr/local/bin/python3 /usr/local/bin/python && \
     ln -sf /usr/local/bin/pip3 /usr/local/bin/pip
 
-## Install pipx for Python tool management
+## Install pipx
 RUN python3 -m pip install --upgrade pip && \
     python3 -m pip install pipx && \
     python3 -m pipx ensurepath
 
-## Create a non-root user
+## Create a non-root user (simulates a regular user account)
 RUN useradd -ms /bin/bash nvimuser && \
     echo "nvimuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     mkdir -p /home/nvimuser/.config /home/nvimuser/.local/share /home/nvimuser/.local/state && \
     chown -R nvimuser:nvimuser /home/nvimuser
 
-## Install nvm as nvimuser and set up Node.js
+## Install nvm + Node.js as nvimuser
 USER nvimuser
 WORKDIR /home/nvimuser
 
@@ -80,95 +85,56 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | ba
     nvm alias default lts/* && \
     nvm use default
 
-## Set up environment for nvm
 RUN echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc && \
     echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.bashrc && \
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
-## Ensure pipx path is available for nvimuser
 RUN mkdir -p /home/nvimuser/.local/bin && \
     python3 -m pipx ensurepath
 
-## Set login shell for all RUN commands to load nvm
+## Use login shell so nvm is available in subsequent RUN steps
 SHELL ["/bin/bash", "-l", "-c"]
 
-## Build stage - install Neovim and configure
-FROM base AS builder
-USER nvimuser
+## -----------------------------------------------------------
+## Copy the repository in and run the install scripts
+## This mirrors: git clone → cd neovim → ./scripts/linux/install.sh
+## -----------------------------------------------------------
 WORKDIR /home/nvimuser/neovim
+COPY --chown=nvimuser:nvimuser . /home/nvimuser/neovim/
 
-## Copy scripts and configs
-COPY --chown=nvimuser:nvimuser scripts/ /home/nvimuser/neovim/scripts/
-COPY --chown=nvimuser:nvimuser config/ /home/nvimuser/neovim/config/
-
-## Set build-time config name (default: nvim)
 ARG CONFIG_NAME=nvim
 ENV CONFIG_NAME=${CONFIG_NAME}
 ENV CONTAINER_ENV=1
-ENV BUILD_DIR=/tmp/neovim-build
 
 ## Make scripts executable
-RUN chmod +x scripts/linux/install.sh scripts/linux/install-lsp-requirements.sh scripts/linux/lazy-sync.sh
+RUN chmod +x scripts/linux/*.sh
 
-## Install Neovim from source and create symlinks
-RUN ./scripts/linux/install.sh --symlink --build-dir "${BUILD_DIR}"
+## Run install.sh exactly as you would on a fresh host
+## --symlink creates ~/.config/<config> symlinks pointing at the repo
+RUN ./scripts/linux/install.sh --symlink --build-dir /tmp/neovim-build
 
-## Verify nvim was installed
+## Verify neovim installed correctly
 RUN nvim --version
 
-## Install LSP servers and formatters
-## Explicitly source nvm to ensure npm is available
+## Install LSP servers and formatters (uses npm, pip, go, cargo)
 RUN source ~/.nvm/nvm.sh && \
-    source ~/.bashrc && \
-    node --version && \
-    npm --version && \
     ./scripts/linux/install-lsp-requirements.sh
 
-## Ensure directories exist for copying later
-RUN mkdir -p /home/nvimuser/.local/share/nvim \
-    /home/nvimuser/.local/state/nvim \
-    /home/nvimuser/go/bin
-
-## Initialize lazy.nvim plugins for the specified config
-## Use the config name from build arg
+## Sync lazy.nvim plugins for the selected config
 RUN export NVIM_APPNAME="${CONFIG_NAME}" && \
-    nvim --headless "+Lazy! sync" +qa || true && \
+    nvim --headless "+Lazy! sync" +qa && \
     nvim --headless "+TSUpdateSync" +qa || true
 
-## Runtime stage
-FROM base AS runtime
-USER nvimuser
-WORKDIR /home/nvimuser/neovim
-
-## Copy installed neovim binary
-COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
-COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
-
-## Copy neovim configs
-COPY --from=builder /home/nvimuser/.config /home/nvimuser/.config
-
-## Copy neovim data (lazy plugins, etc)
-COPY --from=builder /home/nvimuser/.local/share/nvim /home/nvimuser/.local/share/nvim
-COPY --from=builder /home/nvimuser/.local/state/nvim /home/nvimuser/.local/state/nvim
-COPY --from=builder /home/nvimuser/.local/bin /home/nvimuser/.local/bin
-
-## Copy installed LSP servers and tools
-COPY --from=builder /home/nvimuser/.nvm /home/nvimuser/.nvm
-COPY --from=builder /home/nvimuser/go /home/nvimuser/go
-
-## Copy the repository for reference
-COPY --chown=nvimuser:nvimuser . /home/nvimuser/neovim
-
-## Set environment
-ENV CONFIG_NAME=${CONFIG_NAME:-nvim}
+## -----------------------------------------------------------
+## Runtime environment
+## -----------------------------------------------------------
 ENV NVIM_APPNAME=${CONFIG_NAME}
 
-## Add helpful aliases to bashrc
 RUN echo 'alias vim="nvim"' >> ~/.bashrc && \
     echo 'alias vi="nvim"' >> ~/.bashrc && \
-    echo 'export NVIM_APPNAME="${CONFIG_NAME}"' >> ~/.bashrc && \
-    echo 'echo "Neovim config: ${CONFIG_NAME}"' >> ~/.bashrc && \
+    echo "export NVIM_APPNAME=\"${CONFIG_NAME}\"" >> ~/.bashrc && \
+    echo "echo \"Neovim config: ${CONFIG_NAME}\"" >> ~/.bashrc && \
     echo 'echo "Available configs in ~/.config: $(ls -1 ~/.config | grep nvim)"' >> ~/.bashrc
 
 CMD ["/bin/bash"]
