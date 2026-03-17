@@ -7,7 +7,6 @@ services:
       args:
         BASE_IMAGE: ${BASE_IMAGE:-debian:stable-slim}
         CONFIG_NAME: ${CONFIG_NAME:-nvim}
-        PYTHON_IMG_TAG: ${PYTHON_IMG_TAG:-3.13-slim}
         GO_IMG_TAG: ${GO_IMG_TAG:-1.25.5}
         RUST_IMG_TAG: ${RUST_IMG_TAG:-latest}
     image: neovim-test:${CONFIG_NAME:-nvim}-${BASE_IMAGE_TAG:-debian}

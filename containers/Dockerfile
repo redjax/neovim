@@ -1,10 +1,10 @@
-ARG PYTHON_IMG_TAG=${PYTHON_IMG_TAG:-3.13-slim}
 ARG GO_IMG_TAG=${GO_IMG_TAG:-1.25.5}
 ARG RUST_IMG_TAG=${RUST_IMG_TAG:-latest}
 ARG BASE_IMAGE=${BASE_IMAGE:-debian:stable-slim}
 
 ## Language runtime base images (for copying toolchains)
-FROM python:${PYTHON_IMG_TAG} AS python-base
+## Go and Rust are self-contained, so they can be copied cross-distro.
+## Python must be installed from the distro's package manager (SSL linkage issues).
 FROM golang:${GO_IMG_TAG} AS go-base
 FROM rust:${RUST_IMG_TAG} AS rust-base
 
@@ -13,45 +13,42 @@ FROM rust:${RUST_IMG_TAG} AS rust-base
 ## so the install scripts run exactly like they would on a host.
 ##
 ## Set BASE_IMAGE to test different distros:
-##   debian:stable-slim, ubuntu:24.04, fedora:41, archlinux:base, alpine:3.21
+##   debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base, alpine:3.21
 ## -----------------------------------------------------------
 FROM ${BASE_IMAGE}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-## Bootstrap: install the bare minimum (curl, git, sudo, bash, openssl libs)
+## Bootstrap: install the bare minimum (curl, git, sudo, bash, python3, pip)
 ## so the install scripts can take over. Detects the package manager automatically.
-## OpenSSL libs are needed because the Python binaries copied from python-base
-## are linked against them, and different distros place them at different paths.
+## Python is installed from the distro's repos to avoid cross-distro SSL issues.
 RUN set -e; \
     if command -v apt-get >/dev/null 2>&1; then \
         apt-get update && apt-get install -y --no-install-recommends \
-            ca-certificates curl git sudo unzip wget bash libssl-dev && \
+            ca-certificates curl git sudo unzip wget bash \
+            python3 python3-pip python3-venv && \
         rm -rf /var/lib/apt/lists/*; \
     elif command -v dnf >/dev/null 2>&1; then \
         dnf install -y ca-certificates curl git sudo unzip wget bash \
-            openssl-devel openssl-libs && \
+            python3 python3-pip && \
         dnf clean all; \
     elif command -v yum >/dev/null 2>&1; then \
         yum install -y ca-certificates curl git sudo unzip wget bash \
-            openssl-devel openssl-libs && \
+            python3 python3-pip && \
         yum clean all; \
     elif command -v pacman >/dev/null 2>&1; then \
-        pacman -Syu --noconfirm ca-certificates curl git sudo unzip wget bash openssl && \
+        pacman -Syu --noconfirm ca-certificates curl git sudo unzip wget bash \
+            python python-pip && \
         pacman -Scc --noconfirm; \
     elif command -v apk >/dev/null 2>&1; then \
-        apk add --no-cache ca-certificates curl git sudo unzip wget bash shadow openssl-dev; \
+        apk add --no-cache ca-certificates curl git sudo unzip wget bash shadow \
+            python3 py3-pip; \
     else \
         echo "ERROR: Unsupported base image — no known package manager found"; \
         exit 1; \
     fi
 
-## Copy language toolchains so LSP requirement scripts can use them
-## Copy Python selectively (COPY /usr/local /usr/local breaks on distros
-## where /usr/local/sbin is a symlink, e.g. Fedora)
-COPY --from=python-base /usr/local/bin/ /usr/local/bin/
-COPY --from=python-base /usr/local/lib/ /usr/local/lib/
-COPY --from=python-base /usr/local/include/ /usr/local/include/
+## Copy Go and Rust toolchains (self-contained, no system lib dependencies)
 COPY --from=go-base /usr/local/go /usr/local/go
 COPY --from=rust-base /usr/local/cargo /usr/local/cargo
 COPY --from=rust-base /usr/local/rustup /usr/local/rustup
@@ -63,14 +60,11 @@ ENV RUSTUP_HOME="/usr/local/rustup"
 ENV CARGO_HOME="/usr/local/cargo"
 ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
-## Create symlinks for Python
-RUN ln -sf /usr/local/bin/python3 /usr/local/bin/python && \
-    ln -sf /usr/local/bin/pip3 /usr/local/bin/pip
-
-## Install pipx
-RUN python3 -m pip install --upgrade pip && \
-    python3 -m pip install pipx && \
-    python3 -m pipx ensurepath
+## Ensure python/pip symlinks exist and install pipx
+RUN ln -sf "$(command -v python3)" /usr/local/bin/python 2>/dev/null || true
+RUN python3 -m pip install --break-system-packages pipx 2>/dev/null \
+    || python3 -m pip install pipx
+RUN python3 -m pipx ensurepath
 
 ## Create a non-root user (simulates a regular user account)
 RUN useradd -ms /bin/bash nvimuser && \
