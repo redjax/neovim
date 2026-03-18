@@ -124,8 +124,12 @@ RUN source ~/.nvm/nvm.sh && \
 
 ## Sync lazy.nvim plugins for the selected config
 RUN export NVIM_APPNAME="${CONFIG_NAME}" && \
-    nvim --headless "+Lazy! sync" +qa && \
-    nvim --headless "+TSUpdateSync" +qa || true
+    nvim --headless "+Lazy! sync" +qa
+
+## Install TreeSitter parsers (requires a C compiler — verify it's available)
+RUN command -v cc >/dev/null 2>&1 || command -v gcc >/dev/null 2>&1 || { echo "ERROR: No C compiler found, TreeSitter parsers cannot compile"; exit 1; }
+RUN export NVIM_APPNAME="${CONFIG_NAME}" && \
+    nvim --headless "+TSUpdateSync" +qa
 
 ## -----------------------------------------------------------
 ## Runtime environment
