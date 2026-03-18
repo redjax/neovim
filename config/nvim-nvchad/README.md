@@ -5,6 +5,7 @@ My [NvChad configuration](https://nvchad.com).
 ## Table of Contents <!-- omit in toc -->
 
 - [Configuration](#configuration)
+- [Plugins](#plugins)
   - [Theme](#theme)
 - [Cheatsheet](#cheatsheet)
   - [General](#general)
@@ -21,6 +22,39 @@ My [NvChad configuration](https://nvchad.com).
 - [Links](#links)
 
 ## Configuration
+
+## Plugins
+
+NvChad supports [`lazy.nvim` plugins](https://github.com/folke/lazy.nvim). To add new plugins, create a file in [the plugins directory](./lua/plugins/); if the file provides an example config for `lazy`, copy and paste it into the plugin file and NvChad will automatically load it at startup.
+
+Plugins placed in the [`disabled/` directory](./lua/plugins/disabled/) will be skipped/ignored.
+
+If the plugin does not provide a `lazy` config, you can create one yourself. At minimum, a lazy plugin spec only needs the GitHub short URL (`"owner/repo"`). From there you can add configuration as needed:
+
+> [!TIP]
+> Most plugins only need `"owner/repo"` and an `opts = {}` table. Start minimal and add lazy-loading triggers (`event`, `ft`, `cmd`, `keys`) only if startup time matters.
+
+```lua
+return {
+  "owner/plugin-name",                                               -- required: GitHub short URL
+  lazy = false,                                                      -- optional: false = load at startup (default), true = lazy-load
+  event = "BufReadPost",                                             -- optional: lazy-load on a specific event
+  ft = { "lua", "python" },                                          -- optional: lazy-load for specific filetypes
+  cmd = "PluginCommand",                                             -- optional: lazy-load when this command is run
+  keys = {                                                           -- optional: lazy-load on keymap & register the binding
+    { "<leader>p", "<cmd>PluginCommand<cr>", desc = "Run plugin" },  -- optional: plugin-specific keybinds
+  },
+  dependencies = {                                                   -- optional: plugins that must load first
+    "nvim-lua/plenary.nvim",
+  },
+  opts = {                                                           -- optional: passed to plugin's setup() automatically
+    some_option = true,
+  },
+  config = function(_, opts)                                         -- optional: custom setup (use instead of opts for more control)
+    require("plugin-name").setup(opts)
+  end,
+}
+```
 
 ### Theme
 
