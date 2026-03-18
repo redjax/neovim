@@ -35,3 +35,8 @@ require "autocmds"
 vim.schedule(function()
   require "mappings"
 end)
+
+-- Load Neovide config if running in Neovide
+if vim.g.neovide then
+  pcall(require, "neovide.init")
+end
