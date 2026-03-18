@@ -1,7 +1,7 @@
--- NavBuddy https://github.com/SmiteshP/nvim-navbuddy
+-- NavBuddy https://github.com/hasansujon786/nvim-navbuddy
 
 return {
-    "SmiteshP/nvim-navbuddy",
+    "hasansujon786/nvim-navbuddy",
     dependencies = {
         "SmiteshP/nvim-navic",
         "MunifTanjim/nui.nvim",
