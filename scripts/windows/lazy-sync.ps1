@@ -3,17 +3,18 @@
     Synchronize Neovim's Lazy plugin manager plugins.
 
 .DESCRIPTION
-    Iterates over predefined list of profiles (or user provided) and updates plugin lockfiles.
+    Discovers all profiles in config/ that have a lazy-lock.json (i.e. use lazy.nvim)
+    and updates their plugin lockfiles. You can override with -ProfileName.
 
     You can run this to update the lazy lockfiles for all your profiles, or the first time after installing the Neovim configs in this repo to initialize your plugins.
 
-.PARAMETER Profile
-    Profiles to update. Default is "nvim" and "nvim-work".
+.PARAMETER ProfileName
+    Profiles to update. By default, discovers all lazy.nvim profiles from config/.
 
 .EXAMPLE
-    .\update-lazy-lockfiles.ps1
-    .\update-lazy-lockfiles.ps1 -Profile nvim-work
-    .\update-lazy-lockfiles.ps1 -Profile nvim -Profile nvim-work
+    .\lazy-sync.ps1
+    .\lazy-sync.ps1 -ProfileName nvim-work
+    .\lazy-sync.ps1 -ProfileName nvim, nvim-noplugins
 #>
 [CmdletBinding()]
 param (
@@ -22,7 +23,9 @@ param (
 )
 
 function Show-Usage {
-    Write-Host "Usage: .\update-lazy-lockfiles.ps1 [-Profile <profile>] [--Help]"
+    Write-Host "Usage: .\lazy-sync.ps1 [-ProfileName <profile>] [--Help]"
+    Write-Host ""
+    Write-Host "Without -ProfileName, syncs all profiles that have a lazy-lock.json in config/."
     exit 0
 }
 
@@ -32,14 +35,50 @@ if ( -not ( Get-Command nvim -ErrorAction SilentlyContinue ) ) {
     exit 1
 }
 
-## Default profiles
-$defaultProfiles = @("nvim", "nvim-work")
+## Discover repo root from script location
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RepoRoot = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
+$ConfigDir = Join-Path $RepoRoot "config"
 
-## Use user-provided profiles if given, otherwise defaults
+## Discover profiles that use lazy.nvim (have a lazy-lock.json)
+function Get-LazyProfiles {
+    $lazyProfiles = @()
+    if (Test-Path $ConfigDir) {
+        foreach ($dir in (Get-ChildItem -Path $ConfigDir -Directory)) {
+            if (Test-Path (Join-Path $dir.FullName "lazy-lock.json")) {
+                $lazyProfiles += $dir.Name
+            }
+        }
+    }
+    return $lazyProfiles
+}
+
+## Discover all valid profiles (for validation)
+function Get-AllProfiles {
+    if (Test-Path $ConfigDir) {
+        return (Get-ChildItem -Path $ConfigDir -Directory).Name
+    }
+    return @()
+}
+
+## Use user-provided profiles if given, otherwise discover lazy profiles
 if ( $ProfileName.Count -gt 0 ) {
-    $profiles = $ProfileName
+    $allProfiles = Get-AllProfiles
+    $profiles = @()
+    foreach ($pn in $ProfileName) {
+        if ($allProfiles -contains $pn) {
+            $profiles += $pn
+        } else {
+            Write-Warning "Profile '$pn' not found in $ConfigDir, skipping."
+        }
+    }
 } else {
-    $profiles = $defaultProfiles
+    $profiles = Get-LazyProfiles
+}
+
+if ($profiles.Count -eq 0) {
+    Write-Host "No profiles to sync."
+    exit 0
 }
 
 Write-Host "Using profiles: $($profiles -join ', ')"

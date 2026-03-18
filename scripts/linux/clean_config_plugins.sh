@@ -1,11 +1,21 @@
 #!/bin/bash
 
-## Configuration: valid profiles
-VALID_PROFILES=(
-    "nvim"
-    "nvim-work"
-    "nvim-lite"
-)
+## Discover valid profiles dynamically from config/ directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+CONFIG_DIR="${REPO_ROOT}/config"
+
+VALID_PROFILES=()
+if [[ -d "$CONFIG_DIR" ]]; then
+  for d in "$CONFIG_DIR"/*/; do
+    [[ -d "$d" ]] && VALID_PROFILES+=("$(basename "$d")")
+  done
+fi
+
+if [[ ${#VALID_PROFILES[@]} -eq 0 ]]; then
+  echo "Error: no profiles found in ${CONFIG_DIR}" >&2
+  exit 1
+fi
 
 DEFAULT_PROFILE="nvim"
 
@@ -14,6 +24,8 @@ usage() {
 Usage: $0 [-p|--profile <profile>|all] [--yes]
 Cleans out the Neovim profile plugin directories under ~/.local/share.
 
+Profiles are discovered from: ${CONFIG_DIR}
+
 Options:
   -p, --profile   Profile name to clean. One of: ${VALID_PROFILES[*]}, or "all". Default: ${DEFAULT_PROFILE}
   --yes          Don't prompt before deletion.
@@ -21,7 +33,7 @@ Options:
 
 Examples:
   $0                       # cleans default profile "nvim" -> ~/.local/share/nvim
-  $0 -p nvim-lite          # cleans ~/.local/share/nvim-nvim-lite
+  $0 -p nvim-noplugins        # cleans ~/.local/share/nvim-noplugins
   $0 --profile all --yes   # force delete all profile dirs without prompt
 EOF
 }
@@ -29,11 +41,7 @@ EOF
 ## Return the target directory for a given profile
 get_target_dir() {
   local profile=$1
-  if [[ "$profile" == "nvim" ]]; then
-    echo "$HOME/.local/share/nvim"
-  else
-    echo "$HOME/.local/share/nvim-${profile}"
-  fi
+  echo "$HOME/.local/share/${profile}"
 }
 
 ## parse args

@@ -6,6 +6,9 @@
 # You can run this to update the lazy lockfiles for all your profiles,
 # or the first time after installing the Neovim configs in this repo
 # to initialize your plugins.
+#
+# By default, discovers all profiles in config/ that have a lazy-lock.json
+# (i.e. profiles that use lazy.nvim). You can override with -p flags.
 ##
 
 if ! command -v nvim &>/dev/null; then
@@ -13,11 +16,31 @@ if ! command -v nvim &>/dev/null; then
     exit 1
 fi
 
-## Default profiles array
-PROFILES=("nvim" "nvim-work")
+## Discover repo root from script location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+CONFIG_DIR="${REPO_ROOT}/config"
+
+## Discover profiles that use lazy.nvim (have a lazy-lock.json)
+discover_lazy_profiles() {
+  local profiles=()
+  for d in "$CONFIG_DIR"/*/; do
+    [[ -d "$d" ]] && [[ -f "$d/lazy-lock.json" ]] && profiles+=("$(basename "$d")")
+  done
+  echo "${profiles[@]}"
+}
+
+## Discover all valid profiles (for validation)
+discover_all_profiles() {
+  local profiles=()
+  for d in "$CONFIG_DIR"/*/; do
+    [[ -d "$d" ]] && profiles+=("$(basename "$d")")
+  done
+  echo "${profiles[@]}"
+}
 
 ## Temp array for user-supplied profiles
-PROVIDED_PROFILES=()
+USER_PROFILES=()
 
 ## Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -28,7 +51,10 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     -h|--help)
-      echo "Usage: $0 [-p|--profile <profile>|all] [--yes]"
+      echo "Usage: $0 [-p|--profile <profile>] ..."
+      echo ""
+      echo "Without -p, syncs all profiles that have a lazy-lock.json in config/."
+      echo "Use -p multiple times to specify profiles manually."
       exit 0
       ;;
     *)
@@ -38,9 +64,28 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-## Use user profiles if provided, otherwise use default
-if [ ${#USER_PROFILES[@]} -gt 0 ]; then
-  PROFILES=("${USER_PROFILES[@]}")
+## Use user profiles if provided, otherwise discover from config/
+if [[ ${#USER_PROFILES[@]} -gt 0 ]]; then
+  ALL_PROFILES=($(discover_all_profiles))
+  PROFILES=()
+  for up in "${USER_PROFILES[@]}"; do
+    found=0
+    for ap in "${ALL_PROFILES[@]}"; do
+      [[ "$up" == "$ap" ]] && found=1 && break
+    done
+    if [[ $found -eq 1 ]]; then
+      PROFILES+=("$up")
+    else
+      echo "[WARNING] Profile '$up' not found in ${CONFIG_DIR}, skipping."
+    fi
+  done
+else
+  PROFILES=($(discover_lazy_profiles))
+fi
+
+if [[ ${#PROFILES[@]} -eq 0 ]]; then
+  echo "No profiles to sync."
+  exit 0
 fi
 
 echo "Using profiles: ${PROFILES[*]}"
