@@ -19,26 +19,31 @@ FROM ${BASE_IMAGE}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-## Bootstrap: install the bare minimum (curl, git, sudo, bash, python3, pip)
-## so the install scripts can take over. Detects the package manager automatically.
+## Bootstrap: install the bare minimum (curl, git, sudo, bash, python3, pip,
+## openssl-dev, pkg-config) so the install scripts can take over.
 ## Python is installed from the distro's repos to avoid cross-distro SSL issues.
+## OpenSSL dev + pkg-config are needed for Rust crates that compile against OpenSSL.
 RUN set -e; \
     if command -v apt-get >/dev/null 2>&1; then \
         apt-get update && apt-get install -y --no-install-recommends \
             ca-certificates curl git sudo unzip wget bash \
-            python3 python3-pip python3-venv && \
+            python3 python3-pip python3-venv \
+            pkg-config libssl-dev && \
         rm -rf /var/lib/apt/lists/*; \
     elif command -v dnf >/dev/null 2>&1; then \
         dnf install -y ca-certificates curl git sudo unzip wget bash \
-            python3 python3-pip && \
+            python3 python3-pip \
+            pkg-config openssl-devel && \
         dnf clean all; \
     elif command -v yum >/dev/null 2>&1; then \
         yum install -y ca-certificates curl git sudo unzip wget bash \
-            python3 python3-pip && \
+            python3 python3-pip \
+            pkg-config openssl-devel && \
         yum clean all; \
     elif command -v pacman >/dev/null 2>&1; then \
         pacman -Syu --noconfirm ca-certificates curl git sudo unzip wget bash \
-            python python-pip && \
+            python python-pip \
+            pkg-config openssl && \
         pacman -Scc --noconfirm; \
     else \
         echo "ERROR: Unsupported base image — no known package manager found"; \
