@@ -4,18 +4,18 @@
 
 .DESCRIPTION
   Usage: .\clean_config_plugins.ps1 [-Profile <profile>|all] [-Yes]
-  Valid profiles: nvim, nvim-work, nvim-lite. Default is "nvim".
-  Removes e.g. "$env:LOCALAPPDATA\nvim" or "$env:LOCALAPPDATA\nvim-nvim-lite".
+  Profiles are discovered dynamically from the config/ directory in the repo.
+  Removes e.g. "$env:LOCALAPPDATA\nvim" or "$env:LOCALAPPDATA\nvim-noplugins".
 
 .PARAMETER Profile
-  Profile name to clean. One of: nvim, nvim-work, nvim-lite, or "all".
+  Profile name to clean, or "all". Default is "nvim".
 
 .PARAMETER Yes
   Skip confirmation prompts.
 
 .EXAMPLE
   .\clean_config_plugins.ps1
-  .\clean_config_plugins.ps1 -Profile nvim-lite
+  .\clean_config_plugins.ps1 -Profile nvim-noplugins
   .\clean_config_plugins.ps1 -Profile all -Yes
 #>
 
@@ -26,12 +26,27 @@ param (
   [switch]$Help
 )
 
-$VALID_PROFILES = @("nvim", "nvim-work", "nvim-lite")
+## Discover valid profiles from config/ directory
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RepoRoot = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
+$ConfigDir = Join-Path $RepoRoot "config"
+
+$VALID_PROFILES = @()
+if (Test-Path $ConfigDir) {
+  $VALID_PROFILES = (Get-ChildItem -Path $ConfigDir -Directory).Name
+}
+
+if ($VALID_PROFILES.Count -eq 0) {
+  Write-Error "No profiles found in $ConfigDir"
+  exit 1
+}
 
 function Show-Usage {
   Write-Host @"
 Usage: $($MyInvocation.MyCommand.Name) [-Profile <profile>|all] [-Yes]
 Cleans out the Neovim profile plugin directories under `$env:LOCALAPPDATA`.
+
+Profiles are discovered from: $ConfigDir
 
 Options:
   -Profile    Profile name to clean. One of: $($VALID_PROFILES -join ', '), or 'all'. Default: nvim
@@ -39,9 +54,9 @@ Options:
   -Help       Show this help message.
 
 Examples:
-  .\clean_config_plugins.ps1                    # cleans default profile "nvim" -> $env:LOCALAPPDATA\nvim
-  .\clean_config_plugins.ps1 -Profile nvim-lite  # cleans $env:LOCALAPPDATA\nvim-nvim-lite
-  .\clean_config_plugins.ps1 -Profile all -Yes   # delete all profile dirs without prompt
+  .\clean_config_plugins.ps1                       # cleans default profile "nvim" -> $env:LOCALAPPDATA\nvim
+  .\clean_config_plugins.ps1 -Profile nvim-noplugins  # cleans $env:LOCALAPPDATA\nvim-noplugins
+  .\clean_config_plugins.ps1 -Profile all -Yes     # delete all profile dirs without prompt
 "@
 }
 
@@ -51,11 +66,7 @@ if ($Help) {
 }
 
 function Get-TargetDir($p) {
-  if ($p -eq "nvim") {
-    return Join-Path $env:LOCALAPPDATA "nvim"
-  } else {
-    return Join-Path $env:LOCALAPPDATA "nvim-$p"
-  }
+  return Join-Path $env:LOCALAPPDATA $p
 }
 
 # Build list of directories to delete
