@@ -150,20 +150,28 @@ vim.lsp.config("bicep", {
 })
 
 -- Enable all servers
-vim.lsp.enable {
+-- Servers requiring specific toolchains are conditional
+local function has(cmd)
+  return vim.fn.executable(cmd) == 1
+end
+
+local servers = {
   "html",
   "cssls",
-  "pyright",
-  "gopls",
-  "rust_analyzer",
   "bashls",
   "yamlls",
   "jsonls",
   "dockerls",
   "docker_compose_language_service",
-  "terraformls",
-  "powershell_es",
-  "bicep",
-  "sqlls",
   "eslint",
+  "sqlls",
 }
+
+if has "python3" or has "python" then table.insert(servers, "pyright") end
+if has "go" then table.insert(servers, "gopls") end
+if has "rustc" then table.insert(servers, "rust_analyzer") end
+if has "terraform" then table.insert(servers, "terraformls") end
+if has "pwsh" or has "powershell" then table.insert(servers, "powershell_es") end
+if has "bicep" or has "az" then table.insert(servers, "bicep") end
+
+vim.lsp.enable(servers)
