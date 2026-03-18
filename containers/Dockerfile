@@ -67,7 +67,8 @@ RUN python3 -m pipx ensurepath
 RUN useradd -ms /bin/bash nvimuser && \
     echo "nvimuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     mkdir -p /home/nvimuser/.config /home/nvimuser/.local/share /home/nvimuser/.local/state && \
-    chown -R nvimuser:nvimuser /home/nvimuser
+    chown -R nvimuser:nvimuser /home/nvimuser && \
+    chown -R nvimuser:nvimuser /usr/local/cargo /usr/local/rustup
 
 ## Install nvm + Node.js as nvimuser
 USER nvimuser
