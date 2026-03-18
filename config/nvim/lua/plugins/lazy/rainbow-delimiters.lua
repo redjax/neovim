@@ -2,6 +2,21 @@
 
 return {
     "HiPhish/rainbow-delimiters.nvim",
-    -- Or "BufReadPost" if you want it earlier
     event = "VeryLazy",
+    config = function()
+        local rainbow = require("rainbow-delimiters")
+        vim.g.rainbow_delimiters = {
+            strategy = {
+                [""] = rainbow.strategy["global"],
+            },
+            query = {
+                [""] = "rainbow-delimiters",
+            },
+            -- Skip buffers that don't have a treesitter parser
+            condition = function(bufnr)
+                local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+                return ok and parser ~= nil
+            end,
+        }
+    end,
 }
