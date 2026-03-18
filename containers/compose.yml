@@ -1,0 +1,30 @@
+---
+services:
+  nvim:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile
+      args:
+        BASE_IMAGE: ${BASE_IMAGE:-debian:stable-slim}
+        CONFIG_NAME: ${CONFIG_NAME:-nvim}
+        GO_IMG_TAG: ${GO_IMG_TAG:-1.25.5}
+        RUST_IMG_TAG: ${RUST_IMG_TAG:-latest}
+    image: neovim-test:${CONFIG_NAME:-nvim}-${BASE_IMAGE_TAG:-debian}
+    container_name: neovim-test-${CONFIG_NAME:-nvim}-${BASE_IMAGE_TAG:-debian}
+    environment:
+      - CONTAINER_ENV=1
+      - CONFIG_NAME=${CONFIG_NAME:-nvim}
+      - NVIM_APPNAME=${CONFIG_NAME:-nvim}
+    working_dir: /home/nvimuser/neovim
+    volumes:
+      ## Optional: Mount your local config for live editing
+      # - ../config/${CONFIG_NAME:-nvim}:/home/nvimuser/.config/${CONFIG_NAME:-nvim}
+      ## Mount a persistent volume for plugin data
+      - nvim-data:/home/nvimuser/.local/share/nvim
+    tty: true
+    stdin_open: true
+    ## Keep container running for exec access
+    command: sleep infinity
+
+volumes:
+  nvim-data:
