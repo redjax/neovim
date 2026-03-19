@@ -52,6 +52,49 @@ Each configuration below has a table with the Linux and Windows environment vari
 
 My 'default' configuration, custom-built by referencing configurations from all over the place.
 
+### Lazyvim
+
+| Config | Linux Env Var | Windows Env Var |
+| ------ | ------------- | --------------- |
+| [`nvim-lazyvim`](./nvim-lazyvim/) | `$NVIM_APPNAME="nvim-lazyvim"` | `$env:NVIM_APPNAME="nvim-lazyvim"`
+
+Built from the [Lazyvim configuration](https://www.lazyvim.org).
+
+#### Lazyvim Requirements
+
+- [Lazyvim dependencies](https://www.lazyvim.org/#%EF%B8%8F-requirements)
+  - `git`
+  - `tree-sitter-cli`
+  - `make` / `CMake`
+  - `curl`
+  - [`fzf`](https://github.com/junegunn/fzf)
+  - [`ripgrep`](https://github.com/BurntSushi/ripgrep)
+  - [`fd`](https://github.com/sharkdp/fd)
+  - A [Nerd Font](https://www.nerdfonts.com/)
+    - The setup scripts install `FiraCode` Nerd Fonts
+  - `nodejs`/`npm`
+    - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
+
+### NvChad
+
+| Config | Linux Env Var | Windows Env Var |
+| ------ | ------------- | --------------- |
+| [`nvim-nvchad`](./nvim-nvchad/) | `$NVIM_APPNAME="nvim-nvchad"` | `$env:NVIM_APPNAME="nvim-nvchad"`
+
+Built from the [NvChad configuration](https://nvchad.com/).
+
+#### NvChad Requirements
+
+- [NvChad dependencies](https://nvchad.com/docs/quickstart/install#pre-requisites)
+  - `git`
+  - `tree-sitter-cli`
+  - `make` / `CMake`
+  - [`ripgrep`](https://github.com/BurntSushi/ripgrep)
+  - A [Nerd Font](https://www.nerdfonts.com/)
+    - The setup scripts install `FiraCode` Nerd Fonts
+  - `nodejs`/`npm`
+    - The setup scripts install `nodejs-lts` with the [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm) on Linux, and `nodejs-lts` via [`scoop`](https://scoop.sh) on Windows.
+
 ### Kickstart
 
 | Config | Linux Env Var | Windows Env Var |
@@ -89,3 +132,4 @@ A configuration that loads the common configuration from the [shared profile](#s
 | [`nvim-work`](./nvim-work/) | `$NVIM_APPNAME="nvim-work"` | `$env:NVIM_APPNAME="nvim-work"` |
 
 My work profile, which I change & adapt to suit my environment at `$JOB`.
+
