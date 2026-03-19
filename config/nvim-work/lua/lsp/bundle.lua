@@ -4,6 +4,7 @@ return {
     dependencies = {
       "mason-org/mason.nvim",
       "mason-org/mason-lspconfig.nvim",
+      "b0o/schemastore.nvim",
       -- "hrsh7th/nvim-cmp",
       -- "hrsh7th/cmp-nvim-lsp",
       "L3MON4D3/LuaSnip",
