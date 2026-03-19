@@ -17,7 +17,7 @@ return {
               url = "https://www.schemastore.org/api/json/catalog.json",
             },
             schemas = {
-              -- Azure DevOps Pipelines
+              -- Azure Pipelines
               ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json"] = {
                 "azure-pipelines.yml",
                 "azure-pipelines.yaml",
@@ -28,7 +28,7 @@ return {
                 ".azure/pipelines/*.yml",
                 ".azure/pipelines/*.yaml",
               },
-              -- GitHub Actions
+              -- GitHub Actions (workflows)
               ["https://json.schemastore.org/github-workflow.json"] = {
                 ".github/workflows/*.yml",
                 ".github/workflows/*.yaml",
@@ -39,11 +39,20 @@ return {
                 "action.yaml",
               },
               -- Docker Compose
-              ["https://json.schemastore.org/docker-compose.json"] = {
+              ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = {
                 "docker-compose.yml",
                 "docker-compose.yaml",
                 "compose.yml",
                 "compose.yaml",
+              },
+              -- GitLab CI
+              ["https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json"] = "*gitlab-ci*.{yml,yaml}",
+              -- Woodpecker CI
+              ["https://raw.githubusercontent.com/woodpecker-ci/woodpecker/main/pipeline/frontend/yaml/linter/schema/schema.json"] = {
+                "**/.woodpecker/**.yml",
+                "**/.woodpecker.yml",
+                "**/.woodpecker/**.yaml",
+                "**/.woodpecker.yaml",
               },
               -- Kubernetes
               ["https://json.schemastore.org/kustomization.json"] = "kustomization.yaml",
