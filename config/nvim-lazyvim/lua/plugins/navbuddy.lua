@@ -3,7 +3,7 @@
 return {
 	"hasansujon786/nvim-navbuddy",
 	dependencies = {
-		"SmiteshP/nvim-navic",
+		"hasansujon786/nvim-navic",
 		"MunifTanjim/nui.nvim",
 		"neovim/nvim-lspconfig", -- Ensure LSP is loaded
 	},

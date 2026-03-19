@@ -1,7 +1,7 @@
--- Navic https://github.com/SmiteshP/nvim-navic
+-- Navic https://github.com/hasansujon786/nvim-navic
 
 return {
-    "SmiteshP/nvim-navic",
+    "hasansujon786/nvim-navic",
     -- Required for LSP integration
     dependencies = { "neovim/nvim-lspconfig" },
     -- Load when LSP attaches
