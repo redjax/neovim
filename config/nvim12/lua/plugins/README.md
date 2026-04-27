@@ -37,7 +37,19 @@ return {
 
 - Files in `plugins/disabled/` are ignored by the loader.
 - Files whose names start with `_` are ignored (for templates/helpers).
+- Update plugins by running this in Neovim:
+
+  ```shell
+  :lua vim.pack.update()
+  ```
+
+- Update a specific plugin with:
+
+  ```shell
+  :lua vim.pack.update({ 'mini.nvim' })
+  ```
 
 ## Starter copy template
 
 Copy from `lua/plugins/_template.lua` and rename to a real plugin file (without leading underscore).
+
