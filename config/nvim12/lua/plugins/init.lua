@@ -1,4 +1,7 @@
 local M = {}
+local registry = {}
+local loaded = {}
+local configured = {}
 
 local function is_disabled(path)
   return path:find("plugins/disabled/") ~= nil
@@ -6,6 +9,11 @@ end
 
 local function is_plugin_loader(path)
   return path:match("/lua/plugins/init%.lua$") ~= nil
+end
+
+local function is_ignored(path)
+  local filename = vim.fs.basename(path)
+  return filename:sub(1, 1) == "_"
 end
 
 local function file_to_module(path)
@@ -46,27 +54,139 @@ local function list_plugins()
   return unique
 end
 
-function M.setup()
-  local paths = list_plugins()
+local function infer_name(src)
+  local name = src:match("([^/]+)$") or src
+  return name:gsub("%.git$", "")
+end
 
-  -- Load all plugins (this will run vim.pack.add inside each file)
-  for _, path in ipairs(paths) do
-    local mod = file_to_module(path)
-    local ok, plugin = pcall(require, mod)
+local function normalize_spec(spec, path)
+  if type(spec) ~= "table" then
+    error("plugin module must return a table: " .. path)
+  end
 
-    if not ok then
-      vim.notify("Failed to load plugin file: " .. path .. ": " .. plugin, vim.log.levels.ERROR)
+  if type(spec.src) ~= "string" or spec.src == "" then
+    error("plugin spec must define src: " .. path)
+  end
+
+  spec.name = spec.name or infer_name(spec.src)
+
+  local normalized = {
+    src = spec.src,
+    name = spec.name,
+    version = spec.version,
+  }
+
+  return normalized, spec.setup
+end
+
+local function load_plugin(name)
+  if loaded[name] then
+    return true
+  end
+
+  local entry = registry[name]
+  if not entry then
+    vim.notify("Unknown plugin in registry: " .. name, vim.log.levels.WARN)
+    return false
+  end
+
+  local ok_add, err_add = pcall(vim.cmd.packadd, name)
+  if not ok_add then
+    vim.notify("Failed to packadd " .. name .. ": " .. err_add, vim.log.levels.ERROR)
+    return false
+  end
+
+  loaded[name] = true
+
+  return true
+end
+
+local function configure_plugin(name)
+  if configured[name] then
+    return true
+  end
+
+  local entry = registry[name]
+  if not entry then
+    vim.notify("Unknown plugin in registry: " .. name, vim.log.levels.WARN)
+    return false
+  end
+
+  if not loaded[name] then
+    return false
+  end
+
+  if type(entry.setup) == "function" then
+    local ok_cfg, err_cfg = pcall(entry.setup, entry.spec)
+    if not ok_cfg then
+      vim.notify("Failed plugin config for " .. name .. ": " .. err_cfg, vim.log.levels.ERROR)
+      return false
     end
   end
 
-  -- Run plugin setups
-  for _, path in ipairs(paths) do
-    local mod = file_to_module(path)
-    local ok, plugin = pcall(require, mod)
+  configured[name] = true
 
-    if ok and plugin and plugin.setup then
-      plugin.setup()
+  return true
+end
+
+local function load_specs(paths)
+  local pack_specs = {}
+
+  for _, path in ipairs(paths) do
+    if not is_ignored(path) then
+      local mod = file_to_module(path)
+      local ok, plugin_spec = pcall(require, mod)
+
+      if not ok then
+        vim.notify("Failed to load plugin file: " .. path .. ": " .. plugin_spec, vim.log.levels.ERROR)
+      else
+        local ok_norm, normalized, setup_fn = pcall(normalize_spec, plugin_spec, path)
+
+        if not ok_norm then
+          vim.notify(normalized, vim.log.levels.ERROR)
+        else
+          registry[normalized.name] = {
+            spec = normalized,
+            setup = setup_fn,
+          }
+
+          table.insert(pack_specs, {
+            src = normalized.src,
+            name = normalized.name,
+            version = normalized.version,
+          })
+        end
+      end
     end
+  end
+
+  return pack_specs
+end
+
+function M.setup()
+  local paths = list_plugins()
+  local pack_specs = load_specs(paths)
+
+  if #pack_specs > 0 then
+    local ok_pack, err_pack = pcall(vim.pack.add, pack_specs, { load = false })
+    if not ok_pack then
+      vim.notify("vim.pack.add failed: " .. err_pack, vim.log.levels.ERROR)
+      return
+    end
+  end
+
+  local names = {}
+  for name, _ in pairs(registry) do
+    table.insert(names, name)
+  end
+  table.sort(names)
+
+  for _, name in ipairs(names) do
+    load_plugin(name)
+  end
+
+  for _, name in ipairs(names) do
+    configure_plugin(name)
   end
 end
 
