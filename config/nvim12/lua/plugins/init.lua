@@ -4,7 +4,7 @@ local loaded = {}
 local configured = {}
 
 local function is_disabled(path)
-  return path:find("plugins/disabled/") ~= nil
+  return path:find("plugins/disabled/") ~= nil or path:find("themes/disabled/") ~= nil
 end
 
 local function is_plugin_loader(path)
@@ -29,6 +29,8 @@ local function list_plugins()
   for _, pattern in ipairs({
     "lua/plugins/*.lua",
     "lua/plugins/**/*.lua",
+    "lua/themes/*.lua",
+    "lua/themes/**/*.lua",
   }) do
 
     -- all=true is required here; false returns only the first matching file.
@@ -132,6 +134,26 @@ end
 local function load_specs(paths)
   local pack_specs = {}
 
+  local function register_one(spec, path)
+    local ok_norm, normalized, setup_fn = pcall(normalize_spec, spec, path)
+
+    if not ok_norm then
+      vim.notify(normalized, vim.log.levels.ERROR)
+      return
+    end
+
+    registry[normalized.name] = {
+      spec = normalized,
+      setup = setup_fn,
+    }
+
+    table.insert(pack_specs, {
+      src = normalized.src,
+      name = normalized.name,
+      version = normalized.version,
+    })
+  end
+
   for _, path in ipairs(paths) do
     if not is_ignored(path) then
       local mod = file_to_module(path)
@@ -140,21 +162,14 @@ local function load_specs(paths)
       if not ok then
         vim.notify("Failed to load plugin file: " .. path .. ": " .. plugin_spec, vim.log.levels.ERROR)
       else
-        local ok_norm, normalized, setup_fn = pcall(normalize_spec, plugin_spec, path)
-
-        if not ok_norm then
-          vim.notify(normalized, vim.log.levels.ERROR)
+        if type(plugin_spec) == "table" and plugin_spec.src then
+          register_one(plugin_spec, path)
+        elseif vim.islist(plugin_spec) then
+          for _, item in ipairs(plugin_spec) do
+            register_one(item, path)
+          end
         else
-          registry[normalized.name] = {
-            spec = normalized,
-            setup = setup_fn,
-          }
-
-          table.insert(pack_specs, {
-            src = normalized.src,
-            name = normalized.name,
-            version = normalized.version,
-          })
+          vim.notify("Invalid plugin spec module (expected spec or list): " .. path, vim.log.levels.ERROR)
         end
       end
     end
