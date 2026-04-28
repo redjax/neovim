@@ -186,6 +186,14 @@ if ( Get-Command "cargo" -ErrorAction SilentlyContinue ) {
     }
 }
 else {
-    Write-Warning "Cargo is not installed. Please install Rust and Cargo before running this script."
-    exit 1
+    Write-Warning "Cargo is not installed. Skipping Cargo dependency installation."
+}
+
+## Install tree-sitter CLI (required by nvim-treesitter)
+$TreeSitterScript = Join-Path -Path $PSScriptRoot -ChildPath "install-treesitter-cli.ps1"
+if (Test-Path $TreeSitterScript) {
+    & $TreeSitterScript
+}
+else {
+    Write-Warning "tree-sitter install script is missing: $TreeSitterScript"
 }

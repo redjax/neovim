@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 ## Define NPM dependencies
 NPM_DEPENDENCIES=(
     "alex"
@@ -173,5 +175,12 @@ if command -v cargo >/dev/null 2>&1; then
     done
 else
     echo "Cargo is not installed, skipping Cargo dependencies installation"
-    exit 0
+fi
+
+## Install tree-sitter CLI (required by nvim-treesitter)
+TREESITTER_SCRIPT="${THIS_DIR}/install-treesitter-cli.sh"
+if [[ -x "$TREESITTER_SCRIPT" ]]; then
+    "$TREESITTER_SCRIPT"
+else
+    echo "tree-sitter install script is missing or not executable: $TREESITTER_SCRIPT" >&2
 fi
