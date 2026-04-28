@@ -162,7 +162,9 @@ local function load_specs(paths)
       if not ok then
         vim.notify("Failed to load plugin file: " .. path .. ": " .. plugin_spec, vim.log.levels.ERROR)
       else
-        if type(plugin_spec) == "table" and plugin_spec.src then
+        if plugin_spec == nil then
+          -- Plugin returns nil (e.g., conditional plugin that's disabled)
+        elseif type(plugin_spec) == "table" and plugin_spec.src then
           register_one(plugin_spec, path)
         elseif vim.islist(plugin_spec) then
           for _, item in ipairs(plugin_spec) do
