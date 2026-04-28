@@ -61,7 +61,11 @@ return {
     end
 
     if has_tool("golangci-lint") then
-      table.insert(sources, null_ls.builtins.diagnostics.golangci_lint)
+      table.insert(sources, null_ls.builtins.diagnostics.golangci_lint.with({
+        condition = function(utils)
+          return utils.root_has_file({ "go.mod", "go.work" })
+        end,
+      }))
     end
 
     if has_tool("yamllint") then
