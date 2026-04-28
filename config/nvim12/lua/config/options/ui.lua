@@ -3,6 +3,12 @@ vim.opt.number = true
 -- Show relative line numbers
 vim.opt.relativenumber = false
 
+-- Show buffers as tabs
+--   0: hidden, 1: visibile only when 2+ tabs, 2: always visible
+--   If you use a plugin like tabby, keep this at 0
+vim.opt.showtabline = 0
+vim.opt.tabpagemax = 100
+
 -- Mouse support
 vim.opt.mouse = "a"
 
