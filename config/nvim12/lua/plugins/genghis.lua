@@ -1,4 +1,4 @@
--- Genghis [https://github.com/chrisgrieser/nvim-genghis](https://github.com/chrisgrieser/nvim-genghis)
+-- Genghis https://github.com/chrisgrieser/nvim-genghis
 
 return {
   src = "https://github.com/chrisgrieser/nvim-genghis",
