@@ -6,18 +6,20 @@ return {
 
   setup = function()
     require("genghis").setup({
-      trashCmd = function()
-        if jit.os == "OSX" then
-          return "trash"
-        end
-        if jit.os == "Windows" then
-          return "trash"
-        end
-        if jit.os == "Linux" then
-          return { "gio", "trash" }
-        end
-        return "trash-cli"
-      end,
+      fileOperations = {
+        trashCmd = function()
+          if jit.os == "OSX" then
+            return "trash"
+          end
+          if jit.os == "Windows" then
+            return "trash"
+          end
+          if jit.os == "Linux" then
+            return { "gio", "trash" }
+          end
+          return "trash-cli"
+        end,
+      },
       navigation = {
         onlySameExtAsCurrentFile = false,
         ignoreDotfiles = true,
