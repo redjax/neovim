@@ -36,10 +36,10 @@ return {
       },
     })
 
-        -- Recommended keymaps for quick access
-        vim.keymap.set("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
-        vim.keymap.set("n", "<leader>gD", "<cmd>DiffviewFileHistory %<cr>", { desc = "File History (current file)" })
-        vim.keymap.set("n", "<leader>gH", "<cmd>DiffviewFileHistory<cr>", { desc = "File History (project)" })
-        vim.keymap.set("n", "<leader>gq", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" })
+    -- Recommended keymaps for quick access
+    vim.keymap.set("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
+    vim.keymap.set("n", "<leader>gD", "<cmd>DiffviewFileHistory %<cr>", { desc = "File History (current file)" })
+    vim.keymap.set("n", "<leader>gH", "<cmd>DiffviewFileHistory<cr>", { desc = "File History (project)" })
+    vim.keymap.set("n", "<leader>gq", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" })
   end,
 }
