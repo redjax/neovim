@@ -31,3 +31,29 @@ return {
     -- vim.api.nvim_create_user_command("MyCommand", function() ... end, {})
   end,
 }
+
+-- Copy/paste version. Copy this an uncomment
+-- return {
+--   src = "https://github.com/...",
+--   name = "...",
+--   setup = function()
+--     require("...").setup({
+--       -- plugin-specific setup options
+--       -- ...
+
+--       -- keybindings
+--       -- vim.keymap.set("n", "<leader>k", function() ... end, { desc = "Plugin action" })
+
+--       -- autocommands
+--       -- vim.api.nvim_create_autocmd("FileType", {
+--       --   pattern = "filetype",
+--       --   callback = function()
+--       --     require("...").setup({})
+--       --   end,
+--       -- })
+
+--       -- custom commands
+--       -- vim.api.nvim_create_user_command("MyCommand", function() ... end, {})
+--     })
+--   end
+-- }
