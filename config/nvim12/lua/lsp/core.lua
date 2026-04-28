@@ -1,10 +1,19 @@
 local M = {}
 
-M.capabilities = vim.tbl_deep_extend(
+local base_capabilities = vim.tbl_deep_extend(
   "force",
   {},
   vim.lsp.protocol.make_client_capabilities()
 )
+
+do
+  local ok_blink, blink = pcall(require, "blink.cmp")
+  if ok_blink and blink and blink.get_lsp_capabilities then
+    M.capabilities = blink.get_lsp_capabilities(base_capabilities)
+  else
+    M.capabilities = base_capabilities
+  end
+end
 
 local function setup_diagnostics()
   vim.diagnostic.config({
