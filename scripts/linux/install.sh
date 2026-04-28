@@ -679,26 +679,26 @@ function main() {
 }
 
 if command -v nvim > /dev/null 2>&1; then
-    echo "Neovim is already installed. Installing dependencies, backing up existing config if it exists and symlinking new config."
+    echo "Neovim is already installed. Reinstalling Neovim from source or appimage, then linking config."
+
+    # Reinstall neovim (update it)
+    if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
+        install_neovim_appimg
+    else
+        install_neovim_source
+    fi
+    eval_last $?
 
     REPO_CONFIGS=($(detect_repo_configs))
-
     symlink-config $REPO_CONFIGS
 
-    ## Install neovim dependencies
+    # Install deps again (in case Neovim version changed)
     if [[ ${PKG_MGR} == "dnf" ]]; then
-        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
         install_dependencies_dnf
     elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
-        # echo "[DEBUG] Would install dependencies with $PKG_MGR"
         install_dependencies_apt
-    else
-        print_unsupported_platform
-        # sleep 6
-        exit 1
     fi
 else
-    ## Run script
     main
 fi
 
