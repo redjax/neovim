@@ -13,9 +13,6 @@ return {
 
   -- Optional: configuration logic executed after loading.
   setup = function()
-    -- Ensure plugin is loaded (especially for lazy-loaded/conditional plugins).
-    -- vim.cmd("packadd repo")
-
     -- Standard plugin setup
     -- require("plugin").setup({})
 
