@@ -4,7 +4,13 @@ return {
   tools = { "json-lsp", "prettier" },
   settings = {
     jsonls = {
-      schemas = require("schemastore").json.schemas(),
+      schemas = (function()
+        local ok, schemastore = pcall(require, "schemastore")
+        if ok and schemastore and schemastore.json and schemastore.json.schemas then
+          return schemastore.json.schemas()
+        end
+        return {}
+      end)(),
       validate = { enable = true },
       format = {
         enable = true,

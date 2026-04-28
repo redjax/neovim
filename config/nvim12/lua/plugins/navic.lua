@@ -8,7 +8,7 @@ return {
 
     navic.setup({
       lsp = {
-        auto_attach = true,
+        auto_attach = false,
         preference = { "yamlls" },
       },
       highlight = true,
@@ -29,7 +29,12 @@ return {
           return
         end
 
+        if vim.b[args.buf].navic_attached then
+          return
+        end
+
         navic.attach(client, args.buf)
+        vim.b[args.buf].navic_attached = true
 
         vim.api.nvim_set_option_value(
           "winbar",

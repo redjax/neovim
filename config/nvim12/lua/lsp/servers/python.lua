@@ -2,6 +2,7 @@ return {
   name = "python",
   servers = { "pyright", "ruff" },
   tools = { "pyright", "ruff", "black", "isort", "mypy", "pylint", "flake8" },
+  filetypes = { "python" },
   settings = {
     pyright = {
       disableOrganizeImports = true,

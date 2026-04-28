@@ -8,11 +8,6 @@ return {
     name = "fidget.nvim",
     setup = function()
       require("fidget").setup({})
-
-      local lsp_auto_servers = require("lsp.auto_servers")
-      local ensure_installed = lsp_auto_servers.get()
-
-      require("lsp.core").setup(ensure_installed)
     end,
   },
   require("lsp.plugins.mason"),
