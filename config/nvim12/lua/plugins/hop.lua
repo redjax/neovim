@@ -3,7 +3,7 @@
 return {
   src = "https://github.com/smoka7/hop.nvim",
   name = "hop.nvim",
-  version = "main",
+  version = "master",
 
   setup = function()
     local opts = {
@@ -12,3 +12,4 @@ return {
     require("hop").setup(opts)
   end,
 }
+
