@@ -71,7 +71,7 @@ return {
 
         -- Format Dockerfile
         vim.keymap.set("n", "<leader>df", function()
-          vim.lsp.buf.format({ async = true })
+          require("conform").format({ async = true, lsp_format = "never" })
         end, vim.tbl_extend("force", opts, { desc = "Format Dockerfile" }))
 
         -- Hover info
