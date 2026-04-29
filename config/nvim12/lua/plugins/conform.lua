@@ -66,13 +66,17 @@ return {
         local filetype = vim.bo[bufnr].filetype
         if vim.tbl_contains(disable_filetypes, filetype) then return end
 
-        local lsp_format = "fallback"
         if filetype == "dockerfile" then
-          local has_external = vim.fn.executable("dockfmt") == 1 or vim.fn.executable("dockerfmt") == 1
-          lsp_format = has_external and "never" or "fallback"
+          local has_external = vim.fn.executable("dockfmt") == 1
+            or vim.fn.executable("dockerfmt") == 1
+          if not has_external then
+            -- Keep docker LSP features (diagnostics/completion), but never auto-format via LSP.
+            return
+          end
+          return { timeout_ms = 500, lsp_format = "never" }
         end
 
-        return { timeout_ms = 500, lsp_format = lsp_format }
+        return { timeout_ms = 500, lsp_format = "fallback" }
       end,
       log_level = vim.log.levels.WARN,
       notify_on_error = true,

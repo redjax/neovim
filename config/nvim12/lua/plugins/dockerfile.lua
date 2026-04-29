@@ -71,6 +71,11 @@ return {
 
         -- Format Dockerfile
         vim.keymap.set("n", "<leader>df", function()
+          local has_external = vim.fn.executable("dockfmt") == 1 or vim.fn.executable("dockerfmt") == 1
+          if not has_external then
+            vim.notify("No Dockerfile formatter found (expected dockfmt or dockerfmt)", vim.log.levels.WARN)
+            return
+          end
           require("conform").format({ async = true, lsp_format = "never" })
         end, vim.tbl_extend("force", opts, { desc = "Format Dockerfile" }))
 
