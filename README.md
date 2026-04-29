@@ -18,8 +18,10 @@
 My `neovim` configurations as a git repository.
 
 > [!TIP]
-> I am working porting my [main config](./config/nvim) to [a Neovim 0.12.0 compatible config](./config/nvim12/), replacing the Lazy package manager with
+> I am working porting my [main config](./config/nvim) to Neovim 0.12.0 compatible config, replacing the Lazy package manager with
 > the new built-in [`vim.pack`](https://neovim.io/doc/user/pack/).
+>
+> This development is happening on the [`feat/nvim-12-profile` branch](https://github.com/redjax/neovim/tree/feat/nvim-12-profile)
 
 > - 🔗 [View all releases](https://github.com/redjax/neovim/releases)
 >   - [Read more about how this repository creates releases](#releases)
