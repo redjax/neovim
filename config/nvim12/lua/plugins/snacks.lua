@@ -5,6 +5,8 @@ return {
   name = "snacks.nvim",
 
   setup = function()
+    local in_tmux = (vim.env.TMUX or "") ~= ""
+
     local opts = {
       animate = { enabled = true },
       bigfile = { enabled = true },
@@ -24,7 +26,8 @@ return {
       notify = { enabled = false },
       picker = { enabled = true },
       profiler = { enabled = false },
-      quickfile = { enabled = true },
+      -- Opening files directly from CLI in tmux can trigger terminal image probing.
+      quickfile = { enabled = not in_tmux },
       scope = { enabled = true },
       scratch = { enabled = false },
       scroll = { enabled = false },
