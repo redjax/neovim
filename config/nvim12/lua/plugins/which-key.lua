@@ -19,22 +19,29 @@ return {
       -- Define a trigger.
       --   Only use 1 `triggers = {...}` line below, keep the other commented.
       --   Also comment the `defer = function()` line beneath the disabled triggers.
-      triggers = {},
-      -- Function for trigger above
-      defer = function()
-        return true
-      end,
 
-      -- -- Open when a key/sequence is pressed that WhichKey recognizes
-      -- triggers = {
-      --   { "<auto>", mode = "nxso" },
-      --   { "<leader>", mode = "n" },
-      --   { "g", mode = "n" },
-      -- },
+      -- Disable popup, requires `:WhichKey` to open
+      -- triggers = {},
       -- -- Function for trigger above
-      -- defer = function(ctx)
-      --   return ctx.mode == "V" or ctx.mode == "<C-V>"
+      -- defer = function()
+      --   return true
       -- end,
+
+      -- Open when a key/sequence is pressed that WhichKey recognizes
+      triggers = {{
+        "<auto>",
+        mode = "nxso"
+      }, {
+        "<leader>",
+        mode = "n"
+      }, {
+        "g",
+        mode = "n"
+      }},
+      -- Function for trigger above
+      defer = function(ctx)
+        return ctx.mode == "V" or ctx.mode == "<C-V>"
+      end,
 
       plugins = {
         marks = true,
@@ -55,18 +62,21 @@ return {
       },
       win = {
         no_overlap = true,
-        padding = {1, 2},
-        title = true,
-        title_pos = "center",
-        zindex = 1000,
-        bo = {},
-        wo = {}
+        width = 45,
+        height = {
+          min = 4,
+          max = 16
+        },
+        border = "rounded",
+        padding = {0, 1},
+        title = false,
+        zindex = 1000
       },
       layout = {
         width = {
           min = 20
         },
-        spacing = 3
+        spacing = 1
       },
       keys = {
         scroll_down = "<c-d>",
