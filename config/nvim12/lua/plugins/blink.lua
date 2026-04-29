@@ -6,7 +6,13 @@ return {
   version = "v1",
   setup = function()
     require("blink.cmp").setup({
-      keymap = { preset = "default" },
+      keymap = {
+        preset = "default",  -- default: <C-y>
+        ["<Tab>"] = { "select_next", "fallback" },  -- Cycle forward through suggestions
+        ["<S-Tab>"] = { "select_prev", "fallback" },  -- Cycle backward through suggestions
+        ["<CR>"] = { "accept", "fallback" },  -- Enter to accept or newline
+        ["<C-CR>"] = { "accept" }  -- Ctrl+Enter
+      },
       appearance = {
         nerd_font_variant = "mono",
       },
