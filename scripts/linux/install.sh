@@ -72,10 +72,6 @@ declare -a NVIM_DNF_DEPENDENCIES=(
     "luarocks"
     "fd-find"
 )
-declare -a NVIM_DNF_GROUP_DEPENDENCIES=(
-    "Development Tools"
-    "Development Libraries"
-)
 
 ## Neovim dependency packages installable with apt
 declare -a NVIM_APT_DEPENDENCIES=(
@@ -302,45 +298,28 @@ function install_dependencies_apt() {
     echo "Please enter your admin password when prompted to install dependency packages"
     echo ""
 
-    sudo $PKG_MGR install -y "${NVIM_APT_DEPENDENCIES[@]}"
+    sudo apt update
+    sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
 
-    if ! command -v nvm --version > /dev/null 2>&1 && [ ! -d "$HOME/.nvm" ]; then
+    if ! command -v nvm >/dev/null 2>&1; then
         echo "[WARNING] nvm is not installed."
-
-        ## Download & install nvm
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-        
-        eval_last $?
+        source ~/.bashrc
     fi
 
-    ## Load NVM
-    echo "Loading nvm"
-    NVM_DIR="$HOME/.nvm"
-
-    ## This loads nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    ## This loads nvm bash_completion
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-    if ! command -v npm > /dev/null 2>&1; then
+    if ! command -v npm >/dev/null 2>&1; then
         echo "[WARNING] node is not installed."
-
         nvm install --lts
-        eval_last $?
         nvm alias default lts/*
     fi
 
-    if ! command -v tree-sitter --version > /dev/null 2>&1; then
+    if ! command -v tree-sitter >/dev/null 2>&1; then
         echo "[WARNING] tree-sitter is not installed."
         npm install -g tree-sitter-cli
     fi
 
-    ## Install neovim package for npm
     echo "Installing neovim with npm"
     npm install -g neovim
-    if [[ $? -ne 0 ]]; then
-        echo "[ERROR] Error installing neovim with npm"
-    fi
 }
 
 function install_dependencies_dnf() {
@@ -353,39 +332,27 @@ function install_dependencies_dnf() {
 
     sudo dnf update -y
     sudo dnf install -y "${NVIM_DNF_DEPENDENCIES[@]}"
-    
-    for dnf_group in "${NVIM_DNF_GROUP_DEPENDENCIES[@]}"; do
-        echo "Installing DNF group: ${dnf_group}"
-        sudo dnf group install -y "${dnf_group}"
-    done
+    sudo dnf install -y @development-tools
 
-    if ! command -v nvm > /dev/null 2>&1; then
+    if ! command -v nvm >/dev/null 2>&1; then
         echo "[WARNING] nvm is not installed."
-
-        ## Download & install nvm
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-
         source ~/.bashrc
     fi
 
-    if ! command -v npm > /dev/null 2>&1; then
+    if ! command -v npm >/dev/null 2>&1; then
         echo "[WARNING] node is not installed."
-
         nvm install --lts
         nvm alias default lts/*
     fi
 
-    if ! command -v tree-sitter --version > /dev/null 2>&1; then
+    if ! command -v tree-sitter >/dev/null 2>&1; then
         echo "[WARNING] tree-sitter is not installed."
         npm install -g tree-sitter-cli
     fi
 
-    ## Install neovim package for npm
     echo "Installing neovim with npm"
     npm install -g neovim
-    if [[ $? -ne 0 ]]; then
-        echo "[ERROR] Error installing neovim with npm"
-    fi
 }
 
 function install_neovim_appimg() {
