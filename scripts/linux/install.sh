@@ -232,8 +232,6 @@ function print_platform() {
     echo -e $PLATFORM_STR
 }
 
-print_platform
-
 function print_unsupported_platform() {
     echo "[WARNING] Platform not supported: [ OS Family: $OS_FAMILY, Release: $OS_RELEASE, Version: $OS_VERSION ]"
 }
