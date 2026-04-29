@@ -34,7 +34,7 @@ return {
       -- Open when a key/sequence is pressed that WhichKey recognizes
       triggers = {{
         "<auto>",
-        mode = "nxso"
+        mode = "n"
       }, {
         "<leader>",
         mode = "n"
