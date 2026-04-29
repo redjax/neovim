@@ -1,5 +1,4 @@
 -- Which-key keymap legend https://github.com/folke/which-key.nvim
-
 return {
   src = "https://github.com/folke/which-key.nvim",
   name = "which-key.nvim",
@@ -16,20 +15,33 @@ return {
       end,
       spec = {},
       notify = true,
-      triggers = {
-        { "<auto>", mode = "nxso" },
-        { "<leader>", mode = "n" },
-        { "g", mode = "n" },
-      },
-      defer = function(ctx)
-        return ctx.mode == "V" or ctx.mode == "<C-V>"
+
+      -- Define a trigger.
+      --   Only use 1 `triggers = {...}` line below, keep the other commented.
+      --   Also comment the `defer = function()` line beneath the disabled triggers.
+      triggers = {},
+      -- Function for trigger above
+      defer = function()
+        return true
       end,
+
+      -- -- Open when a key/sequence is pressed that WhichKey recognizes
+      -- triggers = {
+      --   { "<auto>", mode = "nxso" },
+      --   { "<leader>", mode = "n" },
+      --   { "g", mode = "n" },
+      -- },
+      -- -- Function for trigger above
+      -- defer = function(ctx)
+      --   return ctx.mode == "V" or ctx.mode == "<C-V>"
+      -- end,
+
       plugins = {
         marks = true,
         registers = true,
         spelling = {
           enabled = true,
-          suggestions = 20,
+          suggestions = 20
         },
         presets = {
           operators = true,
@@ -38,44 +50,36 @@ return {
           windows = true,
           nav = true,
           z = true,
-          g = true,
-        },
+          g = true
+        }
       },
       win = {
         no_overlap = true,
-        padding = { 1, 2 },
+        padding = {1, 2},
         title = true,
         title_pos = "center",
         zindex = 1000,
         bo = {},
-        wo = {},
+        wo = {}
       },
       layout = {
-        width = { min = 20 },
-        spacing = 3,
+        width = {
+          min = 20
+        },
+        spacing = 3
       },
       keys = {
         scroll_down = "<c-d>",
-        scroll_up = "<c-u>",
+        scroll_up = "<c-u>"
       },
-      sort = { "local", "order", "group", "alphanum", "mod" },
+      sort = {"local", "order", "group", "alphanum", "mod"},
       expand = 0,
       replace = {
-        key = {
-          function(key)
-            return require("which-key.view").format(key)
-          end,
-        },
-        desc = {
-          { "<Plug>%(?(.*)%)?", "%1" },
-          { "^%+", "" },
-          { "<[cC]md>", "" },
-          { "<[cC][rR]>", "" },
-          { "<[sS]ilent>", "" },
-          { "^lua%s+", "" },
-          { "^call%s+", "" },
-          { "^:%s*", "" },
-        },
+        key = {function(key)
+          return require("which-key.view").format(key)
+        end},
+        desc = {{"<Plug>%(?(.*)%)?", "%1"}, {"^%+", ""}, {"<[cC]md>", ""}, {"<[cC][rR]>", ""}, {"<[sS]ilent>", ""},
+                {"^lua%s+", ""}, {"^call%s+", ""}, {"^:%s*", ""}}
       },
       icons = {
         breadcrumb = "»",
@@ -113,20 +117,24 @@ return {
           F9 = "F9",
           F10 = "F10",
           F11 = "F11",
-          F12 = "F12",
-        },
+          F12 = "F12"
+        }
       },
       show_help = true,
       show_keys = true,
       disable = {
         ft = {},
-        bt = {},
+        bt = {}
       },
-      debug = false,
+      debug = false
     })
 
     vim.keymap.set("n", "<leader>?", function()
-      wk.show({ global = false })
-    end, { desc = "Buffer Local Keymaps (which-key)" })
-  end,
+      wk.show({
+        global = false
+      })
+    end, {
+      desc = "Buffer Local Keymaps (which-key)"
+    })
+  end
 }
