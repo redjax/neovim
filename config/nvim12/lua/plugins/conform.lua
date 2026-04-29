@@ -29,6 +29,7 @@ return {
         sh = { "shfmt" },
         bash = { "shfmt" },
         zsh = { "shfmt" },
+        dockerfile = { "dockfmt", "dockerfmt", stop_after_first = true },
         ps1 = { "powershell_es" },
         psm1 = { "powershell_es" },
         terraform = { "terraform_fmt" },
@@ -39,6 +40,20 @@ return {
         xml = { "xmllint" },
       },
       formatters = {
+        dockfmt = {
+          command = "dockfmt",
+          stdin = true,
+          condition = function()
+            return vim.fn.executable("dockfmt") == 1
+          end,
+        },
+        dockerfmt = {
+          command = "dockerfmt",
+          stdin = true,
+          condition = function()
+            return vim.fn.executable("dockerfmt") == 1
+          end,
+        },
         powershell_es = {
           command = "pwsh",
           args = { "-Command", "Format-Document" },
@@ -48,8 +63,16 @@ return {
       format_on_save = function(bufnr)
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
         local disable_filetypes = { "sql", "terraform" }
-        if vim.tbl_contains(disable_filetypes, vim.bo[bufnr].filetype) then return end
-        return { timeout_ms = 500, lsp_format = "fallback" }
+        local filetype = vim.bo[bufnr].filetype
+        if vim.tbl_contains(disable_filetypes, filetype) then return end
+
+        local lsp_format = "fallback"
+        if filetype == "dockerfile" then
+          local has_external = vim.fn.executable("dockfmt") == 1 or vim.fn.executable("dockerfmt") == 1
+          lsp_format = has_external and "never" or "fallback"
+        end
+
+        return { timeout_ms = 500, lsp_format = lsp_format }
       end,
       log_level = vim.log.levels.WARN,
       notify_on_error = true,

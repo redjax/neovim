@@ -8,7 +8,7 @@ return {
         docker = {
           languageserver = {
             formatter = {
-              ignoreMultilineInstructions = false,
+              ignoreMultilineInstructions = true,
             },
             diagnostics = {
               deprecatedMaintainer = true,
