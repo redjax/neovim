@@ -26,15 +26,6 @@ My `neovim` configurations as a git repository.
 > - 🔗 [View all releases](https://github.com/redjax/neovim/releases)
 >   - [Read more about how this repository creates releases](#releases)
 > - 📕 [Read the documentation](./docs/README.md)
-> [!TIP]
-> I am working porting my [main config](./config/nvim) to Neovim 0.12.0 compatible config, replacing the Lazy package manager with
-> the new built-in [`vim.pack`](https://neovim.io/doc/user/pack/).
->
-> This development is happening on the [`feat/nvim-12-profile` branch](https://github.com/redjax/neovim/tree/feat/nvim-12-profile)
-
-> - 🔗 [View all releases](https://github.com/redjax/neovim/releases)
->   - [Read more about how this repository creates releases](#releases)
-> - 📕 [Read the documentation](./docs/README.md)
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -54,7 +45,6 @@ Each time a release is created, it will contain .zip archives of each configurat
 
 ## Instructions
 
-_[View installation documentation](./docs/INSTALL.md)_
 _[View installation documentation](./docs/INSTALL.md)_
 
 - Clone repository with `git clone git@github.com:redjax/neovim` (or with HTTPS: `git clone https://github.com/redjax/neovim ./neovim`)
@@ -84,20 +74,15 @@ _[View plugin documentation](./docs/PLUGINS)_
 ## Updating
 
 _[View Neovim app update documentation](./docs/USAGE.md#update-neovim-app)_
-_[View Neovim app update documentation](./docs/USAGE.md#update-neovim-app)_
 
 _[View Neovim configuration update documentation](./docs/USAGE.md#updating-neovim-configuration)_
-_[View Neovim configuration update documentation](./docs/USAGE.md#updating-neovim-configuration)_
 
-_[View Neovim plugin update documentation](./docs/USAGE.md#updating-plugins)_
 _[View Neovim plugin update documentation](./docs/USAGE.md#updating-plugins)_
 
 ## Notes
 
 _[View notes documentation](./docs/NOTES.md)_
-_[View notes documentation](./docs/NOTES.md)_
 
 ## Links
 
-_[View links documentation](./docs/LINKS.md)_
 _[View links documentation](./docs/LINKS.md)_
