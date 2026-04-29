@@ -1,5 +1,6 @@
 local M = {}
 
+-- Get listed buffers
 local function listed_buffers()
   local bufs = {}
 
@@ -12,6 +13,18 @@ local function listed_buffers()
   return bufs
 end
 
+-- Show/hide bufferline depending on buffer count
+local function update_tabline_visibility()
+  local count = #listed_buffers()
+
+  if count <= 1 then
+    vim.o.showtabline = 0
+  else
+    vim.o.showtabline = 2
+  end
+end
+
+-- Get buffer display name
 local function buf_name(bufnr)
   local name = vim.api.nvim_buf_get_name(bufnr)
 
@@ -22,6 +35,7 @@ local function buf_name(bufnr)
   return vim.fn.fnamemodify(name, ":t")
 end
 
+-- Close buffer safely
 local function close_buf(bufnr)
   if not vim.api.nvim_buf_is_valid(bufnr) then
     return
@@ -35,13 +49,12 @@ local function close_buf(bufnr)
     vim.api.nvim_buf_delete(bufnr, {
       force = true
     })
-
     return
   end
 
   local cur = vim.api.nvim_get_current_buf()
 
-  -- If we're closing the current buffer, switch first
+  -- If closing the current buffer, switch first
   if cur == bufnr then
     for _, b in ipairs(bufs) do
       if b ~= bufnr then
@@ -56,7 +69,7 @@ local function close_buf(bufnr)
   })
 end
 
--- Click handlers (must be scheduled to avoid E565)
+-- Click handlers (scheduled to avoid E565)
 function _G.BufferLineClick(minwid, clicks, button, mods)
   if minwid <= 0 then
     return
@@ -66,12 +79,10 @@ function _G.BufferLineClick(minwid, clicks, button, mods)
     vim.schedule(function()
       vim.api.nvim_set_current_buf(minwid)
     end)
-
   elseif button == "r" then
     vim.schedule(function()
       close_buf(minwid)
     end)
-
   end
 end
 
@@ -97,10 +108,10 @@ function _G.BufferLine()
   for i, bufnr in ipairs(bufs) do
     local name = buf_name(bufnr)
 
-    -- Active vs inactive highlight
+    -- Highlight
     table.insert(parts, bufnr == curbuf and "%#TabLineSel#" or "%#TabLine#")
 
-    -- Clickable buffer name
+    -- Clickable name
     table.insert(parts, "%" .. bufnr .. "@v:lua.BufferLineClick@")
     table.insert(parts, " " .. name .. " ")
     table.insert(parts, "%T")
@@ -123,8 +134,22 @@ function _G.BufferLine()
 end
 
 function M.setup()
-  vim.o.showtabline = 2
   vim.o.tabline = "%!v:lua.BufferLine()"
+
+  -- Create augroup (prevents duplicates on reload)
+  local group = vim.api.nvim_create_augroup("BufferLineAutoHide", {
+    clear = true
+  })
+
+  vim.api.nvim_create_autocmd({"BufAdd", "BufDelete", "BufEnter"}, {
+    group = group,
+    callback = function()
+      vim.schedule(update_tabline_visibility)
+    end
+  })
+
+  -- Initial state
+  update_tabline_visibility()
 end
 
 return M
