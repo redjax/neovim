@@ -64,6 +64,10 @@ _[View installation documentation](./docs/INSTALL.md)_
 
 _[View usage documentation](./docs/USAGE.md)_
 
+## Plugins
+
+_[View plugin documentation](./docs/PLUGINS)_
+
 ## Updating
 
 _[View Neovim app update documentation](./docs/USAGE.md#update-neovim-app)_
