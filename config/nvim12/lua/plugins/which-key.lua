@@ -6,7 +6,11 @@ return {
     local wk = require("which-key")
 
     wk.setup({
-      preset = "classic",
+      -- Options:
+      --   - left aligned: classic (default)
+      --   - right aligned: helix
+      --   - center aligned: modern
+      preset = "helix",
       delay = function(ctx)
         return ctx.plugin and 0 or 200
       end,
