@@ -132,8 +132,6 @@ function main() {
 
     print_platform
 
-    pkg_mgr_update
-
     echo "-- [ Install dependencies"
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then

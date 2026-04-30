@@ -7,6 +7,44 @@ THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "${THIS_DIR}/path.sh"
 . "${THIS_DIR}/utils.sh"
 
+function npm_global_package_installed() {
+    ## Check if a global npm package is already installed
+    local pkg="$1"
+    local npm_root
+
+    if ! command -v npm >/dev/null 2>&1; then
+        return 1
+    fi
+
+    npm_root=$(npm root -g 2>/dev/null)
+    [[ -n "$npm_root" && -d "$npm_root/$pkg" ]]
+}
+
+function install_missing_npm_global_packages() {
+    ## Install only missing npm packages in one invocation for faster installs
+    local -n npm_deps=$1
+    local -a missing_pkgs=()
+
+    for pkg in "${npm_deps[@]}"; do
+        [[ "$pkg" =~ ^# ]] && continue
+
+        if npm_global_package_installed "$pkg"; then
+            echo "Skipping NPM package (already installed): $pkg"
+            continue
+        fi
+
+        missing_pkgs+=("$pkg")
+    done
+
+    if [[ ${#missing_pkgs[@]} -eq 0 ]]; then
+        echo "All requested NPM packages are already installed"
+        return 0
+    fi
+
+    echo "Installing missing NPM packages: ${missing_pkgs[*]}"
+    npm install -g "${missing_pkgs[@]}"
+}
+
 ##########################
 # Nerd Font Installation #
 ##########################
@@ -97,8 +135,12 @@ function install_dependencies_apt() {
         npm install -g tree-sitter-cli
     fi
 
-    echo "Installing neovim with npm"
-    npm install -g neovim
+    if npm_global_package_installed "neovim"; then
+        echo "Skipping npm install for neovim (already installed globally)"
+    else
+        echo "Installing neovim with npm"
+        npm install -g neovim
+    fi
 }
 
 function install_dependencies_dnf() {
@@ -133,8 +175,12 @@ function install_dependencies_dnf() {
         npm install -g tree-sitter-cli
     fi
 
-    echo "Installing neovim with npm"
-    npm install -g neovim
+    if npm_global_package_installed "neovim"; then
+        echo "Skipping npm install for neovim (already installed globally)"
+    else
+        echo "Installing neovim with npm"
+        npm install -g neovim
+    fi
 }
 
 #######################
@@ -524,25 +570,36 @@ function install_lsp_requirements() {
 
     ## Install NPM dependencies
     if command -v npm >/dev/null 2>&1; then
-        for pkg in "${NPM_DEPENDENCIES[@]}"; do
-            ## Skip commented dependencies
-            [[ "$pkg" =~ ^# ]] && continue
-            echo "Installing NPM package: $pkg"
-            if ! npm install -g "$pkg"; then
-                echo "Error installing NPM dependency '$pkg'" >&2
-            fi
-        done
+        if ! install_missing_npm_global_packages NPM_DEPENDENCIES; then
+            echo "Error installing one or more NPM dependencies" >&2
+        fi
     else
         echo "NPM is not installed. Please install Node.js and NPM, then re-run the script." >&2
         return 1
     fi
 
     ## Install Python dependencies
-    if command -v $PYTHON_PKG_MANAGER >/dev/null 2>&1; then
+    if command -v "$PYTHON_PKG_MANAGER" >/dev/null 2>&1; then
+        local PYTHON_CMD="python"
+        if command -v python3 >/dev/null 2>&1; then
+            PYTHON_CMD="python3"
+        fi
+
         for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
+            if "$PYTHON_CMD" -m pip show "$pkg" >/dev/null 2>&1; then
+                echo "Skipping Python package (already installed): $pkg"
+                continue
+            fi
+
             echo "Installing Python package: $pkg"
-            if ! $PYTHON_PKG_MANAGER install "$pkg"; then
-                echo "Error installing Python dependency '$pkg'" >&2
+            if [[ "$PYTHON_PKG_MANAGER" == "uv" ]]; then
+                if ! uv pip install --system "$pkg"; then
+                    echo "Error installing Python dependency '$pkg' with uv" >&2
+                fi
+            else
+                if ! "$PYTHON_PKG_MANAGER" install "$pkg"; then
+                    echo "Error installing Python dependency '$pkg' with pip" >&2
+                fi
             fi
         done
     else
