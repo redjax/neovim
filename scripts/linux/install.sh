@@ -6,7 +6,9 @@ LIB_DIR="${THIS_DIR}/lib"
 
 ## Source lib scripts
 . "${LIB_DIR}/path.sh"
+. "${LIB_DIR}/utils.sh"
 . "${LIB_DIR}/install-depends.sh"
+. "${LIB_DIR}/config.sh"
 
 ## Set path where script was called from
 CWD=$(pwd)
