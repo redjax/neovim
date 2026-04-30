@@ -1,26 +1,24 @@
 [CmdletBinding()]
 Param(
     [string]$ProfileName = $env:NVIM_APPNAME,
-    [string]$LogFile = (Join-Path -Path (Get-Location).Path -ChildPath "$($ProfileName)_startup.log")
+    [string]$LogFile = $null
 )
 
-if ( -not ( $ProfileName ) ) {
-    $ProfileName = "nvim"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$libDir = Join-Path $scriptDir 'lib'
+
+. (Join-Path $libDir 'NvimOps.ps1')
+
+if ([string]::IsNullOrWhiteSpace($ProfileName)) {
+    $ProfileName = 'nvim'
 }
 
-if ( -not ( $LogFile ) ) {
-    $LogFile = (Join-Path -Path (Get-Location).Path -ChildPath "$($ProfileName)_startup.log")
+if ([string]::IsNullOrWhiteSpace($LogFile)) {
+    $LogFile = Join-Path -Path (Get-Location).Path -ChildPath ("{0}_startup.log" -f $ProfileName)
 }
-
-if ( -not ( Get-Command nvim -ErrorAction SilentlyContinue ) ) {
-    Write-Error "Neovim (nvim) is not installed or not in PATH. Please install Neovim to use this script."
-    exit 1
-}
-
-Write-Host "Timing startup for profile: $ProfileName (saving log to file: $LogFile)"
 
 try {
-    nvim --startuptime $LogFile --headless +qall
+    Measure-NvimStartup -ProfileName $ProfileName -LogFile $LogFile
     Write-Host "Startup timing completed. Log saved to $LogFile"
 } catch {
     Write-Error "An error occurred while timing Neovim startup: $_"

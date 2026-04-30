@@ -26,15 +26,17 @@ param (
   [switch]$Help
 )
 
-## Discover valid profiles from config/ directory
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$RepoRoot = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
-$ConfigDir = Join-Path $RepoRoot "config"
+$scriptPath = $MyInvocation.MyCommand.Path
+$scriptDir = Split-Path -Parent $scriptPath
+$libDir = Join-Path $scriptDir 'lib'
 
-$VALID_PROFILES = @()
-if (Test-Path $ConfigDir) {
-  $VALID_PROFILES = (Get-ChildItem -Path $ConfigDir -Directory).Name
-}
+. (Join-Path $libDir 'Common.ps1')
+. (Join-Path $libDir 'Config.ps1')
+
+$repoRoot = Get-RepoRootFromScript -ScriptPath $scriptPath
+$ConfigDir = Get-ConfigDirectory -RepoRoot $repoRoot
+
+$VALID_PROFILES = Get-ProfileNames -ConfigDir $ConfigDir
 
 if ($VALID_PROFILES.Count -eq 0) {
   Write-Error "No profiles found in $ConfigDir"
@@ -65,46 +67,21 @@ if ($Help) {
   exit 0
 }
 
-function Get-TargetDir($p) {
-  return Join-Path $env:LOCALAPPDATA $p
-}
-
 # Build list of directories to delete
 $toDelete = @()
 
 if ($Profile -eq "all") {
   foreach ($p in $VALID_PROFILES) {
-    $toDelete += Get-TargetDir $p
+    $toDelete += Get-ProfileDataCleanupTargets -ProfileName $p -DataRoot $env:LOCALAPPDATA
   }
 } else {
   if (-not ($VALID_PROFILES -contains $Profile)) {
     Write-Error "Invalid profile '$Profile'. Valid: $($VALID_PROFILES -join ', '), or all."
     exit 1
   }
-  $toDelete += Get-TargetDir $Profile
+  $toDelete += Get-ProfileDataCleanupTargets -ProfileName $Profile -DataRoot $env:LOCALAPPDATA
 }
 
-foreach ($dir in $toDelete) {
-  if (-not (Test-Path -LiteralPath $dir)) {
-    Write-Host "Skipping: $dir does not exist."
-    continue
-  }
-
-  if (-not $Yes) {
-    $answer = Read-Host "About to remove '$dir'. Continue? [y/N]"
-    if ($answer -notmatch '^[Yy]') {
-      Write-Host "Skipped $dir"
-      continue
-    }
-  }
-
-  Write-Host "Removing $dir ..."
-  try {
-    Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction Stop
-    Write-Host "Removed $dir"
-  } catch {
-    Write-Warning "Failed to remove $($dir): $($_.Exception.Message)"
-  }
-}
+Remove-TargetsWithPrompt -Targets $toDelete -Yes:$Yes
 
 Write-Host "Done. If deletion was successful, open Neovim and run ':Lazy clean' then ':Lazy sync' (or press S when Lazy loads)."
