@@ -4,11 +4,15 @@ local loaded = {}
 local configured = {}
 
 local function is_disabled(path)
-  return path:find("plugins/disabled/") ~= nil or path:find("themes/disabled/") ~= nil
+  -- Normalize path separators to forward slashes for consistent matching
+  local normalized = path:gsub("\\", "/")
+  return normalized:find("plugins/disabled/") ~= nil or normalized:find("themes/disabled/") ~= nil
 end
 
 local function is_plugin_loader(path)
-  return path:match("/lua/plugins/init%.lua$") ~= nil
+  -- Normalize path separators to forward slashes for consistent matching
+  local normalized = path:gsub("\\", "/")
+  return normalized:match("/lua/plugins/init%.lua$") ~= nil
 end
 
 local function is_ignored(path)
