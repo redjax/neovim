@@ -2,10 +2,11 @@
 
 ## Installation and dependency management functions
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__NEOVIM_INSTALL_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-. "${THIS_DIR}/path.sh"
-. "${THIS_DIR}/utils.sh"
+. "${__NEOVIM_INSTALL_LIB_DIR}/path.sh"
+. "${__NEOVIM_INSTALL_LIB_DIR}/utils.sh"
+unset __NEOVIM_INSTALL_LIB_DIR
 
 function npm_global_package_installed() {
     ## Check if a global npm package is already installed

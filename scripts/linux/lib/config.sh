@@ -2,9 +2,10 @@
 
 ## Configuration management functions
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__NEOVIM_CONFIG_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-. "${THIS_DIR}/path.sh"
+. "${__NEOVIM_CONFIG_LIB_DIR}/path.sh"
+unset __NEOVIM_CONFIG_LIB_DIR
 
 ###############################
 # Config Management Functions #

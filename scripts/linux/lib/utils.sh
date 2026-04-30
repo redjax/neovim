@@ -2,9 +2,10 @@
 
 ## Utility functions and platform detection
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__NEOVIM_UTILS_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-. "${THIS_DIR}/path.sh"
+. "${__NEOVIM_UTILS_LIB_DIR}/path.sh"
+unset __NEOVIM_UTILS_LIB_DIR
 
 #####################
 # Utility Functions #
