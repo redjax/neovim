@@ -32,6 +32,7 @@ My `neovim` configurations as a git repository.
 - [Releases](#releases)
 - [Instructions](#instructions)
 - [Usage](#usage)
+- [Plugins](#plugins)
 - [Updating](#updating)
 - [Notes](#notes)
 - [Links](#links)
