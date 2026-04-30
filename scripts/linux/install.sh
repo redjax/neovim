@@ -11,6 +11,33 @@ LIB_DIR="${THIS_DIR}/lib"
 ## Set path where script was called from
 CWD=$(pwd)
 
+## Neovim dependency packages installable with dnf
+declare -a NVIM_DNF_DEPENDENCIES=(
+    "ripgrep"
+    "xclip"
+    "git"
+    "fzf"
+    "wl-clipboard"
+    "openssl-devel"
+    "lua-devel"
+    "luarocks"
+    "fd-find"
+)
+
+## Neovim dependency packages installable with apt
+declare -a NVIM_APT_DEPENDENCIES=(
+    "build-essential"
+    "ripgrep"
+    "xclip"
+    "wl-clipboard"
+    "git"
+    "fzf"
+    "libssl-dev"
+    "liblua5.1-0-dev"
+    "luarocks"
+    "fd-find"
+)
+
 ## Arg defaults
 DEBUG=0
 APPIMG=0
@@ -451,10 +478,10 @@ function main() {
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then
         # echo "[DEBUG] Would install dependencies with $PKG_MGR"
-        install_dependencies_dnf
+        install_dependencies_dnf NVIM_DNF_DEPENDENCIES
     elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
         # echo "[DEBUG] Would install dependencies with $PKG_MGR"
-        install_dependencies_apt
+        install_dependencies_apt NVIM_APT_DEPENDENCIES
     else
         print_unsupported_platform
         # sleep 6
@@ -515,10 +542,10 @@ if command -v nvim > /dev/null 2>&1; then
     ## Install neovim dependencies
     if [[ ${PKG_MGR} == "dnf" ]]; then
         # echo "[DEBUG] Would install dependencies with $PKG_MGR"
-        install_dependencies_dnf
+        install_dependencies_dnf NVIM_DNF_DEPENDENCIES
     elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
         # echo "[DEBUG] Would install dependencies with $PKG_MGR"
-        install_dependencies_apt
+        install_dependencies_apt NVIM_APT_DEPENDENCIES
     else
         print_unsupported_platform
         # sleep 6

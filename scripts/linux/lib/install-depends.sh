@@ -4,33 +4,6 @@ THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 . "${THIS_DIR}/path.sh"
 
-## Neovim dependency packages installable with dnf
-declare -a NVIM_DNF_DEPENDENCIES=(
-    "ripgrep"
-    "xclip"
-    "git"
-    "fzf"
-    "wl-clipboard"
-    "openssl-devel"
-    "lua-devel"
-    "luarocks"
-    "fd-find"
-)
-
-## Neovim dependency packages installable with apt
-declare -a NVIM_APT_DEPENDENCIES=(
-    "build-essential"
-    "ripgrep"
-    "xclip"
-    "wl-clipboard"
-    "git"
-    "fzf"
-    "libssl-dev"
-    "liblua5.1-0-dev"
-    "luarocks"
-    "fd-find"
-)
-
 function install_nerdfont() {
     ## Install the FiraCode nerd font
 
@@ -85,6 +58,9 @@ function install_nerdfont() {
 
 function install_dependencies_apt() {
     ## Install all neovim dependencies
+    
+    ## Expects array name as first parameter: install_dependencies_apt NVIM_APT_DEPENDENCIES
+    local -n apt_deps=$1
 
     echo ""
     echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
@@ -92,7 +68,7 @@ function install_dependencies_apt() {
     echo ""
 
     sudo apt update
-    sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
+    sudo apt install -y "${apt_deps[@]}"
 
     if ! command -v nvm >/dev/null 2>&1; then
         echo "[WARNING] nvm is not installed."
@@ -117,6 +93,9 @@ function install_dependencies_apt() {
 
 function install_dependencies_dnf() {
     ## Install all neovim dependencies
+    
+    ## Expects array name as first parameter: install_dependencies_dnf NVIM_DNF_DEPENDENCIES
+    local -n dnf_deps=$1
 
     echo ""
     echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
@@ -124,7 +103,7 @@ function install_dependencies_dnf() {
     echo ""
 
     sudo dnf update -y
-    sudo dnf install -y "${NVIM_DNF_DEPENDENCIES[@]}"
+    sudo dnf install -y "${dnf_deps[@]}"
     sudo dnf install -y @development-tools
 
     if ! command -v nvm >/dev/null 2>&1; then
