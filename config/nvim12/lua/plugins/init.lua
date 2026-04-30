@@ -17,8 +17,23 @@ local function is_ignored(path)
 end
 
 local function file_to_module(path)
-  return path
-    :match("lua/(.+)")
+  -- Normalize path separators to forward slashes
+  local normalized = path:gsub("\\", "/")
+  
+  -- Try to extract everything after "lua/" first
+  local mod = normalized:match("lua/(.+)")
+  
+  -- If that doesn't work, try to extract just the filename and relative structure
+  if not mod then
+    -- Try matching from the end for patterns like ".../lua/plugins/..." -> "plugins/..."
+    mod = normalized:match("^.*/lua/(.+)$")
+  end
+  
+  if not mod then
+    error("Unable to extract module path from: " .. path)
+  end
+  
+  return mod
     :gsub("%.lua$", "")
     :gsub("/", ".")
 end
