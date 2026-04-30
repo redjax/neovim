@@ -15,15 +15,15 @@ function symlink-config() {
     ## Create symbolic link from repository's config/nvim path to ~/.config/nvim
     #  Usage: symlink-config "config1" "config2" ...
     
-    local -n REPO_CONFIGS=$1
+        local -n repo_configs_ref=$1
     
-    if [[ ${#REPO_CONFIGS[@]} -eq 0 ]]; then
+        if [[ ${#repo_configs_ref[@]} -eq 0 ]]; then
       echo "[ERROR] Did not find any neovim configurations at path: ${CWD}/config"
       return 1
     fi
 
     ## Symlink discovered configurations
-    for conf in "${REPO_CONFIGS[@]}"; do
+        for conf in "${repo_configs_ref[@]}"; do
         ## Get absolute path to config file
         abs_path=$(cd "${CWD}/config/$conf" && pwd)
         
