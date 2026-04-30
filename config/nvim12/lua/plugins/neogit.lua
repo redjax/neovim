@@ -76,6 +76,14 @@ return {
         kind = "split",
       },
 
+      -- Keep hjkl navigation while preserving a key for log popup in Magit mode.
+      mappings = {
+        popup = {
+          ["l"] = false,
+          ["L"] = "LogPopup",
+        },
+      },
+
       -- Configure which branch to checkout after creating/rebasing
       -- Useful when you want to automatically switch branches
       auto_refresh = true,
