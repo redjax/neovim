@@ -17,8 +17,8 @@
 			"name": "Default Config"
 		},
 		{
-			"path": "../config/nvim-lite",
-			"name": "Lite Config"
+			"path": "../config/nvim12",
+			"name": "Neovim 0.12.0 Config"
 		},
 		{
 			"path": "../config/nvim-noplugins",

@@ -1,52 +1,41 @@
 #!/bin/bash
 
-## Discover valid profiles dynamically from config/ directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+LIB_DIR="${SCRIPT_DIR}/lib"
+
+. "${LIB_DIR}/path.sh"
+. "${LIB_DIR}/config.sh"
+
 CONFIG_DIR="${REPO_ROOT}/config"
+DEFAULT_PROFILE="nvim"
+PROFILE="${DEFAULT_PROFILE}"
+AUTO_YES=0
 
 VALID_PROFILES=()
-if [[ -d "$CONFIG_DIR" ]]; then
-  for d in "$CONFIG_DIR"/*/; do
-    [[ -d "$d" ]] && VALID_PROFILES+=("$(basename "$d")")
-  done
-fi
-
-if [[ ${#VALID_PROFILES[@]} -eq 0 ]]; then
+if ! discover_profile_names "$CONFIG_DIR" VALID_PROFILES; then
   echo "Error: no profiles found in ${CONFIG_DIR}" >&2
   exit 1
 fi
 
-DEFAULT_PROFILE="nvim"
-
 usage() {
   cat <<EOF
 Usage: $0 [-p|--profile <profile>|all] [--yes]
-Cleans out the Neovim profile plugin directories under ~/.local/share.
+Cleans profile data directories under ~/.local/share (not repo config files).
 
 Profiles are discovered from: ${CONFIG_DIR}
 
 Options:
   -p, --profile   Profile name to clean. One of: ${VALID_PROFILES[*]}, or "all". Default: ${DEFAULT_PROFILE}
-  --yes          Don't prompt before deletion.
-  -h, --help     Show this help message.
+  --yes           Do not prompt before deletion.
+  -h, --help      Show this help message.
 
 Examples:
-  $0                       # cleans default profile "nvim" -> ~/.local/share/nvim
+  $0                          # cleans default profile "nvim" -> ~/.local/share/nvim
   $0 -p nvim-noplugins        # cleans ~/.local/share/nvim-noplugins
-  $0 --profile all --yes   # force delete all profile dirs without prompt
+  $0 -p nvim12                # cleans ~/.local/share/nvim12 and ~/.local/share/nvim12/vim.pack
+  $0 --profile all --yes      # force delete all profile data dirs without prompt
 EOF
 }
-
-## Return the target directory for a given profile
-get_target_dir() {
-  local profile=$1
-  echo "$HOME/.local/share/${profile}"
-}
-
-## parse args
-PROFILE="${DEFAULT_PROFILE}"
-AUTO_YES=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -76,58 +65,23 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-## build list of targets
-to_delete=()
+ALL_TARGETS=()
 
 if [[ "$PROFILE" == "all" ]]; then
   for p in "${VALID_PROFILES[@]}"; do
-    to_delete+=("$(get_target_dir "$p")")
+    PROFILE_TARGETS=()
+    profile_data_cleanup_targets "$p" PROFILE_TARGETS
+    ALL_TARGETS+=("${PROFILE_TARGETS[@]}")
   done
-
 else
-  found=0
-  ## validate
-  for p in "${VALID_PROFILES[@]}"; do
-    if [[ "$p" == "$PROFILE" ]]; then
-      found=1
-      break
-    fi
-  done
-
-  if [[ $found -ne 1 ]]; then
+  if ! profile_is_valid "$PROFILE" VALID_PROFILES; then
     echo "Error: invalid profile '$PROFILE'. Valid: ${VALID_PROFILES[*]}, or all." >&2
     exit 1
   fi
-  
-  ## Append dir to to_delete arr
-  to_delete+=("$(get_target_dir "$PROFILE")")
 
+  profile_data_cleanup_targets "$PROFILE" ALL_TARGETS
 fi
 
-## Confirm and delete
-for dir in "${to_delete[@]}"; do
-  if [[ ! -e "$dir" ]]; then
-    echo "Skipping: $dir does not exist."
-    continue
-  fi
+remove_targets_with_prompt ALL_TARGETS "$AUTO_YES"
 
-  if [[ $AUTO_YES -eq 0 ]]; then
-    read -rp "About to remove $dir (requires sudo). Continue? [y/N] " ans
-
-    case "$ans" in
-      [Yy]*) ;;
-      *) echo "Skipped $dir"; continue ;;
-    esac
-  fi
-
-  echo "Removing $dir ..."
-  
-  sudo rm -rf -- "$dir"
-  if [[ $? -ne 0 ]]; then
-    echo "Failed to remove $dir"
-  else
-    echo "Removed $dir"
-  fi
-done
-
-echo "Done. If deletion was successful, you should open neovim and run :Lazy clean, then :Lazy sync (or press S when Lazy loads for the clean operation)."
+echo "Done. If deletion was successful, open Neovim and run :Lazy clean, then :Lazy sync."

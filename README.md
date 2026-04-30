@@ -17,9 +17,15 @@
 
 My `neovim` configurations as a git repository.
 
-> * 🔗 [View all releases](https://github.com/redjax/neovim/releases)
->   * [Read more about how this repository creates releases](#releases)
-> * 📕 [Read the documentation](./docs/README.md)
+> [!TIP]
+> I am working porting my [main config](./config/nvim) to Neovim 0.12.0 compatible config, replacing the Lazy package manager with
+> the new built-in [`vim.pack`](https://neovim.io/doc/user/pack/).
+>
+> This development is happening on the [`feat/nvim-12-profile` branch](https://github.com/redjax/neovim/tree/feat/nvim-12-profile)
+
+> - 🔗 [View all releases](https://github.com/redjax/neovim/releases)
+>   - [Read more about how this repository creates releases](#releases)
+> - 📕 [Read the documentation](./docs/README.md)
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -38,7 +44,7 @@ Each time a release is created, it will contain .zip archives of each configurat
 
 ## Instructions
 
-*[View installation documentation](./docs/INSTALL.md)*
+_[View installation documentation](./docs/INSTALL.md)_
 
 - Clone repository with `git clone git@github.com:redjax/neovim` (or with HTTPS: `git clone https://github.com/redjax/neovim ./neovim`)
 - Run the setup script for your platform:
@@ -58,20 +64,20 @@ Each time a release is created, it will contain .zip archives of each configurat
 
 ## Usage
 
-*[View usage documentation](./docs/USAGE.md)*
+_[View usage documentation](./docs/USAGE.md)_
 
 ## Updating
 
-*[View Neovim app update documentation](./docs/USAGE.md#update-neovim-app)*
+_[View Neovim app update documentation](./docs/USAGE.md#update-neovim-app)_
 
-*[View Neovim configuration update documentation](./docs/USAGE.md#updating-neovim-configuration)*
+_[View Neovim configuration update documentation](./docs/USAGE.md#updating-neovim-configuration)_
 
-*[View Neovim plugin update documentation](./docs/USAGE.md#updating-plugins)*
+_[View Neovim plugin update documentation](./docs/USAGE.md#updating-plugins)_
 
 ## Notes
 
-*[View notes documentation](./docs/NOTES.md)*
+_[View notes documentation](./docs/NOTES.md)_
 
 ## Links
 
-*[View links documentation](./docs/LINKS.md)*
+_[View links documentation](./docs/LINKS.md)_
