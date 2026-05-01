@@ -105,8 +105,8 @@ return {
     end, { desc = "Neogit commit" })
 
     vim.keymap.set("n", "<leader>gp", function()
-      require("neogit").open({ "push" })
-    end, { desc = "Neogit push" })
+      require("neogit").open({ "pull" })
+    end, { desc = "Neogit pull" })
 
     vim.keymap.set("n", "<leader>gl", function()
       require("neogit").open({ "log" })
@@ -125,8 +125,8 @@ return {
     end, { desc = "Neogit merge" })
 
     vim.keymap.set("n", "<leader>gP", function()
-      require("neogit").open({ "pull" })
-    end, { desc = "Neogit pull" })
+      require("neogit").open({ "push" })
+    end, { desc = "Neogit push" })
 
     vim.keymap.set("n", "<leader>gS", function()
       require("neogit").open({ "stash" })
