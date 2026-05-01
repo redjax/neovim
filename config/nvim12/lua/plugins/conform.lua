@@ -62,7 +62,7 @@ return {
       },
       format_on_save = function(bufnr)
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
-        local disable_filetypes = { "sql", "terraform" }
+        local disable_filetypes = { "sql", "terraform", "markdown", "mdx" }
         local filetype = vim.bo[bufnr].filetype
         if vim.tbl_contains(disable_filetypes, filetype) then return end
 
