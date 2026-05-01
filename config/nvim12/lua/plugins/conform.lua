@@ -38,8 +38,22 @@ return {
         c = { "clang_format" },
         cpp = { "clang_format" },
         xml = { "xmllint" },
+        toml = { "taplo" },
+        conf = {},
+        env = {},
+        envrc = {},
       },
       formatters = {
+        black = {
+          command = "black",
+          args = { "--line-ending", "lf", "-" },
+          stdin = true,
+        },
+        prettier = {
+          command = "prettier",
+          args = { "--stdin-filepath", "$FILENAME", "--end-of-line", "lf" },
+          stdin = true,
+        },
         dockfmt = {
           command = "dockfmt",
           stdin = true,
