@@ -22,7 +22,9 @@ return {
       dap_debug_gui = true,
       dap_debug_vt = true,
       trouble = true,
-      luasnip = true,
+      -- Keep LuaSnip available globally, but disable go.nvim's built-in snippets
+      -- because they currently hard-depend on guihua internals.
+      luasnip = false,
     })
 
     -- Run Go binary install/update once per Neovim session
