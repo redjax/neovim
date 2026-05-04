@@ -46,12 +46,12 @@ return {
       formatters = {
         black = {
           command = "black",
-          args = { "--line-ending", "lf", "-" },
+          args = { "-" },
           stdin = true,
         },
         prettier = {
           command = "prettier",
-          args = { "--stdin-filepath", "$FILENAME", "--end-of-line", "lf" },
+          args = { "--stdin-filepath", "$FILENAME" },
           stdin = true,
         },
         dockfmt = {
