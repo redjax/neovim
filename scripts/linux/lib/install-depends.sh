@@ -498,140 +498,209 @@ function install_neovide() {
 #################################
 
 function install_lsp_requirements() {
-    ## Install LSP language server dependencies
-    
-    ## Define NPM dependencies
+
+    local failed=0
+
+    #########
+    # Paths #
+    #########
+
+    export PATH="$HOME/.local/bin:$PATH"
+
+    local BASE_DIR="$HOME/.local/share/neovim-lsp"
+    local VENV_DIR="$BASE_DIR/venv"
+    local PYTHON_BIN="$VENV_DIR/bin/python"
+
+    mkdir -p "$BASE_DIR"
+
+    echo ""
+    echo "[ LSP Setup ]"
+    echo ""
+
+    ##############
+    # Require uv #
+    ##############
+
+    if ! command -v uv >/dev/null 2>&1; then
+        echo "[ERROR] uv is required but not installed"
+        return 1
+    fi
+
+    ###############################
+    # Create isolated environment #
+    ###############################
+
+    if [[ ! -x "$PYTHON_BIN" ]]; then
+        echo "[ Python ] Creating isolated user environment at $VENV_DIR"
+
+        uv venv "$VENV_DIR" --python 3.12 || {
+            echo "[ERROR] Failed to create venv"
+            return 1
+        }
+    fi
+
+    #####################################
+    # Bootstrap pip tooling inside venv #
+    #####################################
+
+    echo "[ Python ] Bootstrapping environment tools"
+
+    uv pip install \
+        --python "$PYTHON_BIN" \
+        --upgrade pip setuptools wheel >/dev/null 2>&1 || {
+        echo "[WARNING] Failed upgrading pip tooling"
+    }
+
+    ###################################
+    # NPM tools (global user install) #
+    ###################################
+
     local -a NPM_DEPENDENCIES=(
         "alex"
         "neovim"
-        "gh-actions-language-server"
-        "azure-pipelines-language-server"
         "bash-language-server"
-        "css-variables-language-server"
-        "markdownlint"
-        "markdownlint-cli2"
-        "@microsoft/compose-language-service"
         "dockerfile-language-server-nodejs"
-        "graphql-language-service-cli"
-        "pyright"
-        "@stoplight/spectral-cli"
         "yaml-language-server"
-        "textlint"
-        "write-good"
         "prettier"
-        "stylelint"
         "sql-formatter"
+        "pyright"
     )
 
-    ## Define Python dependencies
-    local -a PYTHON_DEPENDENCIES=(
-        "pyyaml"
-        "nginx-language-server"
-        "pynvim"
+    if command -v npm >/dev/null 2>&1; then
+        echo ""
+        echo "[ NPM ] Installing tools"
+        echo ""
+
+        for pkg in "${NPM_DEPENDENCIES[@]}"; do
+
+            if npm list -g "$pkg" >/dev/null 2>&1; then
+                echo "Skipping (already installed): $pkg"
+                continue
+            fi
+
+            echo "Installing npm tool: $pkg"
+            npm install -g "$pkg" || {
+                echo "[WARNING] Failed npm install: $pkg"
+                failed=1
+            }
+        done
+    else
+        echo "[WARNING] npm not installed"
+    fi
+
+    ####################
+    # Python CLI tools #
+    ####################
+
+    local -a PYTHON_TOOLS=(
         "ruff"
-        "ruff-lsp"
-        "salt-lsp"
         "sqruff"
         "cmake-language-server"
         "proselint"
         "mdformat"
         "ansible-lint"
         "yamlfix"
-        "sqlfmt"
-        "sqlformat"
     )
 
-    ## Define Rust/Cargo dependencies
-    local -a CARGO_DEPENDENCIES=(
-        "stylua"
+    echo ""
+    echo "[ Python ] Installing CLI tools"
+    echo ""
+
+    for pkg in "${PYTHON_TOOLS[@]}"; do
+        echo "Installing: $pkg"
+
+        uv tool install --force \
+            --python "$PYTHON_BIN" \
+            "$pkg" || {
+            echo "[ERROR] Failed tool: $pkg"
+            failed=1
+        }
+    done
+
+    ####################
+    # Python libraries #
+    ####################
+
+    local -a PYTHON_LIBRARIES=(
+        "pynvim"
+        "pyyaml"
     )
 
-    ## Define Go dependencies
-    local -a GO_DEPENDENCIES=(
-        "mvdan.cc/sh/v3/cmd/shfmt@latest"
-        "github.com/rhysd/actionlint/cmd/actionlint@latest"
-        "github.com/incu6us/goimports-reviser/v3@latest"
-        "github.com/google/yamlfmt/cmd/yamlfmt@latest"
-        "github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
-    )
+    echo ""
+    echo "[ Python ] Installing libraries into venv"
+    echo ""
 
-    echo "[ Installing LSP Requirements ]"
+    for pkg in "${PYTHON_LIBRARIES[@]}"; do
 
-    ## Determine Python package manager
-    local PYTHON_PKG_MANAGER="pip"
-    local PYTHON_TOOL_MANAGER="pipx"
-    
-    if command -v uv >/dev/null 2>&1; then
-        echo "Using uv for Python dependencies"
-        PYTHON_PKG_MANAGER="uv"
-        PYTHON_TOOL_MANAGER="uv"
-    else
-        echo "Using pip for Python dependencies"
-    fi
-
-    ## Install NPM dependencies
-    if command -v npm >/dev/null 2>&1; then
-        if ! install_missing_npm_global_packages NPM_DEPENDENCIES; then
-            echo "Error installing one or more NPM dependencies" >&2
-        fi
-    else
-        echo "NPM is not installed. Please install Node.js and NPM, then re-run the script." >&2
-        return 1
-    fi
-
-    ## Install Python dependencies
-    if command -v "$PYTHON_PKG_MANAGER" >/dev/null 2>&1; then
-        local PYTHON_CMD="python"
-        if command -v python3 >/dev/null 2>&1; then
-            PYTHON_CMD="python3"
+        # FIX: correct uv pip check (not pip show)
+        if uv pip list --python "$PYTHON_BIN" 2>/dev/null | grep -q "^$pkg "; then
+            echo "Skipping (already installed): $pkg"
+            continue
         fi
 
-        for pkg in "${PYTHON_DEPENDENCIES[@]}"; do
-            if "$PYTHON_CMD" -m pip show "$pkg" >/dev/null 2>&1; then
-                echo "Skipping Python package (already installed): $pkg"
-                continue
-            fi
+        echo "Installing library: $pkg"
 
-            echo "Installing Python package: $pkg"
-            if [[ "$PYTHON_PKG_MANAGER" == "uv" ]]; then
-                if ! uv pip install --system "$pkg"; then
-                    echo "Error installing Python dependency '$pkg' with uv" >&2
-                fi
-            else
-                if ! "$PYTHON_PKG_MANAGER" install "$pkg"; then
-                    echo "Error installing Python dependency '$pkg' with pip" >&2
-                fi
-            fi
-        done
-    else
-        echo "Python package manager ($PYTHON_PKG_MANAGER) is not installed." >&2
-        return 1
-    fi
+        uv pip install \
+            --python "$PYTHON_BIN" \
+            "$pkg" || {
+            echo "[ERROR] Failed library: $pkg"
+            failed=1
+        }
+    done
 
-    ## Install Rust/Cargo dependencies
+    ########################################
+    # Explicitly block broken legacy chain #
+    ########################################
+
+    echo ""
+    echo "[ Python ] Optional legacy tools"
+
+    echo "Skipping salt-lsp (broken on Python 3.12 + pyyaml dependency chain)"
+
+    ##############
+    # Rust tools #
+    ##############
+
     if command -v cargo >/dev/null 2>&1; then
-        for pkg in "${CARGO_DEPENDENCIES[@]}"; do
-            echo "Installing Cargo package: $pkg"
-            if ! cargo install "$pkg"; then
-                echo "Error installing Cargo dependency '$pkg'" >&2
-            fi
-        done
+        echo ""
+        echo "[ Rust ] Installing tools"
+
+        cargo install stylua || {
+            echo "[WARNING] stylua install failed"
+            failed=1
+        }
     else
-        echo "Cargo is not installed. Skipping Rust dependencies." >&2
+        echo "[WARNING] Cargo not installed"
     fi
 
-    ## Install Go dependencies
+    ############
+    # Go tools #
+    ############
+
     if command -v go >/dev/null 2>&1; then
-        for pkg in "${GO_DEPENDENCIES[@]}"; do
-            echo "Installing Go package: $pkg"
-            if ! go install "$pkg"; then
-                echo "Error installing Go dependency '$pkg'" >&2
-            fi
-        done
+        echo ""
+        echo "[ Go ] Installing tools"
+
+        go install mvdan.cc/sh/v3/cmd/shfmt@latest || {
+            echo "[WARNING] go install failed"
+            failed=1
+        }
     else
-        echo "Go is not installed. Skipping Go dependencies." >&2
+        echo "[WARNING] Go not installed"
     fi
 
-    echo "[SUCCESS] LSP requirements installed"
-    return 0
+    ################
+    # Final status #
+    ################
+
+    echo ""
+
+    if [[ $failed -eq 0 ]]; then
+        echo "[SUCCESS] LSP requirements installed"
+    else
+        echo "[WARNING] Some installs failed"
+    fi
+
+    return $failed
 }
+
