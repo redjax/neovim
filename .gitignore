@@ -20,3 +20,6 @@ witch*
 #  manage its own lockfile independently seems like the best way
 lazy-lock.json
 
+## Ignore vim.pack lockfile
+nvim-pack-lock.json
+
