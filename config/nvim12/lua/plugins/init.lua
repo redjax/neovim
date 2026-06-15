@@ -1,6 +1,7 @@
 local M = {}
 local registry = {}
 local loaded = {}
+local loading = {}
 local configured = {}
 local ensuring = {}
 local lazy_handlers_registered = {}
@@ -156,19 +157,40 @@ local function load_plugin(name)
     return true
   end
 
+  if loading[name] then
+    return true
+  end
+
   local entry = registry[name]
   if not entry then
     vim.notify("Unknown plugin in registry: " .. name, vim.log.levels.WARN)
     return false
   end
 
+  loading[name] = true
+
+  for _, dep in ipairs(listify(entry.spec.dependencies)) do
+    local dep_name = dependency_name(dep)
+    if not dep_name then
+      vim.notify("Invalid dependency in plugin spec for " .. name, vim.log.levels.WARN)
+      loading[name] = nil
+      return false
+    end
+    if dep_name ~= name and not load_plugin(dep_name) then
+      loading[name] = nil
+      return false
+    end
+  end
+
   local ok_add, err_add = pcall(vim.cmd.packadd, name)
   if not ok_add then
     vim.notify("Failed to packadd " .. name .. ": " .. err_add, vim.log.levels.ERROR)
+    loading[name] = nil
     return false
   end
 
   loaded[name] = true
+  loading[name] = nil
 
   return true
 end
