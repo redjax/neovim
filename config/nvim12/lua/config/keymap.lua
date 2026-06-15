@@ -9,6 +9,28 @@ vim.keymap.set('n', '<leader>w', '<cmd>write<cr>', {
   desc = 'Save file'
 })
 
+-- File tree toggle with explicit first-use bootstrap to avoid setup ordering races.
+vim.keymap.set('n', '<leader>e', function()
+  if not vim.g.nvim_tree_setup_done then
+    pcall(vim.cmd.packadd, 'nvim-tree.lua')
+
+    local ok_spec, spec = pcall(require, 'plugins.nvim-tree')
+    if ok_spec and type(spec) == 'table' and type(spec.setup) == 'function' then
+      pcall(spec.setup)
+    end
+  end
+
+  local ok_api, api = pcall(require, 'nvim-tree.api')
+  if ok_api then
+    api.tree.toggle()
+  else
+    vim.notify('nvim-tree not available', vim.log.levels.ERROR)
+  end
+end, {
+  desc = 'Toggle NvimTree',
+  silent = true,
+})
+
 -- Copy to system clipboard
 vim.keymap.set({'n', 'x'}, 'gy', '"+y', {
   desc = 'Copy to clipboard'

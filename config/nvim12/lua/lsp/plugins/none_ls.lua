@@ -1,6 +1,8 @@
 return {
 	src = "https://github.com/nvimtools/none-ls.nvim",
 	name = "none-ls.nvim",
+	event = { "BufReadPost", "BufNewFile" },
+	lazy = true,
 	setup = function()
 		local ok, null_ls = pcall(require, "null-ls")
 		if not ok then

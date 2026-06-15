@@ -4,6 +4,12 @@
 return {
   src = "https://github.com/rcarriga/nvim-dap-ui",
   name = "nvim-dap-ui",
+  cmd = {
+    "DapUIOpen",
+    "DapUIClose",
+    "DapUIToggle",
+  },
+  lazy = true,
 
   setup = function()
     require("dapui").setup({

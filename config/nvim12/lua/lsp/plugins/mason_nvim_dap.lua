@@ -3,7 +3,12 @@
 return {
   src = "https://github.com/jay-babu/mason-nvim-dap.nvim",
   name = "mason-nvim-dap.nvim",
-  config = function()
+  cmd = {
+    "DapContinue",
+    "DapToggleBreakpoint",
+  },
+  lazy = true,
+  setup = function()
     require("mason-nvim-dap").setup({
       automatic_installation = true,
       handlers = {},

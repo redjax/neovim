@@ -4,10 +4,45 @@
 return {
   src = "https://github.com/stevearc/conform.nvim",
   name = "conform.nvim",
+  cmd = {
+    "Format",
+    "FormatDisable",
+    "FormatEnable",
+  },
+  keys = {
+    { "<leader>f", mode = { "n", "v" }, desc = "Format buffer" },
+  },
+  ft = {
+    "lua",
+    "python",
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact",
+    "html",
+    "css",
+    "scss",
+    "json",
+    "jsonc",
+    "yaml",
+    "markdown",
+    "go",
+    "rust",
+    "sh",
+    "bash",
+    "zsh",
+    "dockerfile",
+    "ps1",
+    "psm1",
+    "terraform",
+    "sql",
+    "c",
+    "cpp",
+    "xml",
+    "toml",
+  },
+  lazy = true,
   setup = function()
-    -- Ensure plugin is loaded for commands and functionality
-    vim.cmd("packadd conform.nvim")
-
     require("conform").setup({
       formatters_by_ft = {
         lua = { "stylua" },

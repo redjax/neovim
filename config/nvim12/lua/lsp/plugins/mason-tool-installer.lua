@@ -1,6 +1,8 @@
 return {
   src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
   name = "mason-tool-installer.nvim",
+  event = "VimEnter",
+  lazy = true,
 
   setup = function()
     local ok, installer = pcall(require, "mason-tool-installer")

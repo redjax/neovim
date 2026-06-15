@@ -3,6 +3,16 @@
 return {
   src = "https://github.com/nvim-telescope/telescope.nvim",
   name = "telescope.nvim",
+  cmd = "Telescope",
+  keys = {
+    { "<leader>pf", desc = "Find files" },
+    { "<C-p>", desc = "Git files" },
+    { "<leader>ps", desc = "Live grep" },
+    { "<leader>pws", desc = "Search word" },
+    { "<leader>pWs", desc = "Search WORD" },
+    { "<leader>vh", desc = "Help tags" },
+  },
+  lazy = true,
   setup = function()
     require("telescope").setup({})
 

@@ -14,4 +14,8 @@ if ok_auto and ok_core then
 	})
 end
 
-return require("lsp.bundle")
+local specs = {}
+vim.list_extend(specs, require("lsp.core_bundle"))
+vim.list_extend(specs, require("lsp.dap_bundle"))
+
+return specs

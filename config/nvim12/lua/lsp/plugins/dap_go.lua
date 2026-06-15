@@ -4,6 +4,8 @@
 return {
   src = "https://github.com/leoluz/nvim-dap-go",
   name = "nvim-dap-go",
+  ft = { "go" },
+  lazy = true,
 
   setup = function()
     require("dap-go").setup()

@@ -2,6 +2,7 @@ local M = {}
 local registry = {}
 local loaded = {}
 local configured = {}
+local lazy_handlers_registered = {}
 
 local function is_disabled(path)
   -- Normalize path separators to forward slashes for consistent matching
@@ -48,8 +49,6 @@ local function list_plugins()
   for _, pattern in ipairs({
     "lua/plugins/*.lua",
     "lua/plugins/**/*.lua",
-    "lua/themes/*.lua",
-    "lua/themes/**/*.lua",
   }) do
 
     -- all=true is required here; false returns only the first matching file.
@@ -95,9 +94,39 @@ local function normalize_spec(spec, path)
     src = spec.src,
     name = spec.name,
     version = spec.version,
+    lazy = spec.lazy,
+    event = spec.event,
+    cmd = spec.cmd,
+    ft = spec.ft,
+    keys = spec.keys,
   }
 
-  return normalized, spec.setup
+  return normalized, spec.setup or spec.config
+end
+
+local function listify(value)
+  if value == nil then
+    return {}
+  end
+  if vim.islist(value) then
+    return value
+  end
+  return { value }
+end
+
+local function has_lazy_trigger(spec)
+  return spec.event ~= nil or spec.cmd ~= nil or spec.ft ~= nil or spec.keys ~= nil
+end
+
+local function should_lazy_load(entry)
+  local spec = entry.spec
+  if spec.lazy == false then
+    return false
+  end
+  if spec.lazy == true then
+    return true
+  end
+  return has_lazy_trigger(spec)
 end
 
 local function load_plugin(name)
@@ -148,6 +177,120 @@ local function configure_plugin(name)
   configured[name] = true
 
   return true
+end
+
+local function ensure_plugin(name)
+  if not load_plugin(name) then
+    return false
+  end
+  if not configure_plugin(name) then
+    return false
+  end
+  return true
+end
+
+local function add_event_trigger(name, events)
+  for _, event in ipairs(listify(events)) do
+    vim.api.nvim_create_autocmd(event, {
+      once = true,
+      callback = function()
+        ensure_plugin(name)
+      end,
+    })
+  end
+end
+
+local function add_ft_trigger(name, fts)
+  local patterns = listify(fts)
+  if #patterns == 0 then
+    return
+  end
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = patterns,
+    once = true,
+    callback = function()
+      ensure_plugin(name)
+    end,
+  })
+end
+
+local function build_command_invocation(cmd_name, opts)
+  local invocation = cmd_name
+  if opts.bang then
+    invocation = invocation .. "!"
+  end
+  if opts.args ~= nil and opts.args ~= "" then
+    invocation = invocation .. " " .. opts.args
+  end
+  return invocation
+end
+
+local function add_cmd_trigger(name, commands)
+  for _, cmd_name in ipairs(listify(commands)) do
+    vim.api.nvim_create_user_command(cmd_name, function(opts)
+      local ok = ensure_plugin(name)
+      if not ok then
+        return
+      end
+
+      pcall(vim.api.nvim_del_user_command, cmd_name)
+      vim.cmd(build_command_invocation(cmd_name, opts))
+    end, {
+      nargs = "*",
+      bang = true,
+      desc = "Lazy-load " .. name .. " on command " .. cmd_name,
+    })
+  end
+end
+
+local function add_keys_trigger(name, keys)
+  for _, key in ipairs(listify(keys)) do
+    local lhs
+    local mode = "n"
+    local desc = nil
+
+    if type(key) == "string" then
+      lhs = key
+    elseif type(key) == "table" then
+      lhs = key[1] or key.lhs
+      mode = key.mode or mode
+      desc = key.desc
+    end
+
+    if type(lhs) == "string" and lhs ~= "" then
+      local modes = listify(mode)
+      vim.keymap.set(modes, lhs, function()
+        local ok = ensure_plugin(name)
+        if not ok then
+          return
+        end
+
+        for _, one_mode in ipairs(modes) do
+          pcall(vim.keymap.del, one_mode, lhs)
+        end
+        local termcodes = vim.api.nvim_replace_termcodes(lhs, true, false, true)
+        vim.api.nvim_feedkeys(termcodes, "m", false)
+      end, { silent = true, desc = desc or ("Lazy-load " .. name) })
+    end
+  end
+end
+
+local function register_lazy_handlers(name, entry)
+  if lazy_handlers_registered[name] then
+    return
+  end
+  lazy_handlers_registered[name] = true
+
+  local spec = entry.spec
+  add_event_trigger(name, spec.event)
+  add_ft_trigger(name, spec.ft)
+  add_cmd_trigger(name, spec.cmd)
+  add_keys_trigger(name, spec.keys)
+
+  if spec.lazy == true and not has_lazy_trigger(spec) then
+    add_event_trigger(name, "UIEnter")
+  end
 end
 
 local function load_specs(paths)
@@ -211,19 +354,36 @@ function M.setup()
     end
   end
 
-  local names = {}
+  local eager_names = {}
   for name, _ in pairs(registry) do
-    table.insert(names, name)
+    local entry = registry[name]
+    if should_lazy_load(entry) then
+      register_lazy_handlers(name, entry)
+    else
+      table.insert(eager_names, name)
+    end
   end
-  table.sort(names)
+  table.sort(eager_names)
 
-  for _, name in ipairs(names) do
+  for _, name in ipairs(eager_names) do
     load_plugin(name)
   end
 
-  for _, name in ipairs(names) do
+  for _, name in ipairs(eager_names) do
     configure_plugin(name)
   end
+end
+
+function M.load(name)
+  return load_plugin(name)
+end
+
+function M.configure(name)
+  return configure_plugin(name)
+end
+
+function M.ensure(name)
+  return ensure_plugin(name)
 end
 
 M.setup()

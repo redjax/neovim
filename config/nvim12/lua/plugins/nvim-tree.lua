@@ -2,12 +2,19 @@
 
 return {
   src = "https://github.com/nvim-tree/nvim-tree.lua",
+  cmd = {
+    "NvimTreeToggle",
+    "NvimTreeOpen",
+    "NvimTreeFocus",
+    "NvimTreeFindFile",
+  },
+  lazy = true,
 
   setup = function()
-    -- Disable netrw (required for nvim-tree)
-    vim.g.loaded_netrw = 1
-    vim.g.loaded_netrwPlugin = 1
-    
+    if vim.g.nvim_tree_setup_done then
+      return
+    end
+
     -- Enable 24-bit colors (required for icons)
     vim.opt.termguicolors = true
     
@@ -30,11 +37,6 @@ return {
       vim.keymap.set("n", "<leader>e", api.tree.toggle, vim.tbl_extend("force", opts_desc("Toggle NvimTree"), { buffer = bufnr }))
     end
 
-    -- Global toggle mapping so it works before the first tree open.
-    vim.keymap.set("n", "<leader>e", function()
-      require("nvim-tree.api").tree.toggle()
-    end, { desc = "Toggle NvimTree", noremap = true, silent = true })
-    
     require("nvim-tree").setup({
       on_attach = on_attach,
       
@@ -75,5 +77,7 @@ return {
         ignore = false,
       },
     })
+
+    vim.g.nvim_tree_setup_done = true
   end,
 }

@@ -4,4 +4,6 @@
 return {
   src = "https://github.com/nvim-neotest/nvim-nio",
   name = "nvim-nio",
+  event = "UIEnter",
+  lazy = true,
 }

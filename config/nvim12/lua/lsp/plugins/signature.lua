@@ -1,6 +1,8 @@
 return {
   src = "https://github.com/ray-x/lsp_signature.nvim",
   name = "lsp_signature.nvim",
+  event = "LspAttach",
+  lazy = true,
   setup = function()
     require("lsp_signature").setup({
       bind = true,

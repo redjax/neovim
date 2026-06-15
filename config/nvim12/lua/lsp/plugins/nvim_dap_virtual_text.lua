@@ -4,6 +4,11 @@
 return {
   src = "https://github.com/theHamsta/nvim-dap-virtual-text",
   name = "nvim-dap-virtual-text",
+  cmd = {
+    "DapContinue",
+    "DapToggleBreakpoint",
+  },
+  lazy = true,
 
   setup = function()
     require("nvim-dap-virtual-text").setup({
