@@ -3,6 +3,10 @@
 return {
   src = "https://github.com/nvim-telescope/telescope-project.nvim",
   name = "telescope-project.nvim",
+  dependencies = {
+    "plenary.nvim",
+    "telescope.nvim",
+  },
   setup = function()
     local telescope = require("telescope")
 

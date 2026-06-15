@@ -3,6 +3,7 @@
 return {
   src = "https://github.com/nvim-telescope/telescope.nvim",
   name = "telescope.nvim",
+  dependencies = { "plenary.nvim" },
   cmd = "Telescope",
   keys = {
     { "<leader>pf", desc = "Find files" },

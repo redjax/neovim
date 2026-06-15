@@ -3,6 +3,7 @@
 return {
   src = "https://github.com/VidocqH/data-viewer.nvim",
   name = "data-viewer.nvim",
+  dependencies = { "plenary.nvim" },
   setup = function()
     require("data-viewer").setup({
       autoDisplayWhenOpenFile = false,

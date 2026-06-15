@@ -2,6 +2,7 @@ local M = {}
 local registry = {}
 local loaded = {}
 local configured = {}
+local ensuring = {}
 local lazy_handlers_registered = {}
 
 local function is_disabled(path)
@@ -79,6 +80,26 @@ local function infer_name(src)
   return name:gsub("%.git$", "")
 end
 
+local function dependency_name(dep)
+  if type(dep) == "string" then
+    if dep:match("^https?://") then
+      return infer_name(dep)
+    end
+    return dep
+  end
+
+  if type(dep) == "table" then
+    if type(dep.name) == "string" and dep.name ~= "" then
+      return dep.name
+    end
+    if type(dep.src) == "string" and dep.src ~= "" then
+      return infer_name(dep.src)
+    end
+  end
+
+  return nil
+end
+
 local function normalize_spec(spec, path)
   if type(spec) ~= "table" then
     error("plugin module must return a table: " .. path)
@@ -94,6 +115,7 @@ local function normalize_spec(spec, path)
     src = spec.src,
     name = spec.name,
     version = spec.version,
+    dependencies = spec.dependencies,
     lazy = spec.lazy,
     event = spec.event,
     cmd = spec.cmd,
@@ -180,12 +202,41 @@ local function configure_plugin(name)
 end
 
 local function ensure_plugin(name)
+  if ensuring[name] then
+    return true
+  end
+
+  local entry = registry[name]
+  if not entry then
+    vim.notify("Unknown plugin in registry: " .. name, vim.log.levels.WARN)
+    return false
+  end
+
+  ensuring[name] = true
+
+  for _, dep in ipairs(listify(entry.spec.dependencies)) do
+    local dep_name = dependency_name(dep)
+    if not dep_name then
+      vim.notify("Invalid dependency in plugin spec for " .. name, vim.log.levels.WARN)
+      ensuring[name] = nil
+      return false
+    end
+    if not ensure_plugin(dep_name) then
+      ensuring[name] = nil
+      return false
+    end
+  end
+
   if not load_plugin(name) then
+    ensuring[name] = nil
     return false
   end
   if not configure_plugin(name) then
+    ensuring[name] = nil
     return false
   end
+
+  ensuring[name] = nil
   return true
 end
 
@@ -366,11 +417,7 @@ function M.setup()
   table.sort(eager_names)
 
   for _, name in ipairs(eager_names) do
-    load_plugin(name)
-  end
-
-  for _, name in ipairs(eager_names) do
-    configure_plugin(name)
+    ensure_plugin(name)
   end
 end
 

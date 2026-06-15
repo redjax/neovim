@@ -3,6 +3,7 @@
 return {
   src = "https://github.com/debugloop/telescope-undo.nvim",
   name = "telescope-undo.nvim",
+  dependencies = { "telescope.nvim" },
   setup = function()
     require("telescope").setup({
       extensions = {

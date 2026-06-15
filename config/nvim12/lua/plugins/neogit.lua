@@ -4,6 +4,10 @@ return {
   src = "https://github.com/NeogitOrg/neogit",
   name = "neogit",
   version = "master",
+  dependencies = {
+    "plenary.nvim",
+    "telescope.nvim",
+  },
 
   setup = function()
     -- Neogit requires plenary to be loaded first
