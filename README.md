@@ -32,6 +32,7 @@ My `neovim` configurations as a git repository.
 - [Releases](#releases)
 - [Instructions](#instructions)
 - [Usage](#usage)
+- [Plugins](#plugins)
 - [Updating](#updating)
 - [Notes](#notes)
 - [Links](#links)
@@ -65,6 +66,10 @@ _[View installation documentation](./docs/INSTALL.md)_
 ## Usage
 
 _[View usage documentation](./docs/USAGE.md)_
+
+## Plugins
+
+_[View plugin documentation](./docs/PLUGINS)_
 
 ## Updating
 
