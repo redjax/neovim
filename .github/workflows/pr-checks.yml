@@ -1,0 +1,66 @@
+############################################################
+# PR validation pipeline.                                  #
+#                                                          #
+# Runs on every PR targeting main.                         #
+#                                                          #
+# renovate-gate is the single required PR check. It is the #
+# fan-in point for PR validation checks.                   #
+#                                                          #
+# Renovate needs a status check to enable auto-merge PRs.  #
+############################################################
+
+name: PR checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+jobs:
+  renovate-gate:
+    name: Renovate gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pass gate
+        run: |
+          echo "No PR validation checks are currently configured."
+          echo "Renovate gate passed."
+
+    ## Uncomment once other steps are added.
+    # renovate-gate:
+    #   name: Renovate gate
+    #   runs-on: ubuntu-latest
+    #   needs:
+    #     - prior-job1
+    #     - prior-job2
+    #   if: always()
+
+    #   steps:
+    #     - name: Check PR validation results
+    #       env:
+    #         SHELLCHECK_RESULT: ${{ needs.prior-job1.result }}
+    #         TASK_LINT_RESULT: ${{ needs.prior-job2.result }}
+    #       run: |
+    #         for result in \
+    #           "$SHELLCHECK_RESULT" \
+    #           "$TASK_LINT_RESULT"
+    #         do
+    #           case "$result" in
+    #             success|skipped)
+    #             ;;
+    #             *)
+    #               echo "A PR check failed or was cancelled: $result"
+    #               exit 1
+    #               ;;
+    #           esac
+    #         done
+
+    #         echo "All required PR checks passed."
