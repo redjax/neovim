@@ -7,34 +7,11 @@
     ],
     "packageRules": [
         {
-            "description": "Group Docker dependencies",
-            "matchManagers": [
-                "dockerfile",
-                "docker-compose"
-            ],
-            "groupName": "docker dependencies"
-        },
-        {
-            "description": "Require review for GitHub Actions",
+            "description": "Group GitHub Actions",
             "matchManagers": [
                 "github-actions"
             ],
-            "groupName": "github actions",
-            "automerge": false
-        },
-        {
-            "description": "Group mise dependencies",
-            "matchManagers": [
-                "mise"
-            ],
-            "groupName": "mise dependencies"
-        },
-        {
-            "description": "Group Node.js dependencies",
-            "matchManagers": [
-                "npm"
-            ],
-            "groupName": "node.js dependencies"
+            "groupName": "github actions"
         }
     ]
 }
