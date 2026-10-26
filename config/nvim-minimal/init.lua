@@ -269,19 +269,15 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 --
 
 -- Install missing plugins and make them available to this session.
-vim.pack.add({"https://github.com/folke/tokyonight.nvim", -- Tokyo Night colorscheme.
-"https://github.com/rebelot/kanagawa.nvim", -- Kanagawa colorscheme with Wave, Dragon, and Lotus variants.
-"https://github.com/zaldih/themery.nvim", -- Colorscheme picker with live preview and persistent selection.
-{
-  src = "https://github.com/saghen/blink.cmp", -- Blink completion, restricted to stable v1 releases.
+vim.pack.add({"https://github.com/folke/tokyonight.nvim", "https://github.com/rebelot/kanagawa.nvim",
+              "https://github.com/bluz71/vim-moonfly-colors", "https://github.com/zaldih/themery.nvim",
+              "https://github.com/daltonmenezes/aura-theme", "https://github.com/gmr458/vscode_modern_theme.nvim",
+              "https://github.com/nyoom-engineering/oxocarbon.nvim", "https://github.com/olimorris/onedarkpro.nvim", {
+  src = "https://github.com/saghen/blink.cmp",
   version = vim.version.range("1.*")
-}, -- Default language-server configurations.
-"https://github.com/neovim/nvim-lspconfig", -- Language-server installation and management.
-"https://github.com/mason-org/mason.nvim", -- Integration between Mason installations and Neovim LSP configurations.
-"https://github.com/mason-org/mason-lspconfig.nvim", -- Telescope's Lua utility dependency.
-"https://github.com/nvim-lua/plenary.nvim", -- Searchable lists of files, buffers, help, and more.
-"https://github.com/nvim-telescope/telescope.nvim", -- Keybinding hints.
-"https://github.com/folke/which-key.nvim"}, {
+}, "https://github.com/neovim/nvim-lspconfig", "https://github.com/mason-org/mason.nvim",
+              "https://github.com/mason-org/mason-lspconfig.nvim", "https://github.com/nvim-lua/plenary.nvim",
+              "https://github.com/nvim-telescope/telescope.nvim", "https://github.com/folke/which-key.nvim"}, {
   -- Install missing plugins without asking for confirmation.
   confirm = false
 })
@@ -310,6 +306,36 @@ require("themery").setup({
   }, {
     name = "Tokyo Night Moon",
     colorscheme = "tokyonight-moon"
+  }, {
+    name = "Moonfly",
+    colorscheme = "moonfly"
+  }, {
+    name = "OneDark",
+    colorscheme = "onedark"
+  }, {
+    name = "OneDark Dark",
+    colorscheme = "onedark_dark"
+  }, {
+    name = "OneDark Vivid",
+    colorscheme = "onedark_vivid"
+  }, {
+    name = "Oxocarbon",
+    colorscheme = "oxocarbon"
+  }, {
+    name = "Slate",
+    colorscheme = "slate"
+  }, {
+    name = "Vaporwave",
+    colorscheme = "vaporwave"
+  }, {
+    name = "VSCode Modern",
+    colorscheme = "vscode_modern"
+  }, {
+    name = "Wild Charm",
+    colorscheme = "wildcharm"
+  }, {
+    name = "Zaibatsu",
+    colorscheme = "zaibatsu"
   }},
 
   -- Preview themes while navigating the menu.
