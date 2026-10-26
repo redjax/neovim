@@ -272,7 +272,8 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 vim.pack.add({"https://github.com/folke/tokyonight.nvim", "https://github.com/rebelot/kanagawa.nvim",
               "https://github.com/bluz71/vim-moonfly-colors", "https://github.com/zaldih/themery.nvim",
               "https://github.com/daltonmenezes/aura-theme", "https://github.com/gmr458/vscode_modern_theme.nvim",
-              "https://github.com/nyoom-engineering/oxocarbon.nvim", "https://github.com/olimorris/onedarkpro.nvim", {
+              "https://github.com/nyoom-engineering/oxocarbon.nvim", "https://github.com/olimorris/onedarkpro.nvim",
+              "https://github.com/eldritch-theme/eldritch.nvim", {
   src = "https://github.com/saghen/blink.cmp",
   version = vim.version.range("1.*")
 }, "https://github.com/neovim/nvim-lspconfig", "https://github.com/mason-org/mason.nvim",
@@ -292,6 +293,15 @@ vim.cmd.colorscheme("zaibatsu")
 -- Provide a menu of installed themes and remember the selected theme.
 require("themery").setup({
   themes = {{
+    name = "Eldritch",
+    colorscheme = "eldritch"
+  }, {
+    name = "Eldritch Dark",
+    colorscheme = "eldritch-dark"
+  }, {
+    name = "Eldritch Minimal",
+    colorscheme = "eldritch-minimal"
+  }, {
     name = "Kanagawa Wave",
     colorscheme = "kanagawa-wave"
   }, {
@@ -345,6 +355,19 @@ require("themery").setup({
 -- Open the theme picker with Space+u+t.
 vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
   desc = "Choose theme"
+})
+
+-- Eldritch theme options
+-- Disable italics for comments and keywords.
+require("eldritch").setup({
+  styles = {
+    comments = {
+      italic = false
+    },
+    keywords = {
+      italic = false
+    }
+  }
 })
 
 --
