@@ -56,6 +56,12 @@ vim.opt.scrolloff = 8
 -- Only applies when line wrapping is disabled.
 vim.opt.sidescrolloff = 8
 
+-- Open vertical splits to the right of the current window instead of the left.
+vim.opt.splitright = true
+
+-- Open horizontal splits below the current window instead of above.
+vim.opt.splitbelow = true
+
 -- Preview substitutions in a separate window.
 vim.opt.inccommand = "split"
 
