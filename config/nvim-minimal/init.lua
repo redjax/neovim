@@ -93,6 +93,24 @@ end
 -- Enable syntax highlighting
 vim.cmd('syntax enable')
 
+-- Use PowerShell 7 on Windows when it is available; otherwise keep the default shell.
+if vim.fn.has("win32") == 1 and vim.fn.executable("pwsh") == 1 then
+  vim.opt.shell = "pwsh"
+
+  -- Run commands without the startup banner or user profile.
+  vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
+
+  -- Do not wrap PowerShell commands in cmd.exe-style outer quotes.
+  vim.opt.shellquote = ""
+  vim.opt.shellxquote = ""
+
+  -- Capture standard output and errors as UTF-8 for commands such as :make.
+  vim.opt.shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+
+  -- Redirect shell-command output to a UTF-8 file.
+  vim.opt.shellredir = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+end
+
 -- Configure how language-server diagnostics are displayed.
 vim.diagnostic.config({
   signs = {
