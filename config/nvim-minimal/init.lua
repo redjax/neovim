@@ -290,8 +290,8 @@ vim.pack.add({"https://github.com/folke/tokyonight.nvim", -- Tokyo Night colorsc
 -- [ THEME / COLORSCHEME ]
 --
 
--- Use Kanagawa Wave as the fallback before Themery restores a saved selection.
-vim.cmd.colorscheme("kanagawa-wave")
+-- Set fallback before Themery restores a saved selection.
+vim.cmd.colorscheme("zaibatsu")
 
 -- Provide a menu of installed themes and remember the selected theme.
 require("themery").setup({
