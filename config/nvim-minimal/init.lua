@@ -147,6 +147,18 @@ vim.keymap.set("i", "<End>", "<C-o>$", {
   desc = "Insert: go to end of line"
 })
 
+-- Map 'z' to fold (close) the current fold
+vim.keymap.set('n', 'z', 'zc', {
+  noremap = true,
+  desc = "Fold section under cursor"
+})
+
+-- Map 'zz' to unfold (open) the current fold
+vim.keymap.set('n', 'zz', 'zo', {
+  noremap = true,
+  desc = "Unfold section under cursor"
+})
+
 --
 -- [ PLUGINS ]
 --
