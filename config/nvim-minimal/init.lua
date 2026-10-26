@@ -67,6 +67,11 @@ vim.opt.expandtab = true
 -- Set the target width for formatting and automatic text wrapping.
 vim.opt.textwidth = 80
 
+-- File encoding
+if vim.g.platform == "windows" then
+  vim.opt.fileformats = {"dos", "unix"}
+end
+
 -- Configure how language-server diagnostics are displayed.
 vim.diagnostic.config({
   signs = {
