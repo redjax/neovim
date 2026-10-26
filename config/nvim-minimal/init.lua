@@ -72,6 +72,9 @@ if vim.g.platform == "windows" then
   vim.opt.fileformats = {"dos", "unix"}
 end
 
+-- Enable syntax highlighting
+vim.cmd('syntax enable')
+
 -- Configure how language-server diagnostics are displayed.
 vim.diagnostic.config({
   signs = {
