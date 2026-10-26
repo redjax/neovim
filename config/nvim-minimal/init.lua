@@ -49,6 +49,13 @@ vim.opt.listchars = {
   nbsp = "␣"
 }
 
+-- Keep eight lines visible above and below the cursor when possible.
+vim.opt.scrolloff = 8
+
+-- Keep eight columns visible beside the cursor when scrolling horizontally.
+-- Only applies when line wrapping is disabled.
+vim.opt.sidescrolloff = 8
+
 -- Preview substitutions in a separate window.
 vim.opt.inccommand = "split"
 
