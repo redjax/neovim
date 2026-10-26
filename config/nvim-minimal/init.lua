@@ -67,6 +67,9 @@ vim.opt.shiftwidth = 2
 -- Insert spaces instead of tab characters.
 vim.opt.expandtab = true
 
+-- Automatically adjust indentation for new lines using basic C-like syntax rules.
+vim.opt.smartindent = true
+
 -- Set the target width for formatting and automatic text wrapping.
 vim.opt.textwidth = 80
 
