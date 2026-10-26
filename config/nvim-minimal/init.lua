@@ -269,10 +269,11 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 --
 
 -- Install missing plugins and make them available to this session.
-vim.pack.add({ -- Tokyo Night colorscheme.
-"https://github.com/folke/tokyonight.nvim", -- Blink completion, restricted to stable v1 releases.
+vim.pack.add({"https://github.com/folke/tokyonight.nvim", -- Tokyo Night colorscheme.
+"https://github.com/rebelot/kanagawa.nvim", -- Kanagawa colorscheme with Wave, Dragon, and Lotus variants.
+"https://github.com/zaldih/themery.nvim", -- Colorscheme picker with live preview and persistent selection.
 {
-  src = "https://github.com/saghen/blink.cmp",
+  src = "https://github.com/saghen/blink.cmp", -- Blink completion, restricted to stable v1 releases.
   version = vim.version.range("1.*")
 }, -- Default language-server configurations.
 "https://github.com/neovim/nvim-lspconfig", -- Language-server installation and management.
@@ -289,8 +290,36 @@ vim.pack.add({ -- Tokyo Night colorscheme.
 -- [ THEME / COLORSCHEME ]
 --
 
--- Apply the dark Tokyo Night theme.
-vim.cmd.colorscheme("tokyonight-night")
+-- Use Kanagawa Wave as the fallback before Themery restores a saved selection.
+vim.cmd.colorscheme("kanagawa-wave")
+
+-- Provide a menu of installed themes and remember the selected theme.
+require("themery").setup({
+  themes = {{
+    name = "Kanagawa Wave",
+    colorscheme = "kanagawa-wave"
+  }, {
+    name = "Kanagawa Dragon",
+    colorscheme = "kanagawa-dragon"
+  }, {
+    name = "Kanagawa Lotus",
+    colorscheme = "kanagawa-lotus"
+  }, {
+    name = "Tokyo Night Night",
+    colorscheme = "tokyonight-night"
+  }, {
+    name = "Tokyo Night Moon",
+    colorscheme = "tokyonight-moon"
+  }},
+
+  -- Preview themes while navigating the menu.
+  livePreview = true
+})
+
+-- Open the theme picker with Space+u+t.
+vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
+  desc = "Choose theme"
+})
 
 --
 -- [ COMPLETION ]
@@ -527,7 +556,11 @@ require("which-key").setup({
   spec = {{
     "<leader>s",
     group = "Search"
-  }}
+  }},
+  {
+    "<leader>u",
+    group = "UI"
+  }
 })
 
 --
