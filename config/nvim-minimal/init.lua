@@ -58,6 +58,9 @@ vim.opt.wrap = true
 -- Display a tab character as two columns.
 vim.opt.tabstop = 2
 
+-- Make Tab and Backspace use two-column soft tab stops in insert mode.
+vim.o.softtabstop = 2
+
 -- Use two columns for indentation operations.
 vim.opt.shiftwidth = 2
 
