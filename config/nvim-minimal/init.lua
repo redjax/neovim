@@ -46,8 +46,11 @@ vim.opt.inccommand = "split"
 -- Highlight the line containing the cursor.
 vim.opt.cursorline = true
 
--- Highlight search matches.
-vim.opt.hlsearch = true
+-- Search options
+vim.opt.ignorecase = true -- ignore case in search patterns unless overridden
+vim.opt.smartcase = true -- make searches case-sensitive when the pattern contains an uppercase letter
+vim.opt.incsearch = true -- show matching text as you type
+vim.opt.hlsearch = true -- highlight matches
 
 -- Preserve indentation on visually wrapped lines.
 vim.opt.breakindent = true
