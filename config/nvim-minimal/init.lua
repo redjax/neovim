@@ -19,8 +19,17 @@ vim.opt.mouse = "a"
 -- Use the system clipboard for the unnamed register.
 vim.opt.clipboard = "unnamedplus"
 
--- Preserve undo history between editing sessions.
+-- Disable swap files; unsaved changes will not have swap-based crash recovery.
+vim.opt.swapfile = false
+
+-- Do not retain backup files after successful writes.
+vim.opt.backup = false
+
+-- Preserve undo history between sessions using Neovim's default undo directory.
 vim.opt.undofile = true
+
+-- Trigger CursorHold events after 250 milliseconds without typing.
+vim.opt.updatetime = 250
 
 -- Always reserve space for diagnostic and other signs.
 vim.opt.signcolumn = "yes"
@@ -174,6 +183,54 @@ vim.keymap.set('n', 'z', 'zc', {
 vim.keymap.set('n', 'zz', 'zo', {
   noremap = true,
   desc = "Unfold section under cursor"
+})
+
+--
+-- [ AUTOCOMMANDS ]
+--
+-- Clear previously registered autocommands if this configuration is sourced again.
+local config_group = vim.api.nvim_create_augroup("MinimalConfig", {
+  clear = true
+})
+
+-- Restore the last cursor position when a file is first displayed.
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = config_group,
+  desc = "Restore the last cursor position",
+  callback = function(event)
+    -- Skip special buffers and buffers already handled during this session.
+    if vim.bo[event.buf].buftype ~= "" or vim.b[event.buf].cursor_restored then
+      return
+    end
+
+    -- Leave Git commit messages and interactive rebases at their initial position.
+    local filetype = vim.bo[event.buf].filetype
+    if filetype == "gitcommit" or filetype == "gitrebase" then
+      return
+    end
+
+    -- Restore only once per buffer, not every time its window is entered.
+    vim.b[event.buf].cursor_restored = true
+
+    -- The double-quote mark records the cursor position from the previous edit.
+    local position = vim.api.nvim_buf_get_mark(event.buf, '"')
+    local line_count = vim.api.nvim_buf_line_count(event.buf)
+
+    -- Ignore missing marks and positions beyond the current end of the file.
+    if position[1] < 1 or position[1] > line_count then
+      return
+    end
+
+    -- Clamp the saved byte column if the line has become shorter.
+    local line = vim.api.nvim_buf_get_lines(event.buf, position[1] - 1, position[1], false)[1]
+    position[2] = math.min(position[2], #line)
+
+    -- Restore the cursor directly instead of injecting keystrokes.
+    vim.api.nvim_win_set_cursor(0, position)
+
+    -- Open any folds hiding the restored cursor position.
+    vim.cmd("normal! zv")
+  end
 })
 
 --
