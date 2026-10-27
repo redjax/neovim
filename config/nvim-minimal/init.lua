@@ -273,7 +273,7 @@ vim.pack.add({"https://github.com/folke/tokyonight.nvim", "https://github.com/re
               "https://github.com/bluz71/vim-moonfly-colors", "https://github.com/zaldih/themery.nvim",
               "https://github.com/daltonmenezes/aura-theme", "https://github.com/gmr458/vscode_modern_theme.nvim",
               "https://github.com/nyoom-engineering/oxocarbon.nvim", "https://github.com/olimorris/onedarkpro.nvim",
-              "https://github.com/eldritch-theme/eldritch.nvim", {
+              "https://github.com/NeogitOrg/neogit", "https://github.com/eldritch-theme/eldritch.nvim", {
   src = "https://github.com/saghen/blink.cmp",
   version = vim.version.range("1.*")
 }, "https://github.com/neovim/nvim-lspconfig", "https://github.com/mason-org/mason.nvim",
@@ -391,6 +391,18 @@ require("blink.cmp").setup({
   fuzzy = {
     implementation = "lua"
   }
+})
+
+---
+--- Neogit
+---
+
+-- Initialize Neogit with its default settings and automatic Telescope integration.
+require("neogit").setup({})
+
+-- Open the Git status interface in a new tab.
+vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<CR>", {
+  desc = "Open Neogit"
 })
 
 --
@@ -603,6 +615,9 @@ require("which-key").setup({
 
   -- Label the Space+s prefix as Search.
   spec = {{
+    "<leader>g",
+    group = "Git"
+  }, {
     "<leader>s",
     group = "Search"
   }},
