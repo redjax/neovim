@@ -658,17 +658,11 @@ require("which-key").setup({
 		mappings = false,
 	},
 
-	-- Label the Space+s prefix as Search.
-	spec = { {
-		"<leader>g",
-		group = "Git",
-	}, {
-		"<leader>s",
-		group = "Search",
-	} },
-	{
-		"<leader>u",
-		group = "UI",
+	-- Label keybinding prefixes; individual mappings supply their own descriptions.
+	spec = {
+		{ "<leader>g", group = "Git" },
+		{ "<leader>s", group = "Search" },
+		{ "<leader>u", group = "UI" },
 	},
 })
 
