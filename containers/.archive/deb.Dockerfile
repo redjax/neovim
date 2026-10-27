@@ -2,8 +2,8 @@
 ARG CONTAINER_ENV=1
 
 ## Pull nodejs container
-FROM node:latest AS node-base
-FROM debian:stable-slim AS debian-base
+FROM node:latest@sha256:a98e6fda54fdbb22d4238054cca9a2a113bcd1191c09193a535aae22f400aa8e AS node-base
+FROM debian:stable-slim@sha256:a717a33469731894e77e912ea7d714e27c2dc38ee6554fd1a3102e92999cfc66 AS debian-base
 
 ## Set environment variables using the ARG values
 ENV CONTAINER_ENV=${CONTAINER_ENV}
