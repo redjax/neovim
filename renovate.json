@@ -5,6 +5,34 @@
         "helpers:pinGitHubActionDigests",
         "docker:pinDigests"
     ],
+    "customManagers": [
+        {
+            "customType": "jsonata",
+            "description": "Update explicitly tracked GitHub refs in vim.pack lockfiles",
+            "fileFormat": "json",
+            "managerFilePatterns": [
+                "/(^|/)nvim-pack-lock\\.json$/"
+            ],
+            "matchStrings": [
+                "$each(plugins, function($v, $k) { ($ref := $v.version; $exists($ref) and $contains($v.src, /^https:\\/\\/github\\.com\\//) and $contains($ref, /^'[^']+'$/) ? {\"depName\": $k, \"packageName\": $replace($replace($v.src, /^https:\\/\\/github\\.com\\//, ''), /\\.git$/, ''), \"currentValue\": $substring($ref, 1, $length($ref) - 2), \"currentDigest\": $v.rev} : []) })"
+            ],
+            "datasourceTemplate": "github-digest",
+            "versioningTemplate": "exact"
+        },
+        {
+            "customType": "jsonata",
+            "description": "Update mapped GitHub plugin branches in Lazy lockfiles",
+            "fileFormat": "json",
+            "managerFilePatterns": [
+                "/(^|/)lazy-lock\\.json$/"
+            ],
+            "matchStrings": [
+                "($repos := {\"LuaSnip\":\"L3MON4D3/LuaSnip\",\"NvChad\":\"NvChad/NvChad\",\"base46\":\"NvChad/base46\",\"cmp-buffer\":\"hrsh7th/cmp-buffer\",\"cmp-nvim-lsp\":\"hrsh7th/cmp-nvim-lsp\",\"cmp-nvim-lua\":\"hrsh7th/cmp-nvim-lua\",\"cmp_luasnip\":\"saadparwaiz1/cmp_luasnip\",\"conform.nvim\":\"stevearc/conform.nvim\",\"diffview.nvim\":\"sindrets/diffview.nvim\",\"flash.nvim\":\"folke/flash.nvim\",\"friendly-snippets\":\"rafamadriz/friendly-snippets\",\"gitsigns.nvim\":\"lewis6991/gitsigns.nvim\",\"indent-blankline.nvim\":\"lukas-reineke/indent-blankline.nvim\",\"lazy.nvim\":\"folke/lazy.nvim\",\"lazydev.nvim\":\"folke/lazydev.nvim\",\"mason-lspconfig.nvim\":\"mason-org/mason-lspconfig.nvim\",\"mason-tool-installer.nvim\":\"WhoIsSethDaniel/mason-tool-installer.nvim\",\"mason.nvim\":\"mason-org/mason.nvim\",\"nui.nvim\":\"MunifTanjim/nui.nvim\",\"nvim-autopairs\":\"windwp/nvim-autopairs\",\"nvim-cmp\":\"hrsh7th/nvim-cmp\",\"nvim-lint\":\"mfussenegger/nvim-lint\",\"nvim-lspconfig\":\"neovim/nvim-lspconfig\",\"nvim-navbuddy\":\"SmiteshP/nvim-navbuddy\",\"nvim-navic\":\"SmiteshP/nvim-navic\",\"nvim-tree.lua\":\"nvim-tree/nvim-tree.lua\",\"nvim-treesitter\":\"nvim-treesitter/nvim-treesitter\",\"nvim-web-devicons\":\"nvim-tree/nvim-web-devicons\",\"plenary.nvim\":\"nvim-lua/plenary.nvim\",\"precognition.nvim\":\"tris203/precognition.nvim\",\"schemastore.nvim\":\"b0o/SchemaStore.nvim\",\"telescope.nvim\":\"nvim-telescope/telescope.nvim\",\"trouble.nvim\":\"folke/trouble.nvim\",\"ui\":\"NvChad/ui\",\"vim-fugitive\":\"tpope/vim-fugitive\",\"vim-illuminate\":\"RRethy/vim-illuminate\",\"which-key.nvim\":\"folke/which-key.nvim\"}; $each($, function($v, $k) { ($repo := $lookup($repos, $k); $exists($repo) and $exists($v.branch) and $exists($v.commit) ? {\"depName\": $k, \"packageName\": $repo, \"currentValue\": $v.branch, \"currentDigest\": $v.commit} : []) }))"
+            ],
+            "datasourceTemplate": "github-digest",
+            "versioningTemplate": "exact"
+        }
+    ],
     "packageRules": [
         {
             "description": "Group GitHub Actions",
