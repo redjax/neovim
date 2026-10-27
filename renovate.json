@@ -40,6 +40,21 @@
                 "github-actions"
             ],
             "groupName": "github actions"
+        },
+        {
+            "description": "Review Neovim plugin digest updates after seven days",
+            "matchManagers": [
+                "custom.jsonata"
+            ],
+            "matchFileNames": [
+                "**/nvim-pack-lock.json",
+                "**/lazy-lock.json"
+            ],
+            "groupName": "neovim plugins",
+            "minimumReleaseAge": "7 days",
+            "minimumReleaseAgeBehaviour": "timestamp-required",
+            "internalChecksFilter": "strict",
+            "automerge": false
         }
     ]
 }
