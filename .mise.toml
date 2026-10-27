@@ -3,4 +3,5 @@
 #  Leaving this here as a reference for a "staging" dir
 #  where I can test my config locally, without installing neovim.
 # "vfox:mise-plugins/vfox-neovim" = "nightly"
-
+"stylua" = "2.6.0"
+"aqua:LuaLS/lua-language-server" = "3.19.2"
