@@ -1,4 +1,0 @@
-## Ignore CMake artifacts
-CMakeCache.txt
-CMakeFiles/
-build/neovim/
