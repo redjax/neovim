@@ -270,30 +270,108 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 
 -- Install missing plugins and make them available to this session.
 vim.pack.add({
-	-- Colorschemes
-	"https://github.com/folke/tokyonight.nvim",
-	"https://github.com/rebelot/kanagawa.nvim",
-	"https://github.com/bluz71/vim-moonfly-colors",
-	"https://github.com/daltonmenezes/aura-theme",
-	"https://github.com/gmr458/vscode_modern_theme.nvim",
-	"https://github.com/nyoom-engineering/oxocarbon.nvim",
-	"https://github.com/olimorris/onedarkpro.nvim",
-	"https://github.com/eldritch-theme/eldritch.nvim",
+	-- Tokyo Night colorscheme.
+	{
+		src = "https://github.com/folke/tokyonight.nvim",
+		version = "main",
+	},
 
-	-- Bling completions
+	-- Kanagawa colorscheme.
+	{
+		src = "https://github.com/rebelot/kanagawa.nvim",
+		version = "master",
+	},
+
+	-- Moonfly colorscheme.
+	{
+		src = "https://github.com/bluz71/vim-moonfly-colors",
+		version = "master",
+	},
+
+	-- Aura colorscheme.
+	{
+		src = "https://github.com/daltonmenezes/aura-theme",
+		version = "main",
+	},
+
+	-- VSCode Modern colorscheme.
+	{
+		src = "https://github.com/gmr458/vscode_modern_theme.nvim",
+		version = "main",
+	},
+
+	-- Oxocarbon colorscheme.
+	{
+		src = "https://github.com/nyoom-engineering/oxocarbon.nvim",
+		version = "main",
+	},
+
+	-- OneDark Pro colorscheme.
+	{
+		src = "https://github.com/olimorris/onedarkpro.nvim",
+		version = "main",
+	},
+
+	-- Eldritch colorscheme.
+	{
+		src = "https://github.com/eldritch-theme/eldritch.nvim",
+		version = "master",
+	},
+
+	-- Blink completion, restricted to v1 releases.
+	-- The branch-only Renovate manager deliberately skips this version range.
 	{
 		src = "https://github.com/saghen/blink.cmp",
 		version = vim.version.range("1.*"),
 	},
 
-	"https://github.com/zaldih/themery.nvim", -- Theme management
-	"https://github.com/NeogitOrg/neogit", -- Magit-like Git interface
-	"https://github.com/neovim/nvim-lspconfig", -- Default set of LSP configs
-	"https://github.com/mason-org/mason.nvim", -- Install LSP tools automatically
-	"https://github.com/mason-org/mason-lspconfig.nvim", -- Configurations for improving Mason + lspconfig integration
-	"https://github.com/nvim-lua/plenary.nvim", -- Pre-fab Neovim functions. Used by a lot of plugins
-	"https://github.com/nvim-telescope/telescope.nvim", -- Extensible fuzzy finder, picker, previewer, & more
-	"https://github.com/folke/which-key.nvim", -- Keybind helper
+	-- Theme selection and persistence.
+	{
+		src = "https://github.com/zaldih/themery.nvim",
+		version = "main",
+	},
+
+	-- Magit-like Git interface.
+	{
+		src = "https://github.com/NeogitOrg/neogit",
+		version = "master",
+	},
+
+	-- Default language-server configurations.
+	{
+		src = "https://github.com/neovim/nvim-lspconfig",
+		version = "master",
+	},
+
+	-- Language-server installation and management.
+	{
+		src = "https://github.com/mason-org/mason.nvim",
+		version = "main",
+	},
+
+	-- Integration between Mason installations and Neovim LSP configurations.
+	{
+		src = "https://github.com/mason-org/mason-lspconfig.nvim",
+		version = "main",
+	},
+
+	-- Lua utility dependency used by Telescope and other plugins.
+	{
+		src = "https://github.com/nvim-lua/plenary.nvim",
+		version = "master",
+	},
+
+	-- Fuzzy finder, picker, and previewer.
+	{
+		src = "https://github.com/nvim-telescope/telescope.nvim",
+		version = "master",
+	},
+
+	-- Keybinding hints.
+	{
+		src = "https://github.com/folke/which-key.nvim",
+		version = "main",
+	},
 }, {
 	-- Install missing plugins without asking for confirmation.
 	confirm = false,
