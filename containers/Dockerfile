@@ -1,7 +1,7 @@
 ## Language runtime base images (for copying toolchains)
 ## Go and Rust are self-contained, so they can be copied cross-distro.
 ## Python must be installed from the distro's package manager (SSL linkage issues).
-FROM golang:1.27.2@sha256:820153096fda4de6ac1b7194d12e416b7dd8f4e9a33d17e0345b111b945162d8 AS go-base
+FROM golang:1.27.3@sha256:9048d5e7751706200eb1719c7dae0436950d362f29a1da91fa05e5c63867c60f AS go-base
 FROM rust:1.99@sha256:931c2c0531a8b143e044f0f3914dfe802f15bb3d1955f0b657e9359327ac2ffc AS rust-base
 
 ## -----------------------------------------------------------
