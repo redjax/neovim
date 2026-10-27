@@ -269,34 +269,35 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 --
 
 -- Install missing plugins and make them available to this session.
-vim.pack.add(
+vim.pack.add({
+	-- Colorschemes
+	"https://github.com/folke/tokyonight.nvim",
+	"https://github.com/rebelot/kanagawa.nvim",
+	"https://github.com/bluz71/vim-moonfly-colors",
+	"https://github.com/daltonmenezes/aura-theme",
+	"https://github.com/gmr458/vscode_modern_theme.nvim",
+	"https://github.com/nyoom-engineering/oxocarbon.nvim",
+	"https://github.com/olimorris/onedarkpro.nvim",
+	"https://github.com/eldritch-theme/eldritch.nvim",
+
+	-- Bling completions
 	{
-		"https://github.com/folke/tokyonight.nvim",
-		"https://github.com/rebelot/kanagawa.nvim",
-		"https://github.com/bluz71/vim-moonfly-colors",
-		"https://github.com/zaldih/themery.nvim",
-		"https://github.com/daltonmenezes/aura-theme",
-		"https://github.com/gmr458/vscode_modern_theme.nvim",
-		"https://github.com/nyoom-engineering/oxocarbon.nvim",
-		"https://github.com/olimorris/onedarkpro.nvim",
-		"https://github.com/NeogitOrg/neogit",
-		"https://github.com/eldritch-theme/eldritch.nvim",
-		{
-			src = "https://github.com/saghen/blink.cmp",
-			version = vim.version.range("1.*"),
-		},
-		"https://github.com/neovim/nvim-lspconfig",
-		"https://github.com/mason-org/mason.nvim",
-		"https://github.com/mason-org/mason-lspconfig.nvim",
-		"https://github.com/nvim-lua/plenary.nvim",
-		"https://github.com/nvim-telescope/telescope.nvim",
-		"https://github.com/folke/which-key.nvim",
+		src = "https://github.com/saghen/blink.cmp",
+		version = vim.version.range("1.*"),
 	},
-	{
-		-- Install missing plugins without asking for confirmation.
-		confirm = false,
-	}
-)
+
+	"https://github.com/zaldih/themery.nvim", -- Theme management
+	"https://github.com/NeogitOrg/neogit", -- Magit-like Git interface
+	"https://github.com/neovim/nvim-lspconfig", -- Default set of LSP configs
+	"https://github.com/mason-org/mason.nvim", -- Install LSP tools automatically
+	"https://github.com/mason-org/mason-lspconfig.nvim", -- Configurations for improving Mason + lspconfig integration
+	"https://github.com/nvim-lua/plenary.nvim", -- Pre-fab Neovim functions. Used by a lot of plugins
+	"https://github.com/nvim-telescope/telescope.nvim", -- Extensible fuzzy finder, picker, previewer, & more
+	"https://github.com/folke/which-key.nvim", -- Keybind helper
+}, {
+	-- Install missing plugins without asking for confirmation.
+	confirm = false,
+})
 
 --
 -- [ THEME / COLORSCHEME ]
