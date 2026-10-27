@@ -676,89 +676,26 @@ require("which-key").setup({
 -- [ PLUGIN UPDATES ]
 --
 
--- Immediately update one plugin, bypassing any custom cooldown logic.
+-- Immediately update one plugin to its configured version.
 -- Usage: :PluginUpdate nvim-lspconfig
--- This still respects the plugin's configured version constraint.
+-- This skips confirmation but still respects the plugin's version constraint.
+-- No minimum release age is enforced.
 vim.api.nvim_create_user_command("PluginUpdate", function(opts)
 	vim.pack.update({ opts.args }, {
 		force = true,
 	})
 end, {
 	nargs = 1,
-	desc = "Immediately update one plugin without confirmation",
+	desc = "Update one plugin without confirmation",
 })
 
--- Check for available updates once per day.
-local update_check_interval = 24 * 60 * 60
-
--- Only install candidate versions that have aged for at least seven days.
--- To manually install a single plugin, even if it's not old enough, run:
---   :lua vim.pack.update({ "<plugin-name>" }, { force = true })
-local minimum_update_age = 7 * 24 * 60 * 60
-
--- Store the last attempt timestamp outside the configuration repository.
-local update_stamp = vim.fn.stdpath("state") .. "/plugin-update-check"
-
--- Prevent overlapping update calls within this Neovim instance.
-local update_running = false
-
--- Share the update operation between automatic and manual updates.
-local function update_plugins()
-	if update_running then
-		return
-	end
-
-	update_running = true
-
-	-- Ensure the state directory exists before writing the timestamp.
-	vim.fn.mkdir(vim.fn.stdpath("state"), "p")
-
-	-- Record the attempt first to avoid retrying on every startup after a failure.
-	vim.fn.writefile({ tostring(os.time()) }, update_stamp)
-
-	-- Apply updates without opening the confirmation buffer.
-	local ok, err = pcall(vim.pack.update, nil, {
+-- Immediately update all managed plugins to their configured versions.
+-- Usage: :PluginsUpdate
+-- No minimum release age is enforced.
+vim.api.nvim_create_user_command("PluginsUpdate", function()
+	vim.pack.update(nil, {
 		force = true,
 	})
-
-	update_running = false
-
-	-- Report errors without opening an update-review tab.
-	if not ok then
-		vim.notify("Plugin update failed: " .. tostring(err), vim.log.levels.WARN)
-	end
-end
-
--- Allow immediate manual updates regardless of the seven-day interval.
-vim.api.nvim_create_user_command("PluginsUpdate", update_plugins, {
-	desc = "Update plugins now without confirmation",
-})
-
--- Schedule one automatic update check after startup.
-vim.api.nvim_create_autocmd("VimEnter", {
-	once = true,
-	callback = function()
-		-- Skip automatic updates in headless sessions.
-		if #vim.api.nvim_list_uis() == 0 then
-			return
-		end
-
-		-- Wait five seconds after startup before checking the interval.
-		vim.defer_fn(function()
-			-- Use the timestamp file's modification time as the last attempt time.
-			local last_check = vim.fn.getftime(update_stamp)
-
-			-- On first launch, start the interval without immediately updating.
-			if last_check == -1 then
-				vim.fn.mkdir(vim.fn.stdpath("state"), "p")
-				vim.fn.writefile({ tostring(os.time()) }, update_stamp)
-				return
-			end
-
-			-- Update only when at least seven days have elapsed.
-			if os.time() - last_check >= update_interval then
-				update_plugins()
-			end
-		end, 5000)
-	end,
+end, {
+	desc = "Update all plugins without confirmation",
 })
