@@ -1,8 +1,8 @@
 ## Language runtime base images (for copying toolchains)
 ## Go and Rust are self-contained, so they can be copied cross-distro.
 ## Python must be installed from the distro's package manager (SSL linkage issues).
-FROM golang:1.25.5 AS go-base
-FROM rust:1.99 AS rust-base
+FROM golang:1.27.2@sha256:820153096fda4de6ac1b7194d12e416b7dd8f4e9a33d17e0345b111b945162d8 AS go-base
+FROM rust:1.99@sha256:931c2c0531a8b143e044f0f3914dfe802f15bb3d1955f0b657e9359327ac2ffc AS rust-base
 
 ## -----------------------------------------------------------
 ## Single-stage build: simulates a fresh install on a target distro
@@ -11,7 +11,7 @@ FROM rust:1.99 AS rust-base
 ## Set BASE_IMAGE to test different distros:
 ##   debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base
 ## -----------------------------------------------------------
-FROM debian:stable-slim
+FROM debian:stable-slim@sha256:a717a33469731894e77e912ea7d714e27c2dc38ee6554fd1a3102e92999cfc66
 
 ENV DEBIAN_FRONTEND=noninteractive
 
