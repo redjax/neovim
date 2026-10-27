@@ -1,12 +1,8 @@
-ARG GO_IMG_TAG=${GO_IMG_TAG:-1.25.5}
-ARG RUST_IMG_TAG=${RUST_IMG_TAG:-latest}
-ARG BASE_IMAGE=${BASE_IMAGE:-debian:stable-slim}
-
 ## Language runtime base images (for copying toolchains)
 ## Go and Rust are self-contained, so they can be copied cross-distro.
 ## Python must be installed from the distro's package manager (SSL linkage issues).
-FROM golang:${GO_IMG_TAG} AS go-base
-FROM rust:${RUST_IMG_TAG} AS rust-base
+FROM golang:1.25.5 AS go-base
+FROM rust:1.99 AS rust-base
 
 ## -----------------------------------------------------------
 ## Single-stage build: simulates a fresh install on a target distro
@@ -15,7 +11,7 @@ FROM rust:${RUST_IMG_TAG} AS rust-base
 ## Set BASE_IMAGE to test different distros:
 ##   debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base
 ## -----------------------------------------------------------
-FROM ${BASE_IMAGE}
+FROM debian:stable-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
