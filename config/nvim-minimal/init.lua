@@ -303,6 +303,22 @@ vim.pack.add({
 -- [ THEME / COLORSCHEME ]
 --
 
+-- Theme options
+-- Load these before any colorscheme.
+--
+
+-- Eldritch theme options
+require("eldritch").setup({
+	styles = {
+		comments = {
+			italic = false,
+		},
+		keywords = {
+			italic = false,
+		},
+	},
+})
+
 -- Set fallback before Themery restores a saved selection.
 vim.cmd.colorscheme("zaibatsu")
 
@@ -390,19 +406,6 @@ require("themery").setup({
 -- Open the theme picker with Space+u+t.
 vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
 	desc = "Choose theme",
-})
-
--- Eldritch theme options
--- Disable italics for comments and keywords.
-require("eldritch").setup({
-	styles = {
-		comments = {
-			italic = false,
-		},
-		keywords = {
-			italic = false,
-		},
-	},
 })
 
 --
