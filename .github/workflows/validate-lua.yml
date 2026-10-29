@@ -36,9 +36,9 @@ jobs:
     name: Validate Neovim Lua configuration
     ## Do not launch validation when both tools are disabled.
     if: ${{ inputs.lint || inputs.format }}
-    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@feat/lua-lint
+    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@main
     with:
-      templates-ref: feat/lua-lint
+      templates-ref: main
 
       ## Check tracked Lua files beneath config/.
       paths: |

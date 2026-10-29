@@ -56,10 +56,10 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.lua == 'true' }}
 
-    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@feat/lua-lint
+    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@main
 
     with:
-      templates-ref: feat/lua-lint
+      templates-ref: main
 
       paths: "."
 
