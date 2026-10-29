@@ -2,27 +2,31 @@
 name: Validate Lua
 
 on:
-  ## Temporary trigger for testing the CI implementation branch.
-  push:
-    branches:
-      - feat/lua-validate-ci
-
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - edited
-    branches:
-      - main
-    paths:
-      - "**/*.lua"
-      - ".luacheckrc"
-      - ".stylua.toml"
-      - "stylua.toml"
-      - ".github/workflows/validate-lua.yml"
-
   workflow_dispatch:
+    inputs:
+      lint:
+        description: Run Luacheck.
+        type: boolean
+        required: false
+        default: true
+
+      format:
+        description: Run StyLua.
+        type: boolean
+        required: false
+        default: true
+
+      use-cache:
+        description: Enable Luacheck's analysis cache.
+        type: boolean
+        required: false
+        default: false
+
+      fix:
+        description: Apply formatting fixes with StyLua.
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -30,6 +34,8 @@ permissions:
 jobs:
   validate:
     name: Validate Neovim Lua configuration
+    ## Do not launch validation when both tools are disabled.
+    if: ${{ inputs.lint || inputs.format }}
     uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@feat/lua-lint
     with:
       templates-ref: feat/lua-lint
@@ -38,19 +44,16 @@ jobs:
       paths: |
         config
 
-      lint: true
-      format: true
+      lint: ${{ inputs.lint }}
+      format: ${{ inputs.format }}
+      use-lint-cache: ${{ inputs['use-cache'] }}
+      fix: ${{ inputs.fix }}
 
       lint-settings-file: .luacheckrc
       format-settings-file: .stylua.toml
 
-      use-lint-cache: true
-
       lint-fail-on-findings: false
       format-fail-on-findings: false
-
-      ## Check formatting without modifying files.
-      fix: false
 
       lint-artifact-name: neovim-lua-lint-results
       format-artifact-name: neovim-lua-format-results
