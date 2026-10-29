@@ -1,0 +1,60 @@
+---
+name: Validate Lua
+
+on:
+  workflow_dispatch:
+    inputs:
+      lint:
+        description: Run Luacheck.
+        type: boolean
+        required: false
+        default: true
+
+      format:
+        description: Run StyLua.
+        type: boolean
+        required: false
+        default: true
+
+      use-cache:
+        description: Enable Luacheck's analysis cache.
+        type: boolean
+        required: false
+        default: false
+
+      fix:
+        description: Apply formatting fixes with StyLua.
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Neovim Lua configuration
+    ## Do not launch validation when both tools are disabled.
+    if: ${{ inputs.lint || inputs.format }}
+    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@main
+    with:
+      templates-ref: main
+
+      ## Check tracked Lua files beneath config/.
+      paths: |
+        config
+
+      lint: ${{ inputs.lint }}
+      format: ${{ inputs.format }}
+      use-lint-cache: ${{ inputs['use-cache'] }}
+      fix: ${{ inputs.fix }}
+
+      lint-settings-file: .luacheckrc
+      format-settings-file: .stylua.toml
+
+      lint-fail-on-findings: false
+      format-fail-on-findings: false
+
+      lint-artifact-name: neovim-lua-lint-results
+      format-artifact-name: neovim-lua-format-results
+      artifact-retention-days: 7
