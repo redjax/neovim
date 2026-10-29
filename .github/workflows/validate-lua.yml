@@ -1,0 +1,55 @@
+---
+name: Validate Lua
+
+on:
+  ## Temporary trigger for testing the CI implementation branch.
+  push:
+    branches:
+      - feat/lua-validate-ci
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+    branches:
+      - main
+    paths:
+      - "**/*.lua"
+      - ".luacheckrc"
+      - ".stylua.toml"
+      - "stylua.toml"
+      - ".github/workflows/validate-lua.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Neovim Lua configuration
+    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@feat/lua-lint
+    with:
+      templates-ref: feat/lua-lint
+
+      ## Check tracked Lua files beneath configs/.
+      paths: |
+        configs
+
+      lint: true
+      format: true
+
+      lint-settings-file: .luacheckrc
+      format-settings-file: .stylua.toml
+
+      lint-fail-on-findings: true
+      format-fail-on-findings: false
+
+      ## Check formatting without modifying files.
+      fix: false
+
+      lint-artifact-name: neovim-lua-lint-results
+      format-artifact-name: neovim-lua-format-results
+      artifact-retention-days: 7
