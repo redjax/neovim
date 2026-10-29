@@ -34,9 +34,9 @@ jobs:
     with:
       templates-ref: feat/lua-lint
 
-      ## Check tracked Lua files beneath configs/.
+      ## Check tracked Lua files beneath config/.
       paths: |
-        configs
+        config
 
       lint: true
       format: true
