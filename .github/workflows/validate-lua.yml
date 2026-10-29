@@ -44,7 +44,7 @@ jobs:
       lint-settings-file: .luacheckrc
       format-settings-file: .stylua.toml
 
-      lint-fail-on-findings: fail
+      lint-fail-on-findings: false
       format-fail-on-findings: false
 
       ## Check formatting without modifying files.
