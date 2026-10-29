@@ -44,6 +44,8 @@ jobs:
       lint-settings-file: .luacheckrc
       format-settings-file: .stylua.toml
 
+      use-lint-cache: true
+
       lint-fail-on-findings: false
       format-fail-on-findings: false
 
