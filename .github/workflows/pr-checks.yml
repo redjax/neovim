@@ -76,7 +76,7 @@ jobs:
       format-fail-on-findings: false
       fix: false
 
-      use-cache: true
+      use-lint-cache: true
 
       lint-artifact-name: neovim-pr-lua-lint-results
       format-artifact-name: neovim-pr-lua-format-results
