@@ -30,7 +30,7 @@ on:
         description: Enable Luacheck's analysis cache.
         type: boolean
         required: false
-        default: false
+        default: true
 
       fix:
         description: Apply formatting fixes in the runner.
@@ -42,7 +42,7 @@ on:
         description: Fail on lint warnings.
         type: boolean
         required: false
-        default: false
+        default: true
 
       format-fail-on-findings:
         description: Fail on formatting differences in check mode.
@@ -68,7 +68,7 @@ on:
         description: Enable Luacheck's analysis cache.
         type: boolean
         required: false
-        default: false
+        default: true
 
       fix:
         description: Apply formatting fixes in the runner.
@@ -80,13 +80,13 @@ on:
         description: Fail on lint warnings.
         type: boolean
         required: false
-        default: false
+        default: true
 
       format-fail-on-findings:
         description: Fail on formatting differences in check mode.
         type: boolean
         required: false
-        default: false
+        default: true
 
 permissions:
   contents: read
