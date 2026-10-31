@@ -1,0 +1,163 @@
+---
+############################################################
+# Bash validation.                                         #
+#                                                          #
+# Supports manual runs and reusable workflow calls.        #
+# Executes the consuming repository's standalone scripts.  #
+#                                                          #
+# Fix mode changes the runner checkout only. No commits    #
+# or pushes are performed. Reports are uploaded.            #
+############################################################
+
+name: Validate Bash
+
+on:
+  workflow_dispatch:
+    inputs:
+      lint:
+        description: Run ShellCheck.
+        type: boolean
+        required: false
+        default: true
+
+      format:
+        description: Run shfmt.
+        type: boolean
+        required: false
+        default: true
+
+      fix:
+        description: Apply formatting fixes in the runner.
+        type: boolean
+        required: false
+        default: false
+
+      lint-fail-on-findings:
+        description: Fail on ShellCheck findings.
+        type: boolean
+        required: false
+        default: true
+
+      format-fail-on-findings:
+        description: Fail on formatting differences in check mode.
+        type: boolean
+        required: false
+        default: true
+
+  workflow_call:
+    inputs:
+      lint:
+        description: Run ShellCheck.
+        type: boolean
+        required: false
+        default: true
+
+      format:
+        description: Run shfmt.
+        type: boolean
+        required: false
+        default: true
+
+      fix:
+        description: Apply formatting fixes in the runner.
+        type: boolean
+        required: false
+        default: false
+
+      lint-fail-on-findings:
+        description: Fail on ShellCheck findings.
+        type: boolean
+        required: false
+        default: true
+
+      format-fail-on-findings:
+        description: Fail on formatting differences in check mode.
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Bash
+    if: ${{ inputs.lint || inputs.format }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Verify local validation script
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f scripts/quality/check-shell.sh
+
+      - name: Install enabled tools
+        shell: bash
+        env:
+          RUN_LINT: ${{ inputs.lint }}
+          RUN_FORMAT: ${{ inputs.format }}
+        run: |
+          set -euo pipefail
+
+          packages=()
+
+          if [[ "$RUN_LINT" == true ]]; then
+            packages+=(shellcheck)
+          fi
+
+          if [[ "$RUN_FORMAT" == true ]]; then
+            packages+=(shfmt)
+          fi
+
+          sudo apt-get update
+          sudo apt-get install --yes "${packages[@]}"
+
+          if [[ "$RUN_LINT" == true ]]; then
+            shellcheck --version
+          fi
+
+          if [[ "$RUN_FORMAT" == true ]]; then
+            shfmt --version
+          fi
+
+      - name: Run Bash validation
+        shell: bash
+        env:
+          ROOT: ${{ github.workspace }}
+
+          LINT: ${{ inputs.lint }}
+          FORMAT: ${{ inputs.format }}
+
+          SHELLCHECK_FAIL_ON_FINDINGS: ${{ inputs['lint-fail-on-findings'] }}
+          SHELLFMT_FAIL_ON_FINDINGS: ${{ inputs['format-fail-on-findings'] }}
+
+          SHOW_DIFF: "false"
+          DIFF_PREVIEW_LINES: "30"
+          APPLY_FIX: ${{ inputs.fix }}
+        run: |
+          set -euo pipefail
+
+          export REPORT_DIR="$RUNNER_TEMP/bash-validation"
+
+          if [[ "$APPLY_FIX" == true ]]; then
+            export SHELLFMT_MODE=write
+          else
+            export SHELLFMT_MODE=check
+          fi
+
+          bash scripts/quality/check-shell.sh
+
+      - name: Upload Bash reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bash-validation-results
+          path: ${{ runner.temp }}/bash-validation/
+          if-no-files-found: ignore
+          retention-days: 7
