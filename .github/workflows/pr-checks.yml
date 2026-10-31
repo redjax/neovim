@@ -1,3 +1,4 @@
+---
 ############################################################
 # PR validation pipeline.                                  #
 #                                                          #
@@ -6,9 +7,9 @@
 # Renovate gate is the single required PR check. It is the #
 # fan-in point for PR validation checks.                   #
 #                                                          #
-# Lua validation runs only when relevant files change.     #
-# Warnings remain visible but do not block the gate.       #
-# Errors and execution failures block the gate.            #
+# Lua and Bash validation run for relevant changes.        #
+# Lua findings remain advisory. Bash findings block.       #
+# Tool and execution errors block the gate.                #
 ############################################################
 
 name: PR checks
@@ -36,9 +37,10 @@ jobs:
 
     outputs:
       lua: ${{ steps.filter.outputs.lua }}
+      bash: ${{ steps.filter.outputs.bash }}
 
     steps:
-      - name: Detect Lua-related changes
+      - name: Detect validation-related changes
         id: filter
         uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3
         with:
@@ -48,6 +50,18 @@ jobs:
               - '.luacheckrc'
               - '.stylua.toml'
               - 'stylua.toml'
+              - 'scripts/quality/check-lua.sh'
+              - '.github/workflows/validate-lua.yml'
+              - '.github/workflows/pr-checks.yml'
+
+            bash:
+              - '**/*.sh'
+              - '**/*.bash'
+              - '**/*.bats'
+              - '**/.shellcheckrc'
+              - '**/.editorconfig'
+              - 'config/shfmt-options.txt'
+              - '.github/workflows/validate-bash.yml'
               - '.github/workflows/pr-checks.yml'
 
   lua-validation:
@@ -56,31 +70,35 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.lua == 'true' }}
 
-    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@main
+    uses: ./.github/workflows/validate-lua.yml
 
     with:
-      templates-ref: main
-
-      paths: "."
-
       lint: true
       format: true
 
-      lint-settings-file: .luacheckrc
-      format-settings-file: .stylua.toml
-
-      ## false=warnings do not stop pipeline
-      lint-fail-on-findings: false
-
-      ## Formatting differences remain advisory.
-      format-fail-on-findings: false
+      use-lint-cache: true
       fix: false
 
-      use-lint-cache: true
+      lint-fail-on-findings: false
+      format-fail-on-findings: false
 
-      lint-artifact-name: neovim-pr-lua-lint-results
-      format-artifact-name: neovim-pr-lua-format-results
-      artifact-retention-days: 7
+  bash-validation:
+    name: Validate Bash
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.bash == 'true' }}
+
+    uses: ./.github/workflows/validate-bash.yml
+
+    with:
+      lint: true
+      format: true
+
+      fix: false
+
+      # ShellCheck findings and formatting differences block.
+      lint-fail-on-findings: true
+      format-fail-on-findings: true
 
   renovate-gate:
     name: Renovate gate
@@ -89,8 +107,9 @@ jobs:
     needs:
       - changes
       - lua-validation
+      - bash-validation
 
-    ## Evaluate results even when validation failed or was skipped.
+    # Evaluate results after failures and intentional skips.
     if: ${{ always() }}
 
     steps:
@@ -98,41 +117,72 @@ jobs:
         shell: bash
         env:
           CHANGES_RESULT: ${{ needs.changes.result }}
+
           LUA_CHANGED: ${{ needs.changes.outputs.lua }}
           LUA_RESULT: ${{ needs.lua-validation.result }}
+
+          BASH_CHANGED: ${{ needs.changes.outputs.bash }}
+          BASH_RESULT: ${{ needs.bash-validation.result }}
         run: |
           set -euo pipefail
 
           echo "Change detection result: $CHANGES_RESULT"
           echo "Lua-related changes: $LUA_CHANGED"
           echo "Lua validation result: $LUA_RESULT"
+          echo "Bash-related changes: $BASH_CHANGED"
+          echo "Bash validation result: $BASH_RESULT"
 
           if [[ "$CHANGES_RESULT" != "success" ]]; then
             echo "::error::Change detection failed or was cancelled."
             exit 1
           fi
 
-          case "$LUA_CHANGED" in
-            true)
-              if [[ "$LUA_RESULT" != "success" ]]; then
-                echo "::error::Lua validation was required but did not succeed: $LUA_RESULT"
-                exit 1
-              fi
+          check_validation() {
+            local name="$1"
+            local required="$2"
+            local result="$3"
 
-              echo "Lua validation passed."
-              ;;
-            false)
-              if [[ "$LUA_RESULT" != "skipped" && "$LUA_RESULT" != "success" ]]; then
-                echo "::error::Unexpected Lua validation result: $LUA_RESULT"
-                exit 1
-              fi
+            case "$required" in
+              true)
+                if [[ "$result" != "success" ]]; then
+                  echo "::error::$name validation was required but did not succeed: $result"
+                  return 1
+                fi
 
-              echo "No Lua-related changes. Lua validation was not required."
-              ;;
-            *)
-              echo "::error::Change detection returned an invalid or missing Lua result."
-              exit 1
-              ;;
-          esac
+                echo "$name validation passed."
+                ;;
+              false)
+                case "$result" in
+                  success | skipped)
+                    echo "$name validation was not required."
+                    ;;
+                  *)
+                    echo "::error::Unexpected $name validation result: $result"
+                    return 1
+                    ;;
+                esac
+                ;;
+              *)
+                echo "::error::Missing or invalid change-detection output for $name."
+                return 1
+                ;;
+            esac
+          }
+
+          failed=0
+
+          check_validation \
+            "Lua" \
+            "$LUA_CHANGED" \
+            "$LUA_RESULT" || failed=1
+
+          check_validation \
+            "Bash" \
+            "$BASH_CHANGED" \
+            "$BASH_RESULT" || failed=1
+
+          if [[ "$failed" -ne 0 ]]; then
+            exit 1
+          fi
 
           echo "All required PR checks passed."
