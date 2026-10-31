@@ -1,4 +1,14 @@
 ---
+############################################################
+# Lua validation.                                          #
+#                                                          #
+# Supports manual runs and reusable workflow calls.        #
+# Executes the consuming repository's standalone scripts.  #
+#                                                          #
+# Fix mode changes the runner checkout and uploads reports #
+# and patches. No commits or pushes are performed.         #
+############################################################
+
 name: Validate Lua
 
 on:
@@ -16,14 +26,64 @@ on:
         required: false
         default: true
 
-      use-cache:
+      use-lint-cache:
         description: Enable Luacheck's analysis cache.
         type: boolean
         required: false
         default: false
 
       fix:
-        description: Apply formatting fixes with StyLua.
+        description: Apply formatting fixes in the runner.
+        type: boolean
+        required: false
+        default: false
+
+      lint-fail-on-findings:
+        description: Fail on lint warnings.
+        type: boolean
+        required: false
+        default: false
+
+      format-fail-on-findings:
+        description: Fail on formatting differences in check mode.
+        type: boolean
+        required: false
+        default: false
+
+  workflow_call:
+    inputs:
+      lint:
+        description: Run Luacheck.
+        type: boolean
+        required: false
+        default: true
+
+      format:
+        description: Run StyLua.
+        type: boolean
+        required: false
+        default: true
+
+      use-lint-cache:
+        description: Enable Luacheck's analysis cache.
+        type: boolean
+        required: false
+        default: false
+
+      fix:
+        description: Apply formatting fixes in the runner.
+        type: boolean
+        required: false
+        default: false
+
+      lint-fail-on-findings:
+        description: Fail on lint warnings.
+        type: boolean
+        required: false
+        default: false
+
+      format-fail-on-findings:
+        description: Fail on formatting differences in check mode.
         type: boolean
         required: false
         default: false
@@ -33,28 +93,97 @@ permissions:
 
 jobs:
   validate:
-    name: Validate Neovim Lua configuration
-    ## Do not launch validation when both tools are disabled.
+    name: Validate Lua
     if: ${{ inputs.lint || inputs.format }}
-    uses: redjax/PipelineTemplates/.github/workflows/validate-lua.yml@main
-    with:
-      templates-ref: main
+    runs-on: ubuntu-latest
 
-      ## Check tracked Lua files beneath config/.
-      paths: |
-        config
+    env:
+      LUACHECK_VERSION: "1.2.0"
+      STYLUA_VERSION: "2.6.0"
 
-      lint: ${{ inputs.lint }}
-      format: ${{ inputs.format }}
-      use-lint-cache: ${{ inputs['use-cache'] }}
-      fix: ${{ inputs.fix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      lint-settings-file: .luacheckrc
-      format-settings-file: .stylua.toml
+      - name: Verify local validation script
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f scripts/quality/check-lua.sh
 
-      lint-fail-on-findings: false
-      format-fail-on-findings: false
+      - name: Install Luacheck
+        if: ${{ inputs.lint }}
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      lint-artifact-name: neovim-lua-lint-results
-      format-artifact-name: neovim-lua-format-results
-      artifact-retention-days: 7
+          sudo apt-get update
+          sudo apt-get install --yes \
+            lua5.4 \
+            liblua5.4-dev \
+            luarocks
+
+          sudo luarocks \
+            --lua-version=5.4 \
+            install luacheck "$LUACHECK_VERSION"
+
+          luacheck --version
+
+      - name: Install StyLua
+        if: ${{ inputs.format }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          install_dir="$RUNNER_TEMP/stylua-bin"
+          archive="$RUNNER_TEMP/stylua.zip"
+
+          mkdir -p "$install_dir"
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --retry 3 \
+            "https://github.com/JohnnyMorganz/StyLua/releases/download/v${STYLUA_VERSION}/stylua-linux-x86_64.zip" \
+            --output "$archive"
+
+          unzip -o "$archive" -d "$install_dir"
+          chmod +x "$install_dir/stylua"
+
+          echo "$install_dir" >>"$GITHUB_PATH"
+          "$install_dir/stylua" --version
+
+      - name: Run Lua validation
+        shell: bash
+        env:
+          ROOT: ${{ github.workspace }}
+
+          LINT: ${{ inputs.lint }}
+          FORMAT: ${{ inputs.format }}
+          USE_LINT_CACHE: ${{ inputs['use-lint-cache'] }}
+          FIX: ${{ inputs.fix }}
+
+          LINT_FAIL_ON_FINDINGS: ${{ inputs['lint-fail-on-findings'] }}
+          FORMAT_FAIL_ON_FINDINGS: ${{ inputs['format-fail-on-findings'] }}
+
+          SHOW_DIFF: "false"
+          DIFF_PREVIEW_LINES: "30"
+        run: |
+          set -euo pipefail
+
+          export REPORT_DIR="$RUNNER_TEMP/lua-validation"
+
+          bash scripts/quality/check-lua.sh
+
+      - name: Upload Lua reports and patches
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lua-validation-results
+          path: ${{ runner.temp }}/lua-validation/
+          if-no-files-found: ignore
+          retention-days: 7
