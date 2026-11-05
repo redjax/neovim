@@ -436,6 +436,18 @@ vim.pack.add({
     src = "https://github.com/nvim-tree/nvim-tree.lua",
     version = "v1.14.0",
   },
+
+  -- Treesitter parser and syntax infrastructure.
+  {
+    src = "https://github.com/nvim-treesitter/nvim-treesitter",
+    version = "master",
+  },
+
+  -- Keybinding ergonomics and suggestions.
+  {
+    src = "https://github.com/tris203/hawtkeys.nvim",
+    version = "main",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -896,6 +908,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
       desc = "Format buffer",
     })
   end,
+})
+
+--
+-- [ KEYBINDING ERGONOMICS ]
+--
+
+require("hawtkeys").setup({
+  leader = " ",
+  keyboardLayout = "qwerty",
 })
 
 --
