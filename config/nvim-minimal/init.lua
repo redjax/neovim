@@ -389,6 +389,11 @@ vim.pack.add({
     src = "https://github.com/folke/which-key.nvim",
     version = "main",
   },
+
+  -- Merge conflict resolution.
+  {
+    src = "https://github.com/spacedentist/resolve.nvim",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
