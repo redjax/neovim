@@ -103,6 +103,10 @@ if vim.g.platform == "windows" then
   vim.opt.fileformats = { "dos", "unix" }
 end
 
+-- Disable netrw so nvim-tree handles directory browsing.
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- Enable syntax highlighting
 vim.cmd("syntax enable")
 
@@ -426,6 +430,12 @@ vim.pack.add({
     src = "https://github.com/lewis6991/gitsigns.nvim",
     version = "main",
   },
+
+  -- Filesystem tree and file-management actions.
+  {
+    src = "https://github.com/nvim-tree/nvim-tree.lua",
+    version = "v1.14.0",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -538,6 +548,73 @@ require("themery").setup({
 -- Open the theme picker with Space+u+t.
 vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
   desc = "Choose theme",
+})
+
+--
+-- [ FILE EXPLORER ]
+--
+
+local function nvimtree_on_attach(bufnr)
+  local api = require("nvim-tree.api")
+
+  local function opts(desc)
+    return {
+      desc = "nvim-tree: " .. desc,
+      buffer = bufnr,
+      noremap = true,
+      silent = true,
+      nowait = true,
+    }
+  end
+
+  -- Register nvim-tree's default mappings.
+  api.config.mappings.default_on_attach(bufnr)
+
+  -- Navigate to the parent directory.
+  vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent, opts("Up"))
+
+  -- Display available keybindings.
+  vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+end
+
+require("nvim-tree").setup({
+  on_attach = nvimtree_on_attach,
+
+  experimental = {
+    session_restore_nvim = false,
+  },
+
+  sort = {
+    sorter = "case_sensitive",
+  },
+
+  view = {
+    width = 35,
+  },
+
+  renderer = {
+    group_empty = true,
+
+    icons = {
+      show = {
+        file = false,
+        folder = false,
+        folder_arrow = false,
+        git = false,
+        modified = false,
+        diagnostics = false,
+        bookmarks = false,
+      },
+    },
+  },
+
+  filters = {
+    dotfiles = false,
+  },
+})
+
+vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", {
+  desc = "Toggle file explorer",
 })
 
 --
