@@ -611,19 +611,32 @@ require("nvim-tree").setup({
   },
 
   renderer = {
+    -- Collapse chains of directories with only one subdirectory.
     group_empty = true,
 
+    -- Use simple ASCII indicators instead of Nerd Font icons.
     icons = {
       show = {
         file = false,
         folder = false,
-        folder_arrow = false,
+        folder_arrow = true,
         git = false,
         modified = false,
         diagnostics = false,
         bookmarks = false,
       },
+
+      -- Use ASCII characters for directory indicators.
+      glyphs = {
+        folder = {
+          arrow_closed = "+",
+          arrow_open = "-",
+        },
+      },
     },
+
+    -- Visually distinguish directories from files.
+    highlight_git = false,
   },
 
   filters = {
