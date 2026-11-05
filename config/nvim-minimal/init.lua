@@ -448,6 +448,12 @@ vim.pack.add({
     src = "https://github.com/tris203/hawtkeys.nvim",
     version = "main",
   },
+
+  -- Mini.nvim is a library with many Lua modules
+  {
+    src = "https://github.com/nvim-mini/mini.nvim",
+    version = "main",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -1018,6 +1024,33 @@ require("which-key").setup({
     { "<leader>u", group = "UI" },
   },
 })
+
+--
+-- [ MINI.NVIM MODULES ]
+--
+
+-- Better text objects.
+require("mini.ai").setup({})
+
+-- Surround manipulation.
+require("mini.surround").setup({})
+
+-- Consistent bracket-based navigation.
+require("mini.bracketed").setup({})
+
+-- Highlight and remove trailing whitespace.
+require("mini.trailspace").setup({})
+
+-- Visualize indentation scope.
+require("mini.indentscope").setup({
+  draw = {
+    delay = 100,
+    animation = require("mini.indentscope").gen_animation.none(),
+  },
+})
+
+-- Better buffer deletion.
+require("mini.bufremove").setup({})
 
 --
 -- [ PLUGIN UPDATES ]
