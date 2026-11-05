@@ -281,6 +281,26 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
   end,
 })
 
+-- Create missing parent directories before writing a local file.
+vim.api.nvim_create_autocmd({ "BufWritePre", "FileWritePre" }, {
+  group = config_group,
+  desc = "Create missing parent directories before writing",
+  callback = function(event)
+    -- Use the write target, which may differ from the current buffer's name.
+    local file = event.match
+
+    -- Ignore unnamed targets and URI-style paths handled by other plugins.
+    -- Requiring at least two scheme characters avoids matching Windows drives.
+    if file == "" or file:match("^%a[%w+.-]+:") then
+      return
+    end
+
+    -- Create the parent directory and any missing intermediate directories.
+    local directory = vim.fn.fnamemodify(file, ":p:h")
+    vim.fn.mkdir(directory, "p")
+  end,
+})
+
 --
 -- [ PLUGINS ]
 --
