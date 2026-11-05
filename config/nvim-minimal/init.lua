@@ -39,14 +39,14 @@ vim.opt.list = true
 
 -- Choose the symbols used to display whitespace.
 vim.opt.listchars = {
-	-- Display tabs with an arrow followed by spaces.
-	tab = "» ",
+  -- Display tabs with an arrow followed by spaces.
+  tab = "» ",
 
-	-- Display trailing spaces as middle dots.
-	trail = "·",
+  -- Display trailing spaces as middle dots.
+  trail = "·",
 
-	-- Display nonbreaking spaces with a visible symbol.
-	nbsp = "␣",
+  -- Display nonbreaking spaces with a visible symbol.
+  nbsp = "␣",
 }
 
 -- Keep eight lines visible above and below the cursor when possible.
@@ -100,7 +100,7 @@ vim.opt.textwidth = 80
 
 -- File encoding
 if vim.g.platform == "windows" then
-	vim.opt.fileformats = { "dos", "unix" }
+  vim.opt.fileformats = { "dos", "unix" }
 end
 
 -- Enable syntax highlighting
@@ -108,36 +108,36 @@ vim.cmd("syntax enable")
 
 -- Use PowerShell 7 on Windows when it is available; otherwise keep the default shell.
 if vim.fn.has("win32") == 1 and vim.fn.executable("pwsh") == 1 then
-	vim.opt.shell = "pwsh"
+  vim.opt.shell = "pwsh"
 
-	-- Run commands without the startup banner or user profile.
-	vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
+  -- Run commands without the startup banner or user profile.
+  vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
 
-	-- Do not wrap PowerShell commands in cmd.exe-style outer quotes.
-	vim.opt.shellquote = ""
-	vim.opt.shellxquote = ""
+  -- Do not wrap PowerShell commands in cmd.exe-style outer quotes.
+  vim.opt.shellquote = ""
+  vim.opt.shellxquote = ""
 
-	-- Capture standard output and errors as UTF-8 for commands such as :make.
-	vim.opt.shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+  -- Capture standard output and errors as UTF-8 for commands such as :make.
+  vim.opt.shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
 
-	-- Redirect shell-command output to a UTF-8 file.
-	vim.opt.shellredir = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+  -- Redirect shell-command output to a UTF-8 file.
+  vim.opt.shellredir = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
 end
 
 -- Configure how language-server diagnostics are displayed.
 vim.diagnostic.config({
-	signs = {
-		-- Use ASCII signs without requiring a Nerd Font.
-		text = {
-			[vim.diagnostic.severity.ERROR] = "E",
-			[vim.diagnostic.severity.WARN] = "W",
-			[vim.diagnostic.severity.INFO] = "I",
-			[vim.diagnostic.severity.HINT] = "H",
-		},
-	},
+  signs = {
+    -- Use ASCII signs without requiring a Nerd Font.
+    text = {
+      [vim.diagnostic.severity.ERROR] = "E",
+      [vim.diagnostic.severity.WARN] = "W",
+      [vim.diagnostic.severity.INFO] = "I",
+      [vim.diagnostic.severity.HINT] = "H",
+    },
+  },
 
-	-- Display diagnostic messages alongside buffer text.
-	virtual_text = true,
+  -- Display diagnostic messages alongside buffer text.
+  virtual_text = true,
 })
 
 --
@@ -146,74 +146,91 @@ vim.diagnostic.config({
 
 -- Clear search highlights with Escape.
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", {
-	desc = "Clear search highlights",
+  desc = "Clear search highlights",
 })
 
 -- Save the current buffer with Space+w.
 vim.keymap.set("n", "<leader>w", "<cmd>write<CR>", {
-	desc = "Save file",
+  desc = "Save file",
 })
 
 -- Yank to the system clipboard in normal or visual mode.
 vim.keymap.set({ "n", "x" }, "gy", '"+y', {
-	desc = "Copy to clipboard",
+  desc = "Copy to clipboard",
 })
 
 -- Paste from the system clipboard.
 vim.keymap.set({ "n", "x" }, "gp", '"+p', {
-	desc = "Paste from clipboard",
+  desc = "Paste from clipboard",
 })
 
 -- Delete characters or selected text without changing yank registers.
 vim.keymap.set({ "n", "x" }, "x", '"_x', {
-	desc = "Delete character without yank",
+  desc = "Delete character without yank",
 })
 
 -- Delete the entire current line without changing yank registers.
 vim.keymap.set("n", "X", '"_dd', {
-	desc = "Delete line without yank",
+  desc = "Delete line without yank",
 })
 
 -- Delete the visual selection without changing yank registers.
 vim.keymap.set("x", "X", '"_d', {
-	desc = "Delete selection without yank",
+  desc = "Delete selection without yank",
 })
 
 -- Select the entire buffer without adding jump-list entries.
 vim.keymap.set("n", "<leader>a", "<cmd>keepjumps normal! ggVG<CR>", {
-	desc = "Select all",
+  desc = "Select all",
 })
 
 -- Move to the first nonblank character in normal mode.
 vim.keymap.set("n", "<Home>", "^", {
-	desc = "Go to first non-blank character",
+  desc = "Go to first non-blank character",
 })
 
 -- Move to the end of the line in normal mode.
 vim.keymap.set("n", "<End>", "$", {
-	desc = "Go to end of line",
+  desc = "Go to end of line",
 })
 
 -- Move to the first nonblank character while remaining in insert mode.
 vim.keymap.set("i", "<Home>", "<C-o>^", {
-	desc = "Insert: go to first non-blank character",
+  desc = "Insert: go to first non-blank character",
 })
 
 -- Move to the end of the line while remaining in insert mode.
 vim.keymap.set("i", "<End>", "<C-o>$", {
-	desc = "Insert: go to end of line",
+  desc = "Insert: go to end of line",
 })
 
 -- Map 'z' to fold (close) the current fold
 vim.keymap.set("n", "z", "zc", {
-	noremap = true,
-	desc = "Fold section under cursor",
+  noremap = true,
+  desc = "Fold section under cursor",
 })
 
 -- Map 'zz' to unfold (open) the current fold
 vim.keymap.set("n", "zz", "zo", {
-	noremap = true,
-	desc = "Unfold section under cursor",
+  noremap = true,
+  desc = "Unfold section under cursor",
+})
+
+-- Navigate between windows using Ctrl+h/j/k/l.
+vim.keymap.set("n", "<C-h>", "<C-w>h", {
+  desc = "Move to left window",
+})
+
+vim.keymap.set("n", "<C-j>", "<C-w>j", {
+  desc = "Move to lower window",
+})
+
+vim.keymap.set("n", "<C-k>", "<C-w>k", {
+  desc = "Move to upper window",
+})
+
+vim.keymap.set("n", "<C-l>", "<C-w>l", {
+  desc = "Move to right window",
 })
 
 --
@@ -221,47 +238,47 @@ vim.keymap.set("n", "zz", "zo", {
 --
 -- Clear previously registered autocommands if this configuration is sourced again.
 local config_group = vim.api.nvim_create_augroup("MinimalConfig", {
-	clear = true,
+  clear = true,
 })
 
 -- Restore the last cursor position when a file is first displayed.
 vim.api.nvim_create_autocmd("BufWinEnter", {
-	group = config_group,
-	desc = "Restore the last cursor position",
-	callback = function(event)
-		-- Skip special buffers and buffers already handled during this session.
-		if vim.bo[event.buf].buftype ~= "" or vim.b[event.buf].cursor_restored then
-			return
-		end
+  group = config_group,
+  desc = "Restore the last cursor position",
+  callback = function(event)
+    -- Skip special buffers and buffers already handled during this session.
+    if vim.bo[event.buf].buftype ~= "" or vim.b[event.buf].cursor_restored then
+      return
+    end
 
-		-- Leave Git commit messages and interactive rebases at their initial position.
-		local filetype = vim.bo[event.buf].filetype
-		if filetype == "gitcommit" or filetype == "gitrebase" then
-			return
-		end
+    -- Leave Git commit messages and interactive rebases at their initial position.
+    local filetype = vim.bo[event.buf].filetype
+    if filetype == "gitcommit" or filetype == "gitrebase" then
+      return
+    end
 
-		-- Restore only once per buffer, not every time its window is entered.
-		vim.b[event.buf].cursor_restored = true
+    -- Restore only once per buffer, not every time its window is entered.
+    vim.b[event.buf].cursor_restored = true
 
-		-- The double-quote mark records the cursor position from the previous edit.
-		local position = vim.api.nvim_buf_get_mark(event.buf, '"')
-		local line_count = vim.api.nvim_buf_line_count(event.buf)
+    -- The double-quote mark records the cursor position from the previous edit.
+    local position = vim.api.nvim_buf_get_mark(event.buf, '"')
+    local line_count = vim.api.nvim_buf_line_count(event.buf)
 
-		-- Ignore missing marks and positions beyond the current end of the file.
-		if position[1] < 1 or position[1] > line_count then
-			return
-		end
+    -- Ignore missing marks and positions beyond the current end of the file.
+    if position[1] < 1 or position[1] > line_count then
+      return
+    end
 
-		-- Clamp the saved byte column if the line has become shorter.
-		local line = vim.api.nvim_buf_get_lines(event.buf, position[1] - 1, position[1], false)[1]
-		position[2] = math.min(position[2], #line)
+    -- Clamp the saved byte column if the line has become shorter.
+    local line = vim.api.nvim_buf_get_lines(event.buf, position[1] - 1, position[1], false)[1]
+    position[2] = math.min(position[2], #line)
 
-		-- Restore the cursor directly instead of injecting keystrokes.
-		vim.api.nvim_win_set_cursor(0, position)
+    -- Restore the cursor directly instead of injecting keystrokes.
+    vim.api.nvim_win_set_cursor(0, position)
 
-		-- Open any folds hiding the restored cursor position.
-		vim.cmd("normal! zv")
-	end,
+    -- Open any folds hiding the restored cursor position.
+    vim.cmd("normal! zv")
+  end,
 })
 
 --
@@ -270,111 +287,111 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 
 -- Install missing plugins and make them available to this session.
 vim.pack.add({
-	-- Tokyo Night colorscheme.
-	{
-		src = "https://github.com/folke/tokyonight.nvim",
-		version = "main",
-	},
+  -- Tokyo Night colorscheme.
+  {
+    src = "https://github.com/folke/tokyonight.nvim",
+    version = "main",
+  },
 
-	-- Kanagawa colorscheme.
-	{
-		src = "https://github.com/rebelot/kanagawa.nvim",
-		version = "master",
-	},
+  -- Kanagawa colorscheme.
+  {
+    src = "https://github.com/rebelot/kanagawa.nvim",
+    version = "master",
+  },
 
-	-- Moonfly colorscheme.
-	{
-		src = "https://github.com/bluz71/vim-moonfly-colors",
-		version = "master",
-	},
+  -- Moonfly colorscheme.
+  {
+    src = "https://github.com/bluz71/vim-moonfly-colors",
+    version = "master",
+  },
 
-	-- Aura colorscheme.
-	{
-		src = "https://github.com/daltonmenezes/aura-theme",
-		version = "main",
-	},
+  -- Aura colorscheme.
+  {
+    src = "https://github.com/daltonmenezes/aura-theme",
+    version = "main",
+  },
 
-	-- VSCode Modern colorscheme.
-	{
-		src = "https://github.com/gmr458/vscode_modern_theme.nvim",
-		version = "main",
-	},
+  -- VSCode Modern colorscheme.
+  {
+    src = "https://github.com/gmr458/vscode_modern_theme.nvim",
+    version = "main",
+  },
 
-	-- Oxocarbon colorscheme.
-	{
-		src = "https://github.com/nyoom-engineering/oxocarbon.nvim",
-		version = "main",
-	},
+  -- Oxocarbon colorscheme.
+  {
+    src = "https://github.com/nyoom-engineering/oxocarbon.nvim",
+    version = "main",
+  },
 
-	-- OneDark Pro colorscheme.
-	{
-		src = "https://github.com/olimorris/onedarkpro.nvim",
-		version = "main",
-	},
+  -- OneDark Pro colorscheme.
+  {
+    src = "https://github.com/olimorris/onedarkpro.nvim",
+    version = "main",
+  },
 
-	-- Eldritch colorscheme.
-	{
-		src = "https://github.com/eldritch-theme/eldritch.nvim",
-		version = "master",
-	},
+  -- Eldritch colorscheme.
+  {
+    src = "https://github.com/eldritch-theme/eldritch.nvim",
+    version = "master",
+  },
 
-	-- Blink completion, restricted to v1 releases.
-	-- The branch-only Renovate manager deliberately skips this version range.
-	{
-		src = "https://github.com/saghen/blink.cmp",
-		version = vim.version.range("1.*"),
-	},
+  -- Blink completion, restricted to v1 releases.
+  -- The branch-only Renovate manager deliberately skips this version range.
+  {
+    src = "https://github.com/saghen/blink.cmp",
+    version = vim.version.range("1.*"),
+  },
 
-	-- Theme selection and persistence.
-	{
-		src = "https://github.com/zaldih/themery.nvim",
-		version = "main",
-	},
+  -- Theme selection and persistence.
+  {
+    src = "https://github.com/zaldih/themery.nvim",
+    version = "main",
+  },
 
-	-- Magit-like Git interface.
-	{
-		src = "https://github.com/NeogitOrg/neogit",
-		version = "master",
-	},
+  -- Magit-like Git interface.
+  {
+    src = "https://github.com/NeogitOrg/neogit",
+    version = "master",
+  },
 
-	-- Default language-server configurations.
-	{
-		src = "https://github.com/neovim/nvim-lspconfig",
-		version = "master",
-	},
+  -- Default language-server configurations.
+  {
+    src = "https://github.com/neovim/nvim-lspconfig",
+    version = "master",
+  },
 
-	-- Language-server installation and management.
-	{
-		src = "https://github.com/mason-org/mason.nvim",
-		version = "main",
-	},
+  -- Language-server installation and management.
+  {
+    src = "https://github.com/mason-org/mason.nvim",
+    version = "main",
+  },
 
-	-- Integration between Mason installations and Neovim LSP configurations.
-	{
-		src = "https://github.com/mason-org/mason-lspconfig.nvim",
-		version = "main",
-	},
+  -- Integration between Mason installations and Neovim LSP configurations.
+  {
+    src = "https://github.com/mason-org/mason-lspconfig.nvim",
+    version = "main",
+  },
 
-	-- Lua utility dependency used by Telescope and other plugins.
-	{
-		src = "https://github.com/nvim-lua/plenary.nvim",
-		version = "master",
-	},
+  -- Lua utility dependency used by Telescope and other plugins.
+  {
+    src = "https://github.com/nvim-lua/plenary.nvim",
+    version = "master",
+  },
 
-	-- Fuzzy finder, picker, and previewer.
-	{
-		src = "https://github.com/nvim-telescope/telescope.nvim",
-		version = "master",
-	},
+  -- Fuzzy finder, picker, and previewer.
+  {
+    src = "https://github.com/nvim-telescope/telescope.nvim",
+    version = "master",
+  },
 
-	-- Keybinding hints.
-	{
-		src = "https://github.com/folke/which-key.nvim",
-		version = "main",
-	},
+  -- Keybinding hints.
+  {
+    src = "https://github.com/folke/which-key.nvim",
+    version = "main",
+  },
 }, {
-	-- Install missing plugins without asking for confirmation.
-	confirm = false,
+  -- Install missing plugins without asking for confirmation.
+  confirm = false,
 })
 
 --
@@ -387,14 +404,14 @@ vim.pack.add({
 
 -- Eldritch theme options
 require("eldritch").setup({
-	styles = {
-		comments = {
-			italic = false,
-		},
-		keywords = {
-			italic = false,
-		},
-	},
+  styles = {
+    comments = {
+      italic = false,
+    },
+    keywords = {
+      italic = false,
+    },
+  },
 })
 
 -- Set fallback before Themery restores a saved selection.
@@ -402,88 +419,88 @@ vim.cmd.colorscheme("zaibatsu")
 
 -- Provide a menu of installed themes and remember the selected theme.
 require("themery").setup({
-	themes = {
-		{
-			name = "Eldritch",
-			colorscheme = "eldritch",
-		},
-		{
-			name = "Eldritch Dark",
-			colorscheme = "eldritch-dark",
-		},
-		{
-			name = "Eldritch Minimal",
-			colorscheme = "eldritch-minimal",
-		},
-		{
-			name = "Kanagawa Wave",
-			colorscheme = "kanagawa-wave",
-		},
-		{
-			name = "Kanagawa Dragon",
-			colorscheme = "kanagawa-dragon",
-		},
-		{
-			name = "Kanagawa Lotus",
-			colorscheme = "kanagawa-lotus",
-		},
-		{
-			name = "Tokyo Night Night",
-			colorscheme = "tokyonight-night",
-		},
-		{
-			name = "Tokyo Night Moon",
-			colorscheme = "tokyonight-moon",
-		},
-		{
-			name = "Moonfly",
-			colorscheme = "moonfly",
-		},
-		{
-			name = "OneDark",
-			colorscheme = "onedark",
-		},
-		{
-			name = "OneDark Dark",
-			colorscheme = "onedark_dark",
-		},
-		{
-			name = "OneDark Vivid",
-			colorscheme = "onedark_vivid",
-		},
-		{
-			name = "Oxocarbon",
-			colorscheme = "oxocarbon",
-		},
-		{
-			name = "Slate",
-			colorscheme = "slate",
-		},
-		{
-			name = "Vaporwave",
-			colorscheme = "vaporwave",
-		},
-		{
-			name = "VSCode Modern",
-			colorscheme = "vscode_modern",
-		},
-		{
-			name = "Wild Charm",
-			colorscheme = "wildcharm",
-		},
-		{
-			name = "Zaibatsu",
-			colorscheme = "zaibatsu",
-		},
-	},
+  themes = {
+    {
+      name = "Eldritch",
+      colorscheme = "eldritch",
+    },
+    {
+      name = "Eldritch Dark",
+      colorscheme = "eldritch-dark",
+    },
+    {
+      name = "Eldritch Minimal",
+      colorscheme = "eldritch-minimal",
+    },
+    {
+      name = "Kanagawa Wave",
+      colorscheme = "kanagawa-wave",
+    },
+    {
+      name = "Kanagawa Dragon",
+      colorscheme = "kanagawa-dragon",
+    },
+    {
+      name = "Kanagawa Lotus",
+      colorscheme = "kanagawa-lotus",
+    },
+    {
+      name = "Tokyo Night Night",
+      colorscheme = "tokyonight-night",
+    },
+    {
+      name = "Tokyo Night Moon",
+      colorscheme = "tokyonight-moon",
+    },
+    {
+      name = "Moonfly",
+      colorscheme = "moonfly",
+    },
+    {
+      name = "OneDark",
+      colorscheme = "onedark",
+    },
+    {
+      name = "OneDark Dark",
+      colorscheme = "onedark_dark",
+    },
+    {
+      name = "OneDark Vivid",
+      colorscheme = "onedark_vivid",
+    },
+    {
+      name = "Oxocarbon",
+      colorscheme = "oxocarbon",
+    },
+    {
+      name = "Slate",
+      colorscheme = "slate",
+    },
+    {
+      name = "Vaporwave",
+      colorscheme = "vaporwave",
+    },
+    {
+      name = "VSCode Modern",
+      colorscheme = "vscode_modern",
+    },
+    {
+      name = "Wild Charm",
+      colorscheme = "wildcharm",
+    },
+    {
+      name = "Zaibatsu",
+      colorscheme = "zaibatsu",
+    },
+  },
 
-	-- Preview themes while navigating the menu.
-	livePreview = true,
+  -- Preview themes while navigating the menu.
+  livePreview = true,
 })
 
 -- Open the theme picker with Space+u+t.
 vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
-	desc = "Choose theme",
+  desc = "Choose theme",
 })
 
 --
@@ -491,22 +508,22 @@ vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
 --
 
 require("blink.cmp").setup({
-	-- Use Blink's built-in default keybindings.
-	keymap = {
-		preset = "default",
-	},
+  -- Use Blink's built-in default keybindings.
+  keymap = {
+    preset = "default",
+  },
 
-	completion = {
-		-- Automatically display documentation for completion items.
-		documentation = {
-			auto_show = true,
-		},
-	},
+  completion = {
+    -- Automatically display documentation for completion items.
+    documentation = {
+      auto_show = true,
+    },
+  },
 
-	-- Use the Lua matcher instead of a native binary.
-	fuzzy = {
-		implementation = "lua",
-	},
+  -- Use the Lua matcher instead of a native binary.
+  fuzzy = {
+    implementation = "lua",
+  },
 })
 
 ---
@@ -518,7 +535,7 @@ require("neogit").setup({})
 
 -- Open the Git status interface in a new tab.
 vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<CR>", {
-	desc = "Open Neogit",
+  desc = "Open Neogit",
 })
 
 --
@@ -530,153 +547,153 @@ require("mason").setup()
 
 -- Advertise Blink's completion capabilities to all language servers.
 vim.lsp.config("*", {
-	capabilities = require("blink.cmp").get_lsp_capabilities(),
+  capabilities = require("blink.cmp").get_lsp_capabilities(),
 })
 
 -- Define the language servers to configure, install, and enable.
 local servers = {
-	-- Lua.
-	lua_ls = {
-		settings = {
-			Lua = {
-				-- Recognize Neovim's global vim object.
-				diagnostics = {
-					globals = { "vim" },
-				},
+  -- Lua.
+  lua_ls = {
+    settings = {
+      Lua = {
+        -- Recognize Neovim's global vim object.
+        diagnostics = {
+          globals = { "vim" },
+        },
 
-				workspace = {
-					-- Avoid prompts about third-party workspace libraries.
-					checkThirdParty = false,
+        workspace = {
+          -- Avoid prompts about third-party workspace libraries.
+          checkThirdParty = false,
 
-					-- Include Neovim's runtime Lua definitions.
-					library = { vim.env.VIMRUNTIME },
-				},
-			},
-		},
-	},
+          -- Include Neovim's runtime Lua definitions.
+          library = { vim.env.VIMRUNTIME },
+        },
+      },
+    },
+  },
 
-	-- Go.
-	gopls = {},
+  -- Go.
+  gopls = {},
 
-	-- Bash.
-	bashls = {},
+  -- Bash.
+  bashls = {},
 
-	-- PowerShell Editor Services.
-	powershell_es = {},
+  -- PowerShell Editor Services.
+  powershell_es = {},
 
-	-- Python completion and analysis.
-	pyright = {},
+  -- Python completion and analysis.
+  pyright = {},
 
-	-- Dockerfiles.
-	dockerls = {},
+  -- Dockerfiles.
+  dockerls = {},
 
-	-- Docker Compose files.
-	docker_compose_language_service = {},
+  -- Docker Compose files.
+  docker_compose_language_service = {},
 
-	-- YAML and pipeline schema associations.
-	yamlls = {
-		settings = {
-			yaml = {
-				-- Validate YAML syntax and applicable schemas.
-				validate = true,
+  -- YAML and pipeline schema associations.
+  yamlls = {
+    settings = {
+      yaml = {
+        -- Validate YAML syntax and applicable schemas.
+        validate = true,
 
-				-- Show schema descriptions when hovering.
-				hover = true,
+        -- Show schema descriptions when hovering.
+        hover = true,
 
-				-- Suggest properties and values from applicable schemas.
-				completion = true,
+        -- Suggest properties and values from applicable schemas.
+        completion = true,
 
-				-- Allow the YAML server to format documents.
-				format = {
-					enable = true,
-				},
+        -- Allow the YAML server to format documents.
+        format = {
+          enable = true,
+        },
 
-				-- Use explicit associations instead of automatic catalog matching.
-				schemaStore = {
-					enable = false,
-					url = "",
-				},
+        -- Use explicit associations instead of automatic catalog matching.
+        schemaStore = {
+          enable = false,
+          url = "",
+        },
 
-				-- Accept GitLab CI's !reference sequence tag.
-				customTags = { "!reference sequence" },
+        -- Accept GitLab CI's !reference sequence tag.
+        customTags = { "!reference sequence" },
 
-				-- Associate schemas with project-relative file patterns.
-				schemas = {
-					-- GitHub Actions workflows.
-					["https://json.schemastore.org/github-workflow.json"] = {
-						"/.github/workflows/*.yml",
-						"/.github/workflows/*.yaml",
-					},
+        -- Associate schemas with project-relative file patterns.
+        schemas = {
+          -- GitHub Actions workflows.
+          ["https://json.schemastore.org/github-workflow.json"] = {
+            "/.github/workflows/*.yml",
+            "/.github/workflows/*.yaml",
+          },
 
-					-- GitHub action metadata at the project root or in subdirectories.
-					["https://json.schemastore.org/github-action.json"] = {
-						"/action.yml",
-						"/action.yaml",
-						"/**/action.yml",
-						"/**/action.yaml",
-					},
+          -- GitHub action metadata at the project root or in subdirectories.
+          ["https://json.schemastore.org/github-action.json"] = {
+            "/action.yml",
+            "/action.yaml",
+            "/**/action.yml",
+            "/**/action.yaml",
+          },
 
-					-- Azure Pipelines and templates in common pipeline directories.
-					["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json"] = {
-						"/azure-pipelines.yml",
-						"/azure-pipelines.yaml",
-						"/azure-pipelines/*.yml",
-						"/azure-pipelines/*.yaml",
-						"/.azure-pipelines/*.yml",
-						"/.azure-pipelines/*.yaml",
-					},
+          -- Azure Pipelines and templates in common pipeline directories.
+          ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json"] = {
+            "/azure-pipelines.yml",
+            "/azure-pipelines.yaml",
+            "/azure-pipelines/*.yml",
+            "/azure-pipelines/*.yaml",
+            "/.azure-pipelines/*.yml",
+            "/.azure-pipelines/*.yaml",
+          },
 
-					-- GitLab CI configuration and included pipeline fragments.
-					["https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json"] = {
-						"/.gitlab-ci.yml",
-						"/.gitlab-ci.yaml",
-						"/.gitlab/ci/*.yml",
-						"/.gitlab/ci/*.yaml",
-						"/.gitlab/ci/**/*.yml",
-						"/.gitlab/ci/**/*.yaml",
-					},
-				},
-			},
-		},
-	},
+          -- GitLab CI configuration and included pipeline fragments.
+          ["https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json"] = {
+            "/.gitlab-ci.yml",
+            "/.gitlab-ci.yaml",
+            "/.gitlab/ci/*.yml",
+            "/.gitlab/ci/*.yaml",
+            "/.gitlab/ci/**/*.yml",
+            "/.gitlab/ci/**/*.yaml",
+          },
+        },
+      },
+    },
+  },
 
-	-- Markdown.
-	marksman = {},
+  -- Markdown.
+  marksman = {},
 
-	-- TOML.
-	taplo = {},
+  -- TOML.
+  taplo = {},
 }
 
 -- Configure each server before Mason enables it.
 for name, config in pairs(servers) do
-	vim.lsp.config(name, config)
+  vim.lsp.config(name, config)
 end
 
 -- Install and automatically enable the language servers listed above.
 require("mason-lspconfig").setup({
-	ensure_installed = vim.tbl_keys(servers),
-	automatic_enable = vim.tbl_keys(servers),
+  ensure_installed = vim.tbl_keys(servers),
+  automatic_enable = vim.tbl_keys(servers),
 })
 
 -- Add buffer-local mappings when a language server attaches.
 vim.api.nvim_create_autocmd("LspAttach", {
-	callback = function(event)
-		-- Jump to the definition under the cursor.
-		vim.keymap.set("n", "grd", vim.lsp.buf.definition, {
-			buffer = event.buf,
-			desc = "Go to definition",
-		})
+  callback = function(event)
+    -- Jump to the definition under the cursor.
+    vim.keymap.set("n", "grd", vim.lsp.buf.definition, {
+      buffer = event.buf,
+      desc = "Go to definition",
+    })
 
-		-- Request formatting asynchronously from an attached language server.
-		vim.keymap.set("n", "grf", function()
-			vim.lsp.buf.format({
-				async = true,
-			})
-		end, {
-			buffer = event.buf,
-			desc = "Format buffer",
-		})
-	end,
+    -- Request formatting asynchronously from an attached language server.
+    vim.keymap.set("n", "grf", function()
+      vim.lsp.buf.format({
+        async = true,
+      })
+    end, {
+      buffer = event.buf,
+      desc = "Format buffer",
+    })
+  end,
 })
 
 --
@@ -691,42 +708,42 @@ local pickers = require("telescope.builtin")
 
 -- List available Telescope pickers.
 vim.keymap.set("n", "<leader>sp", pickers.builtin, {
-	desc = "Search pickers",
+  desc = "Search pickers",
 })
 
 -- Search open buffers.
 vim.keymap.set("n", "<leader>sb", pickers.buffers, {
-	desc = "Search buffers",
+  desc = "Search buffers",
 })
 
 -- Search filenames in the working directory.
 vim.keymap.set("n", "<leader>sf", pickers.find_files, {
-	desc = "Search files",
+  desc = "Search files",
 })
 
 -- Search for the word under the cursor.
 vim.keymap.set("n", "<leader>sw", pickers.grep_string, {
-	desc = "Search current word",
+  desc = "Search current word",
 })
 
 -- Search file contents interactively.
 vim.keymap.set("n", "<leader>sg", pickers.live_grep, {
-	desc = "Search by grep",
+  desc = "Search by grep",
 })
 
 -- Reopen the previous Telescope picker.
 vim.keymap.set("n", "<leader>sr", pickers.resume, {
-	desc = "Resume search",
+  desc = "Resume search",
 })
 
 -- Search Neovim and plugin help tags.
 vim.keymap.set("n", "<leader>sh", pickers.help_tags, {
-	desc = "Search help",
+  desc = "Search help",
 })
 
 -- Search available system manual pages.
 vim.keymap.set("n", "<leader>sm", pickers.man_pages, {
-	desc = "Search manuals",
+  desc = "Search manuals",
 })
 
 --
@@ -734,17 +751,17 @@ vim.keymap.set("n", "<leader>sm", pickers.man_pages, {
 --
 
 require("which-key").setup({
-	-- Disable decorative mapping icons.
-	icons = {
-		mappings = false,
-	},
+  -- Disable decorative mapping icons.
+  icons = {
+    mappings = false,
+  },
 
-	-- Label keybinding prefixes; individual mappings supply their own descriptions.
-	spec = {
-		{ "<leader>g", group = "Git" },
-		{ "<leader>s", group = "Search" },
-		{ "<leader>u", group = "UI" },
-	},
+  -- Label keybinding prefixes; individual mappings supply their own descriptions.
+  spec = {
+    { "<leader>g", group = "Git" },
+    { "<leader>s", group = "Search" },
+    { "<leader>u", group = "UI" },
+  },
 })
 
 --
@@ -756,21 +773,21 @@ require("which-key").setup({
 -- This skips confirmation but still respects the plugin's version constraint.
 -- No minimum release age is enforced.
 vim.api.nvim_create_user_command("PluginUpdate", function(opts)
-	vim.pack.update({ opts.args }, {
-		force = true,
-	})
+  vim.pack.update({ opts.args }, {
+    force = true,
+  })
 end, {
-	nargs = 1,
-	desc = "Update one plugin without confirmation",
+  nargs = 1,
+  desc = "Update one plugin without confirmation",
 })
 
 -- Immediately update all managed plugins to their configured versions.
 -- Usage: :PluginsUpdate
 -- No minimum release age is enforced.
 vim.api.nvim_create_user_command("PluginsUpdate", function()
-	vim.pack.update(nil, {
-		force = true,
-	})
+  vim.pack.update(nil, {
+    force = true,
+  })
 end, {
-	desc = "Update all plugins without confirmation",
+  desc = "Update all plugins without confirmation",
 })
