@@ -421,9 +421,9 @@ vim.pack.add({
     version = "main",
   },
 
-  -- Current-line Git blame information and commit actions.
+  -- Git change indicators, hunk actions, and blame.
   {
-    src = "https://github.com/f-person/git-blame.nvim",
+    src = "https://github.com/lewis6991/gitsigns.nvim",
     version = "main",
   },
 }, {
@@ -576,37 +576,91 @@ vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<CR>", {
 })
 
 --
--- [ GIT BLAME ]
+-- [ GITSIGNS ]
 --
 
-require("gitblame").setup({
-  -- Keep annotations off until explicitly enabled.
-  enabled = false,
+require("gitsigns").setup({
+  -- Use ASCII signs without requiring a Nerd Font.
+  signs = {
+    add = { text = "+" },
+    change = { text = "~" },
+    delete = { text = "_" },
+    topdelete = { text = "-" },
+    changedelete = { text = "~" },
+    untracked = { text = "?" },
+  },
 
-  -- Show the author, relative date, and commit summary.
-  message_template = " <author> | <date> | <summary>",
-  date_format = "%r",
+  signs_staged = {
+    add = { text = "+" },
+    change = { text = "~" },
+    delete = { text = "_" },
+    topdelete = { text = "-" },
+    changedelete = { text = "~" },
+    untracked = { text = "?" },
+  },
 
-  -- Wait before displaying the annotation.
-  delay = 750,
+  -- Keep blame annotations hidden until explicitly enabled.
+  current_line_blame = false,
 
-  -- Keep long commit messages from dominating the line.
-  max_commit_summary_length = 60,
-})
+  current_line_blame_opts = {
+    -- Wait 750 milliseconds before showing inline blame.
+    delay = 750,
+  },
 
--- Toggle current-line blame with Space+g+b.
-vim.keymap.set("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", {
-  desc = "Toggle Git blame",
-})
+  on_attach = function(bufnr)
+    local gitsigns = require("gitsigns")
 
--- Open the current line's commit in the browser.
-vim.keymap.set("n", "<leader>go", "<cmd>GitBlameOpenCommitURL<CR>", {
-  desc = "Open blame commit URL",
-})
+    -- Register mappings only for buffers attached to Gitsigns.
+    local function map(mode, lhs, rhs, desc)
+      vim.keymap.set(mode, lhs, rhs, {
+        buffer = bufnr,
+        desc = desc,
+      })
+    end
 
--- Copy the current line's commit SHA.
-vim.keymap.set("n", "<leader>gy", "<cmd>GitBlameCopySHA<CR>", {
-  desc = "Copy blame commit SHA",
+    -- Navigate Git hunks, preserving native navigation in diff windows.
+    map("n", "]c", function()
+      if vim.wo.diff then
+        vim.cmd.normal({ "]c", bang = true })
+      else
+        gitsigns.nav_hunk("next")
+      end
+    end, "Next Git hunk")
+
+    map("n", "[c", function()
+      if vim.wo.diff then
+        vim.cmd.normal({ "[c", bang = true })
+      else
+        gitsigns.nav_hunk("prev")
+      end
+    end, "Previous Git hunk")
+
+    -- Inspect and stage the hunk under the cursor.
+    map("n", "<leader>gp", gitsigns.preview_hunk, "Preview Git hunk")
+    map("n", "<leader>gs", gitsigns.stage_hunk, "Stage/unstage Git hunk")
+
+    -- Stage only the selected lines.
+    map("x", "<leader>gs", function()
+      gitsigns.stage_hunk({
+        vim.fn.line("."),
+        vim.fn.line("v"),
+      })
+    end, "Stage/unstage selected lines")
+
+    -- Inspect blame without keeping annotations visible.
+    map("n", "<leader>gB", function()
+      gitsigns.blame_line({ full = true })
+    end, "Show line blame")
+
+    -- Toggle inline blame.
+    map("n", "<leader>gb", gitsigns.toggle_current_line_blame, "Toggle Git blame")
+
+    -- Compare the current buffer with the Git index.
+    map("n", "<leader>gd", gitsigns.diffthis, "Diff against index")
+
+    -- Select a Git hunk as a text object.
+    map({ "o", "x" }, "ih", gitsigns.select_hunk, "Select Git hunk")
+  end,
 })
 
 --
