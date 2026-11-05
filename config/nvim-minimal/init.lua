@@ -420,6 +420,12 @@ vim.pack.add({
     src = "https://github.com/tris203/precognition.nvim",
     version = "main",
   },
+
+  -- Current-line Git blame information and commit actions.
+  {
+    src = "https://github.com/f-person/git-blame.nvim",
+    version = "main",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -567,6 +573,40 @@ require("neogit").setup({})
 -- Open the Git status interface in a new tab.
 vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<CR>", {
   desc = "Open Neogit",
+})
+
+--
+-- [ GIT BLAME ]
+--
+
+require("gitblame").setup({
+  -- Keep annotations off until explicitly enabled.
+  enabled = false,
+
+  -- Show the author, relative date, and commit summary.
+  message_template = " <author> | <date> | <summary>",
+  date_format = "%r",
+
+  -- Wait before displaying the annotation.
+  delay = 750,
+
+  -- Keep long commit messages from dominating the line.
+  max_commit_summary_length = 60,
+})
+
+-- Toggle current-line blame with Space+g+b.
+vim.keymap.set("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", {
+  desc = "Toggle Git blame",
+})
+
+-- Open the current line's commit in the browser.
+vim.keymap.set("n", "<leader>go", "<cmd>GitBlameOpenCommitURL<CR>", {
+  desc = "Open blame commit URL",
+})
+
+-- Copy the current line's commit SHA.
+vim.keymap.set("n", "<leader>gy", "<cmd>GitBlameCopySHA<CR>", {
+  desc = "Copy blame commit SHA",
 })
 
 --
