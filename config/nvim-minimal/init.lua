@@ -452,7 +452,7 @@ vim.pack.add({
   -- Mini.nvim is a library with many Lua modules
   {
     src = "https://github.com/nvim-mini/mini.nvim",
-    version = "main",
+    version = "stable",
   },
 }, {
   -- Install missing plugins without asking for confirmation.
