@@ -1052,6 +1052,70 @@ require("mini.indentscope").setup({
 -- Better buffer deletion.
 require("mini.bufremove").setup({})
 
+-- Text manipulation operators.
+require("mini.operators").setup({
+  -- Avoid conflicts with Neovim's built-in LSP gr mappings.
+  replace = {
+    prefix = "gR",
+  },
+})
+
+-- Move lines and visual selections.
+require("mini.move").setup({
+  mappings = {
+    -- Move selections in all four directions.
+    left = "<M-h>",
+    right = "<M-l>",
+    down = "<M-j>",
+    up = "<M-k>",
+
+    -- Move lines in normal mode.
+    line_left = "<M-h>",
+    line_right = "<M-l>",
+    line_down = "<M-j>",
+    line_up = "<M-k>",
+  },
+})
+
+-- Automatically insert matching brackets and quotes.
+require("mini.pairs").setup({})
+
+-- Interactive text alignment.
+require("mini.align").setup({})
+
+--
+-- [ MINI.NVIM KEYBINDINGS ]
+--
+
+local wk = require("which-key")
+
+wk.add({
+  -- mini.operators
+  { "gx", desc = "Exchange text" },
+  { "gX", desc = "Replace with register" },
+  { "gm", desc = "Multiply text" },
+  { "gs", desc = "Sort text" },
+  { "g=", desc = "Evaluate text" },
+
+  -- mini.move
+  { "<M-h>", desc = "Move selection left", mode = { "n", "v" } },
+  { "<M-j>", desc = "Move selection down", mode = { "n", "v" } },
+  { "<M-k>", desc = "Move selection up", mode = { "n", "v" } },
+  { "<M-l>", desc = "Move selection right", mode = { "n", "v" } },
+
+  -- mini.pairs
+  { "(", desc = "Insert matching parentheses", mode = "i" },
+  { "[", desc = "Insert matching brackets", mode = "i" },
+  { "{", desc = "Insert matching braces", mode = "i" },
+  { '"', desc = "Insert matching quotes", mode = "i" },
+  { "'", desc = "Insert matching quotes", mode = "i" },
+  { "`", desc = "Insert matching backticks", mode = "i" },
+
+  -- mini.align
+  { "ga", desc = "Align text" },
+  { "gA", desc = "Align text with preview" },
+})
+
 --
 -- [ PLUGIN UPDATES ]
 --
