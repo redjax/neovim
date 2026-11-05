@@ -1143,3 +1143,18 @@ vim.api.nvim_create_user_command("PluginsUpdate", function()
 end, {
   desc = "Update all plugins without confirmation",
 })
+
+--
+-- [ LOCAL CONFIGURATION ]
+--
+-- Sources an init.local.lua file if it exists in the same path as this init.lua.
+-- Use the local file to override configs, i.e. installing additional plugins on
+-- a work machine.
+--
+
+local local_config = vim.fn.stdpath("config") .. "/init.local.lua"
+
+if vim.fn.filereadable(local_config) == 1 then
+  dofile(local_config)
+  vim.notify("Loaded init.local.lua", vim.log.levels.INFO)
+end
