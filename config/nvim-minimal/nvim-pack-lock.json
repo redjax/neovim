@@ -19,6 +19,21 @@
       "src": "https://github.com/eldritch-theme/eldritch.nvim",
       "version": "'master'"
     },
+    "git-blame.nvim": {
+      "rev": "5c536e2d4134d064aa3f41575280bc8a2a0e03d7",
+      "src": "https://github.com/f-person/git-blame.nvim",
+      "version": "'main'"
+    },
+    "gitsigns.nvim": {
+      "rev": "ef707fb93301a9b856f36eae4c8f56f5b988a794",
+      "src": "https://github.com/lewis6991/gitsigns.nvim",
+      "version": "'main'"
+    },
+    "hawtkeys.nvim": {
+      "rev": "27495e633c071ab0881d337e0f59bfbbb19e0ac2",
+      "src": "https://github.com/tris203/hawtkeys.nvim",
+      "version": "'main'"
+    },
     "kanagawa.nvim": {
       "rev": "bb85e4bfc8d89b0e62c8fa53ccdd13d12e2f77b3",
       "src": "https://github.com/rebelot/kanagawa.nvim",
@@ -38,6 +53,11 @@
       "src": "https://github.com/mason-org/mason.nvim",
       "version": "'main'"
     },
+    "mini.nvim": {
+      "rev": "a321b535c75ca88ba7fddfd8eb5b583fbda50dd6",
+      "src": "https://github.com/nvim-mini/mini.nvim",
+      "version": "'stable'"
+    },
     "neogit": {
       "rev": "832a2db084ac25c2801fd73a3fab58f3c82ed2ec",
       "src": "https://github.com/NeogitOrg/neogit",
@@ -48,9 +68,15 @@
       "src": "https://github.com/neovim/nvim-lspconfig",
       "version": "'master'"
     },
+    "nvim-tree.lua": {
+      "rev": "69eb0c34ed3d836d5a0d92d913b77dd73b054f2f",
+      "src": "https://github.com/nvim-tree/nvim-tree.lua",
+      "version": "'v1.14.0'"
+    },
     "nvim-treesitter": {
       "rev": "a2f694478be07f89c2d03cc17858a8745a400c4b",
-      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter",
+      "version": "'master'"
     },
     "nvim-web-devicons": {
       "rev": "ec309a0eaff6ea967e58c275996155ab5c16938d",
@@ -70,6 +96,15 @@
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim",
       "version": "'master'"
+    },
+    "precognition.nvim": {
+      "rev": "af99323ea0942aac39b65dca2bac7bb1174c010f",
+      "src": "https://github.com/tris203/precognition.nvim",
+      "version": "'main'"
+    },
+    "resolve.nvim": {
+      "rev": "1ed8bcc9ce7d43a0e8e05d0001c9cadb822d95a8",
+      "src": "https://github.com/spacedentist/resolve.nvim"
     },
     "telescope.nvim": {
       "rev": "40aedd8a68c78a656a10a8d62d80c54af59420fb",
