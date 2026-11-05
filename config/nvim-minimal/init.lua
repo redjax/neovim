@@ -414,6 +414,12 @@ vim.pack.add({
   {
     src = "https://github.com/spacedentist/resolve.nvim",
   },
+
+  -- Visual hints for learning and discovering Vim motions.
+  {
+    src = "https://github.com/tris203/precognition.nvim",
+    version = "main",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -769,6 +775,38 @@ vim.keymap.set("n", "<leader>sh", pickers.help_tags, {
 -- Search available system manual pages.
 vim.keymap.set("n", "<leader>sm", pickers.man_pages, {
   desc = "Search manuals",
+})
+
+--
+-- [ MOTION HINTS ]
+--
+
+require("precognition").setup({
+  -- Display motion hints immediately.
+  startVisible = true,
+
+  -- Hide empty virtual hint lines.
+  showBlankVirtLine = false,
+
+  -- Match the active colorscheme's comment highlighting.
+  highlightColor = {
+    link = "Comment",
+  },
+
+  -- Hide the dense per-character f/F hints.
+  targetedMotionHints = {
+    enabled = false,
+  },
+})
+
+-- Toggle motion hints with Space+u+p.
+vim.keymap.set("n", "<leader>up", "<cmd>Precognition toggle<CR>", {
+  desc = "Toggle motion hints",
+})
+
+-- Show motion hints until the next cursor movement with Space+u+P.
+vim.keymap.set("n", "<leader>uP", "<cmd>Precognition peek<CR>", {
+  desc = "Peek motion hints",
 })
 
 --
