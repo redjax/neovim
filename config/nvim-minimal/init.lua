@@ -262,7 +262,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     end
 
     -- Restore only once per buffer, not every time its window is entered.
-    vim.b[event.buf].cursor_restored = true
+    vim.api.nvim_buf_set_var(event.buf, "cursor_restored", true)
 
     -- The double-quote mark records the cursor position from the previous edit.
     local position = vim.api.nvim_buf_get_mark(event.buf, '"')
