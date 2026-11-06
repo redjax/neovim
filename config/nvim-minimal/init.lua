@@ -934,21 +934,57 @@ vim.api.nvim_create_autocmd("LspAttach", {
 --
 
 local treesitter_languages = {
-  "bash",
-  "dockerfile",
+  -- Documentation.
+  "markdown",
+  "markdown_inline",
+
+  -- Go and module/workspace files.
   "go",
   "gomod",
   "gosum",
-  "json",
-  "lua",
-  "markdown",
-  "markdown_inline",
+  "gowork",
+
+  -- Python.
   "python",
-  "query",
+
+  -- Shell scripting.
+  "bash",
+  "powershell",
+
+  -- Infrastructure as code.
+  "bicep",
+  "hcl",
+  "terraform",
+
+  -- Structured data, configuration, and YAML-based automation.
+  "json",
+  "json5",
   "toml",
+  "yaml",
+
+  -- Containers.
+  "dockerfile",
+
+  -- Databases.
+  "sql",
+
+  -- Templates.
+  "jinja",
+  "jinja_inline",
+  "gotmpl",
+  "helm",
+  "html",
+
+  -- Useful if you write AWS CDK applications in TypeScript/JavaScript.
+  "typescript",
+  "javascript",
+
+  -- Neovim configuration and documentation.
+  "lua",
+  "luadoc",
   "vim",
   "vimdoc",
-  "yaml",
+  "query",
 }
 
 if vim.fn.has("nvim-0.12") == 1 then
