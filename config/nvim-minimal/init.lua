@@ -431,12 +431,6 @@ vim.pack.add({
     version = "main",
   },
 
-  -- Filesystem tree and file-management actions.
-  {
-    src = "https://github.com/nvim-tree/nvim-tree.lua",
-    version = "v1.14.0",
-  },
-
   -- Treesitter parser and syntax infrastructure.
   {
     src = "https://github.com/nvim-treesitter/nvim-treesitter",
@@ -453,6 +447,56 @@ vim.pack.add({
   {
     src = "https://github.com/nvim-mini/mini.nvim",
     version = "stable",
+  },
+
+  -- Diagnostics, references, quickfix, and search-result lists.
+  {
+    src = "https://github.com/folke/trouble.nvim",
+  },
+
+  -- Multiline diagnostic messages.
+  {
+    src = "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+  },
+
+  -- Filesystem tree.
+  {
+    src = "https://github.com/SidOfc/carbon.nvim",
+  },
+
+  -- Discover and open local repositories through Telescope.
+  {
+    src = "https://github.com/cljoly/telescope-repo.nvim",
+  },
+
+  -- Buffer switcher ranked by frequency and recency.
+  {
+    src = "https://github.com/dzfrias/arena.nvim",
+  },
+
+  -- Preview color literals in buffer text.
+  {
+    src = "https://github.com/catgoose/nvim-colorizer.lua",
+  },
+
+  -- Additional colorschemes.
+  {
+    src = "https://github.com/ChristianChiarulli/nvcode-color-schemes.vim",
+  },
+
+  -- Clickable breadcrumbs and symbol navigation.
+  {
+    src = "https://github.com/Bekaboo/dropbar.nvim",
+  },
+
+  -- Clickable file-buffer tabs.
+  {
+    src = "https://github.com/akinsho/bufferline.nvim",
+  },
+
+  -- Highlight references to the symbol under the cursor.
+  {
+    src = "https://github.com/RRethy/vim-illuminate",
   },
 }, {
   -- Install missing plugins without asking for confirmation.
@@ -557,6 +601,34 @@ require("themery").setup({
       name = "Zaibatsu",
       colorscheme = "zaibatsu",
     },
+    {
+      name = "NVCode",
+      colorscheme = "nvcode",
+    },
+    {
+      name = "Nord",
+      colorscheme = "nord",
+    },
+    {
+      name = "Aurora",
+      colorscheme = "aurora",
+    },
+    {
+      name = "Gruvbox",
+      colorscheme = "gruvbox",
+    },
+    {
+      name = "Palenight",
+      colorscheme = "palenight",
+    },
+    {
+      name = "Snazzy",
+      colorscheme = "snazzy",
+    },
+    {
+      name = "Xoria",
+      colorscheme = "xoria",
+    },
   },
 
   -- Preview themes while navigating the menu.
@@ -572,80 +644,172 @@ vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
 -- [ NVIM-TREE FILE EXPLORER ]
 --
 
-local function nvimtree_on_attach(bufnr)
-  local api = require("nvim-tree.api")
+-- local function nvimtree_on_attach(bufnr)
+--   local api = require("nvim-tree.api")
 
-  local function opts(desc)
-    return {
-      desc = "nvim-tree: " .. desc,
-      buffer = bufnr,
-      noremap = true,
-      silent = true,
-      nowait = true,
-    }
-  end
+--   local function opts(desc)
+--     return {
+--       desc = "nvim-tree: " .. desc,
+--       buffer = bufnr,
+--       noremap = true,
+--       silent = true,
+--       nowait = true,
+--     }
+--   end
 
-  -- Register nvim-tree's default mappings.
-  api.config.mappings.default_on_attach(bufnr)
+--   -- Register nvim-tree's default mappings.
+--   api.config.mappings.default_on_attach(bufnr)
 
-  -- Navigate to the parent directory.
-  vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent, opts("Up"))
+--   -- Navigate to the parent directory.
+--   vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent, opts("Up"))
 
-  -- Display available keybindings.
-  vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
-end
+--   -- Display available keybindings.
+--   vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+-- end
 
-require("nvim-tree").setup({
-  on_attach = nvimtree_on_attach,
+-- require("nvim-tree").setup({
+--   on_attach = nvimtree_on_attach,
 
-  experimental = {
-    session_restore_nvim = false,
-  },
+--   experimental = {
+--     session_restore_nvim = false,
+--   },
 
-  sort = {
-    sorter = "case_sensitive",
-  },
+--   sort = {
+--     sorter = "case_sensitive",
+--   },
 
-  view = {
-    width = 35,
-  },
+--   view = {
+--     width = 35,
+--   },
 
-  renderer = {
-    -- Collapse chains of directories with only one subdirectory.
-    group_empty = true,
+--   renderer = {
+--     -- Collapse chains of directories with only one subdirectory.
+--     group_empty = true,
 
-    -- Use simple ASCII indicators instead of Nerd Font icons.
-    icons = {
-      show = {
-        file = false,
-        folder = false,
-        folder_arrow = true,
-        git = false,
-        modified = false,
-        diagnostics = false,
-        bookmarks = false,
+--     -- Use simple ASCII indicators instead of Nerd Font icons.
+--     icons = {
+--       show = {
+--         file = false,
+--         folder = false,
+--         folder_arrow = true,
+--         git = false,
+--         modified = false,
+--         diagnostics = false,
+--         bookmarks = false,
+--       },
+
+--       -- Use ASCII characters for directory indicators.
+--       glyphs = {
+--         folder = {
+--           arrow_closed = "+",
+--           arrow_open = "-",
+--         },
+--       },
+--     },
+
+--     -- Visually distinguish directories from files.
+--     highlight_git = false,
+--   },
+
+--   filters = {
+--     dotfiles = false,
+--   },
+-- })
+
+-- vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", {
+--   desc = "Toggle file explorer",
+-- })
+
+--
+-- [ CARBON FILE EXPLORER ]
+--
+
+require("carbon").setup({})
+
+-- Toggle the explorer sidebar.
+vim.keymap.set("n", "<leader>e", "<cmd>ToggleSidebarCarbon<CR>", {
+  desc = "Toggle file explorer",
+})
+
+-- Explore in the current window.
+vim.keymap.set("n", "<leader>E", "<cmd>Carbon<CR>", {
+  desc = "Explore directory in current window",
+})
+
+--
+-- [ DROPBAR BREADCRUMBS ]
+--
+
+vim.opt.mousemoveevent = true
+
+require("dropbar").setup({
+  icons = {
+    enable = false,
+
+    ui = {
+      bar = {
+        separator = " > ",
+        extends = "...",
       },
-
-      -- Use ASCII characters for directory indicators.
-      glyphs = {
-        folder = {
-          arrow_closed = "+",
-          arrow_open = "-",
-        },
+      menu = {
+        separator = " ",
+        indicator = "> ",
       },
     },
-
-    -- Visually distinguish directories from files.
-    highlight_git = false,
-  },
-
-  filters = {
-    dotfiles = false,
   },
 })
 
-vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", {
-  desc = "Toggle file explorer",
+vim.keymap.set("n", "<leader>;", function()
+  require("dropbar.api").pick()
+end, {
+  desc = "Navigate breadcrumbs",
+})
+
+--
+-- [ TROUBLE DIAGNOSTICS ]
+--
+
+-- Use text labels instead of Nerd Font symbol icons.
+local trouble_kinds = {}
+for _, kind in ipairs(vim.lsp.protocol.SymbolKind) do
+  trouble_kinds[kind] = kind .. " "
+end
+
+require("trouble").setup({
+  focus = true,
+
+  icons = {
+    kinds = trouble_kinds,
+    folder_closed = "+ ",
+    folder_open = "- ",
+    indent = {
+      top = "| ",
+      middle = "|-",
+      last = "`-",
+      fold_open = "- ",
+      fold_closed = "+ ",
+      ws = "  ",
+    },
+  },
+})
+
+vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<CR>", {
+  desc = "Toggle diagnostics list",
+})
+
+vim.keymap.set(
+  "n",
+  "<leader>xX",
+  "<cmd>Trouble diagnostics toggle filter.buf=0<CR>",
+  { desc = "Toggle current-buffer diagnostics" }
+)
+
+vim.keymap.set("n", "<leader>xq", "<cmd>Trouble qflist toggle<CR>", {
+  desc = "Toggle quickfix list",
+})
+
+vim.keymap.set("n", "<leader>xl", "<cmd>Trouble loclist toggle<CR>", {
+  desc = "Toggle location list",
 })
 
 --
@@ -669,6 +833,25 @@ require("blink.cmp").setup({
   fuzzy = {
     implementation = "lua",
   },
+})
+
+--
+-- [ DIAGNOSTIC LINES ]
+--
+
+require("lsp_lines").setup()
+
+-- Avoid displaying each message twice.
+-- Show multiline diagnostics only for the cursor's current line.
+vim.diagnostic.config({
+  virtual_text = false,
+  virtual_lines = {
+    only_current_line = true,
+  },
+})
+
+vim.keymap.set("n", "<leader>ul", require("lsp_lines").toggle, {
+  desc = "Toggle diagnostic lines",
 })
 
 ---
@@ -1046,7 +1229,20 @@ require("hawtkeys").setup({
 --
 
 -- Initialize Telescope with its default settings.
-require("telescope").setup({})
+require("telescope").setup({
+  defaults = {
+    mappings = {
+      i = {
+        ["<C-t>"] = require("trouble.sources.telescope").open,
+      },
+      n = {
+        ["<C-t>"] = require("trouble.sources.telescope").open,
+      },
+    },
+  },
+})
+
+require("telescope").load_extension("repo")
 
 -- Load Telescope's built-in search pickers.
 local pickers = require("telescope.builtin")
@@ -1095,6 +1291,69 @@ vim.keymap.set("n", "<leader>sm", pickers.man_pages, {
   desc = "Search manuals",
 })
 
+-- Find repositories using the system's filesystem index.
+vim.keymap.set("n", "<leader>sR", function()
+  require("telescope").extensions.repo.cached_list()
+end, {
+  desc = "Search repositories",
+})
+
+--
+-- [ COLOR PREVIEWS ]
+--
+
+require("colorizer").setup({
+  user_default_options = {
+    -- Avoid highlighting ordinary words such as "red".
+    names = false,
+
+    RGB = true,
+    RGBA = true,
+    RRGGBB = true,
+    RRGGBBAA = true,
+
+    rgb_fn = true,
+    hsl_fn = true,
+    mode = "background",
+  },
+})
+
+vim.keymap.set("n", "<leader>uc", "<cmd>ColorizerToggle<CR>", {
+  desc = "Toggle color previews",
+})
+
+--
+-- [ SYMBOL REFERENCE HIGHLIGHTING ]
+--
+
+require("illuminate").configure({
+  delay = 200,
+  disable_keymaps = true,
+
+  providers = {
+    "lsp",
+    "treesitter",
+    "regex",
+  },
+
+  min_count_to_highlight = 2,
+
+  filetypes_denylist = {
+    "dirbuf",
+    "dirvish",
+    "fugitive",
+    "carbon",
+    "Trouble",
+    "TelescopePrompt",
+  },
+})
+
+vim.keymap.set("n", "<leader>ui", function()
+  require("illuminate").toggle()
+end, {
+  desc = "Toggle reference highlighting",
+})
+
 --
 -- [ PRECOGNITION MOTION HINTS ]
 --
@@ -1128,6 +1387,19 @@ vim.keymap.set("n", "<leader>uP", "<cmd>Precognition peek<CR>", {
 })
 
 --
+-- [ ARENA BUFFER SWITCHER ]
+--
+
+require("arena").setup({
+  max_items = 10,
+  devicons = false,
+})
+
+vim.keymap.set("n", "<leader>ba", "<cmd>ArenaToggle<CR>", {
+  desc = "Open frequently used buffers",
+})
+
+--
 -- [ WHICH-KEY ]
 --
 
@@ -1142,6 +1414,8 @@ require("which-key").setup({
     { "<leader>g", group = "Git" },
     { "<leader>s", group = "Search" },
     { "<leader>u", group = "UI" },
+    { "<leader>b", group = "Buffers" },
+    { "<leader>x", group = "Diagnostics / lists" },
   },
 })
 
@@ -1203,6 +1477,11 @@ require("mini.pairs").setup({})
 -- Interactive text alignment.
 require("mini.align").setup({})
 
+-- Useful statusline without another plugin dependency.
+require("mini.statusline").setup({
+  use_icons = false,
+})
+
 --
 -- [ MINI.NVIM KEYBINDINGS ]
 --
@@ -1234,6 +1513,61 @@ wk.add({
   -- mini.align
   { "ga", desc = "Align text" },
   { "gA", desc = "Align text with preview" },
+})
+
+--
+-- [ BUFFERLINE ]
+--
+
+local function close_buffer(bufnr)
+  -- Preserve window layouts and do not force-discard unsaved changes.
+  require("mini.bufremove").delete(bufnr, false)
+end
+
+require("bufferline").setup({
+  options = {
+    mode = "buffers",
+
+    show_buffer_icons = false,
+    show_buffer_close_icons = true,
+    show_close_icon = false,
+
+    buffer_close_icon = "x",
+    modified_icon = "+",
+    left_trunc_marker = "<",
+    right_trunc_marker = ">",
+
+    indicator = {
+      style = "none",
+    },
+
+    separator_style = { "|", "|" },
+
+    close_command = close_buffer,
+    right_mouse_command = false,
+    middle_mouse_command = close_buffer,
+
+    diagnostics = "nvim_lsp",
+    diagnostics_indicator = function(count)
+      return "(" .. count .. ")"
+    end,
+
+    always_show_bufferline = true,
+  },
+})
+
+vim.keymap.set("n", "<leader>bn", "<cmd>BufferLineCycleNext<CR>", {
+  desc = "Next buffer",
+})
+
+vim.keymap.set("n", "<leader>bp", "<cmd>BufferLineCyclePrev<CR>", {
+  desc = "Previous buffer",
+})
+
+vim.keymap.set("n", "<leader>bd", function()
+  close_buffer(0)
+end, {
+  desc = "Close buffer",
 })
 
 --
