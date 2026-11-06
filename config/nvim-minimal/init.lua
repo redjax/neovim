@@ -498,6 +498,11 @@ vim.pack.add({
   {
     src = "https://github.com/RRethy/vim-illuminate",
   },
+
+  -- Org documents, agenda, capture, and task management.
+  {
+    src = "https://github.com/nvim-orgmode/orgmode",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -888,6 +893,37 @@ vim.diagnostic.config({
 
 vim.keymap.set("n", "<leader>ul", require("lsp_lines").toggle, {
   desc = "Toggle diagnostic lines",
+})
+
+--
+-- [ ORGMODE ]
+--
+
+-- Initialize cross-platform org homedir path
+local org_home = vim.env.ORG_HOME
+
+if not org_home or org_home == "" then
+  org_home = vim.fs.joinpath(vim.uv.os_homedir(), "org")
+end
+
+org_home = vim.fs.normalize(org_home)
+
+-- Create the notes directory if it does not exist.
+vim.fn.mkdir(org_home, "p")
+
+require("orgmode").setup({
+  org_agenda_files = {
+    org_home .. "/**/*.org",
+  },
+
+  org_default_notes_file = vim.fs.joinpath(org_home, "refile.org"),
+})
+
+-- Open the capture destination directly.
+vim.keymap.set("n", "<leader>on", function()
+  vim.cmd.edit(vim.fn.fnameescape(vim.fs.joinpath(org_home, "refile.org")))
+end, {
+  desc = "Open Org inbox",
 })
 
 ---
@@ -1452,6 +1488,7 @@ require("which-key").setup({
     { "<leader>u", group = "UI" },
     { "<leader>b", group = "Buffers" },
     { "<leader>x", group = "Diagnostics / lists" },
+    { "<leader>o", group = "Org" },
   },
 })
 
