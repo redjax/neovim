@@ -1048,6 +1048,10 @@ require("telescope").setup({})
 -- Load Telescope's built-in search pickers.
 local pickers = require("telescope.builtin")
 
+vim.keymap.set("n", "<leader>t", "<cmd>Telescope<CR>", {
+  desc = "Open Telescope",
+})
+
 -- List available Telescope pickers.
 vim.keymap.set("n", "<leader>sp", pickers.builtin, {
   desc = "Search pickers",
