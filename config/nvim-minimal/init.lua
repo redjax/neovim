@@ -1635,6 +1635,98 @@ end, {
 })
 
 --
+-- [ MINI.STARTER START SCREEN ]
+--
+
+local starter = require("mini.starter")
+
+starter.setup({
+  -- Show the start screen when launching Neovim without a target.
+  autoopen = true,
+
+  -- Require Enter to execute an item after filtering.
+  evaluate_single = false,
+
+  header = function()
+    return "Neovim v" .. tostring(vim.version())
+  end,
+
+  items = {
+    {
+      name = "Find files",
+      action = function()
+        require("telescope.builtin").find_files()
+      end,
+      section = "Search",
+    },
+    {
+      name = "Grep project",
+      action = function()
+        require("telescope.builtin").live_grep()
+      end,
+      section = "Search",
+    },
+    {
+      name = "Repositories",
+      action = function()
+        require("telescope").extensions.repo.cached_list()
+      end,
+      section = "Search",
+    },
+    {
+      name = "Buffers",
+      action = function()
+        require("telescope.builtin").buffers()
+      end,
+      section = "Search",
+    },
+
+    {
+      name = "New file",
+      action = "enew",
+      section = "Actions",
+    },
+    {
+      name = "Explore directory",
+      action = "Carbon",
+      section = "Actions",
+    },
+    {
+      name = "Git status",
+      action = "Neogit",
+      section = "Actions",
+    },
+    {
+      name = "Choose theme",
+      action = "Themery",
+      section = "Actions",
+    },
+    {
+      name = "Quit",
+      action = "quit",
+      section = "Actions",
+    },
+
+    -- Recent files across all directories.
+    starter.sections.recent_files(5, false),
+  },
+
+  content_hooks = {
+    starter.gen_hook.adding_bullet("> "),
+    starter.gen_hook.aligning("center", "center"),
+  },
+
+  footer = "Type an item prefix, or use Up/Down and Enter. Backspace clears characters.",
+})
+
+-- Reopen the start screen with Space+u+s.
+vim.keymap.set("n", "<leader>us", function()
+  starter.open()
+end, {
+  desc = "Open start screen",
+})
+
+--
 -- [ LOCAL CONFIGURATION ]
 --
 -- !! NO EDITS BELOW THIS SECTION !!
