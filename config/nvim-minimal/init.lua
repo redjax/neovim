@@ -805,6 +805,9 @@ local servers = {
     },
   },
 
+  -- SQL language server.
+  sqls = {},
+
   -- Go.
   gopls = {},
 
