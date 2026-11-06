@@ -115,6 +115,10 @@
       "src": "https://github.com/olimorris/onedarkpro.nvim",
       "version": "'main'"
     },
+    "orgmode": {
+      "rev": "a7fdbd3cfdd94b425c655cc72e3a6c4dd0a3959f",
+      "src": "https://github.com/nvim-orgmode/orgmode"
+    },
     "oxocarbon.nvim": {
       "rev": "cd6523a0836d6e8ee823d343149fd06c7b71fdde",
       "src": "https://github.com/nyoom-engineering/oxocarbon.nvim",
