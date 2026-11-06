@@ -504,6 +504,19 @@ vim.pack.add({
 })
 
 --
+-- [ ICON PROVIDER ]
+--
+
+local mini_icons = require("mini.icons")
+
+mini_icons.setup({
+  style = "glyph",
+})
+
+-- Supply mini.icons to plugins that expect nvim-web-devicons.
+mini_icons.mock_nvim_web_devicons()
+
+--
 -- [ THEME / COLORSCHEME ]
 --
 
@@ -742,9 +755,30 @@ vim.keymap.set("n", "<leader>E", "<cmd>Carbon<CR>", {
 
 vim.opt.mousemoveevent = true
 
+local dropbar_kinds = {}
+
+for _, kind in ipairs(vim.lsp.protocol.SymbolKind) do
+  local icon = mini_icons.get("lsp", kind)
+  dropbar_kinds[kind] = icon .. " "
+end
+
 require("dropbar").setup({
   icons = {
-    enable = false,
+    enable = true,
+
+    kinds = {
+      symbols = dropbar_kinds,
+
+      dir_icon = function(path)
+        local icon, hl = mini_icons.get("directory", path)
+        return icon .. " ", hl
+      end,
+
+      file_icon = function(path)
+        local icon, hl = mini_icons.get("file", path)
+        return icon .. " ", hl
+      end,
+    },
 
     ui = {
       bar = {
@@ -769,10 +803,12 @@ end, {
 -- [ TROUBLE DIAGNOSTICS ]
 --
 
--- Use text labels instead of Nerd Font symbol icons.
+-- Use mini.icons for LSP symbol kinds.
 local trouble_kinds = {}
+
 for _, kind in ipairs(vim.lsp.protocol.SymbolKind) do
-  trouble_kinds[kind] = kind .. " "
+  local icon = mini_icons.get("lsp", kind)
+  trouble_kinds[kind] = icon .. " "
 end
 
 require("trouble").setup({
@@ -1392,7 +1428,7 @@ vim.keymap.set("n", "<leader>uP", "<cmd>Precognition peek<CR>", {
 
 require("arena").setup({
   max_items = 10,
-  devicons = false,
+  devicons = true,
 })
 
 vim.keymap.set("n", "<leader>ba", "<cmd>ArenaToggle<CR>", {
@@ -1406,7 +1442,7 @@ vim.keymap.set("n", "<leader>ba", "<cmd>ArenaToggle<CR>", {
 require("which-key").setup({
   -- Disable decorative mapping icons.
   icons = {
-    mappings = false,
+    mappings = true,
   },
 
   -- Label keybinding prefixes; individual mappings supply their own descriptions.
@@ -1479,7 +1515,7 @@ require("mini.align").setup({})
 
 -- Useful statusline without another plugin dependency.
 require("mini.statusline").setup({
-  use_icons = false,
+  use_icons = true,
 })
 
 --
@@ -1528,7 +1564,7 @@ require("bufferline").setup({
   options = {
     mode = "buffers",
 
-    show_buffer_icons = false,
+    show_buffer_icons = true,
     show_buffer_close_icons = true,
     show_close_icon = false,
 
