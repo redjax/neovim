@@ -569,7 +569,7 @@ vim.keymap.set("n", "<leader>ut", "<cmd>Themery<CR>", {
 })
 
 --
--- [ FILE EXPLORER ]
+-- [ NVIM-TREE FILE EXPLORER ]
 --
 
 local function nvimtree_on_attach(bufnr)
@@ -649,7 +649,7 @@ vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", {
 })
 
 --
--- [ COMPLETION ]
+-- [ BLINK COMPLETION ]
 --
 
 require("blink.cmp").setup({
@@ -672,7 +672,7 @@ require("blink.cmp").setup({
 })
 
 ---
---- Neogit
+--- [ NEOGIT ]
 ---
 
 -- Initialize Neogit with its default settings and automatic Telescope integration.
@@ -770,70 +770,6 @@ require("gitsigns").setup({
     map({ "o", "x" }, "ih", gitsigns.select_hunk, "Select Git hunk")
   end,
 })
-
---
--- [ TREESITTER ]
---
-
-local treesitter_languages = {
-  "bash",
-  "dockerfile",
-  "go",
-  "gomod",
-  "gosum",
-  "json",
-  "lua",
-  "markdown",
-  "markdown_inline",
-  "python",
-  "query",
-  "toml",
-  "vim",
-  "vimdoc",
-  "yaml",
-}
-
-if vim.fn.has("nvim-0.12") == 1 then
-  -- Neovim 0.12+: use the rewritten main-branch API.
-  local treesitter = require("nvim-treesitter")
-
-  treesitter.setup({})
-
-  -- Install missing parsers asynchronously.
-  treesitter.install(treesitter_languages)
-
-  -- Enable highlighting when a file is opened.
-  vim.api.nvim_create_autocmd("FileType", {
-    group = config_group,
-    desc = "Enable Tree-sitter highlighting when a parser is available",
-    callback = function(event)
-      -- Skip special buffers such as terminals and plugin interfaces.
-      if vim.bo[event.buf].buftype ~= "" then
-        return
-      end
-
-      -- Files without an installed parser retain traditional highlighting.
-      pcall(vim.treesitter.start, event.buf)
-    end,
-  })
-else
-  -- Neovim 0.11: use the legacy master-branch API.
-  require("nvim-treesitter.configs").setup({
-    ensure_installed = treesitter_languages,
-    sync_install = false,
-    auto_install = false,
-
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = false,
-    },
-
-    -- Preserve your existing indentation behavior.
-    indent = {
-      enable = false,
-    },
-  })
-end
 
 --
 -- [ LSP ]
@@ -1067,7 +1003,7 @@ require("hawtkeys").setup({
 })
 
 --
--- [ SEARCH ]
+-- [ TELESCOPE SEARCH ]
 --
 
 -- Initialize Telescope with its default settings.
@@ -1117,7 +1053,7 @@ vim.keymap.set("n", "<leader>sm", pickers.man_pages, {
 })
 
 --
--- [ MOTION HINTS ]
+-- [ PRECOGNITION MOTION HINTS ]
 --
 
 require("precognition").setup({
@@ -1288,9 +1224,12 @@ end, {
 --
 -- [ LOCAL CONFIGURATION ]
 --
+-- !! NO EDITS BELOW THIS SECTION !!
+--
 -- Sources an init.local.lua file if it exists in the same path as this init.lua.
 -- Use the local file to override configs, i.e. installing additional plugins on
--- a work machine.
+-- a work machine. It should be the last thing neovim loads to allow overriding
+-- all configurations defined here.
 --
 
 local local_config = vim.fn.stdpath("config") .. "/init.local.lua"
