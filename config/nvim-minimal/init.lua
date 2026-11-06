@@ -440,7 +440,7 @@ vim.pack.add({
   -- Treesitter parser and syntax infrastructure.
   {
     src = "https://github.com/nvim-treesitter/nvim-treesitter",
-    version = "master",
+    version = vim.fn.has("nvim-0.12") == 1 and "main" or "master",
   },
 
   -- Keybinding ergonomics and suggestions.
@@ -772,6 +772,70 @@ require("gitsigns").setup({
 })
 
 --
+-- [ TREESITTER ]
+--
+
+local treesitter_languages = {
+  "bash",
+  "dockerfile",
+  "go",
+  "gomod",
+  "gosum",
+  "json",
+  "lua",
+  "markdown",
+  "markdown_inline",
+  "python",
+  "query",
+  "toml",
+  "vim",
+  "vimdoc",
+  "yaml",
+}
+
+if vim.fn.has("nvim-0.12") == 1 then
+  -- Neovim 0.12+: use the rewritten main-branch API.
+  local treesitter = require("nvim-treesitter")
+
+  treesitter.setup({})
+
+  -- Install missing parsers asynchronously.
+  treesitter.install(treesitter_languages)
+
+  -- Enable highlighting when a file is opened.
+  vim.api.nvim_create_autocmd("FileType", {
+    group = config_group,
+    desc = "Enable Tree-sitter highlighting when a parser is available",
+    callback = function(event)
+      -- Skip special buffers such as terminals and plugin interfaces.
+      if vim.bo[event.buf].buftype ~= "" then
+        return
+      end
+
+      -- Files without an installed parser retain traditional highlighting.
+      pcall(vim.treesitter.start, event.buf)
+    end,
+  })
+else
+  -- Neovim 0.11: use the legacy master-branch API.
+  require("nvim-treesitter.configs").setup({
+    ensure_installed = treesitter_languages,
+    sync_install = false,
+    auto_install = false,
+
+    highlight = {
+      enable = true,
+      additional_vim_regex_highlighting = false,
+    },
+
+    -- Preserve your existing indentation behavior.
+    indent = {
+      enable = false,
+    },
+  })
+end
+
+--
 -- [ LSP ]
 --
 
@@ -930,7 +994,71 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 --
--- [ KEYBINDING ERGONOMICS ]
+-- [ TREESITTER ]
+--
+
+local treesitter_languages = {
+  "bash",
+  "dockerfile",
+  "go",
+  "gomod",
+  "gosum",
+  "json",
+  "lua",
+  "markdown",
+  "markdown_inline",
+  "python",
+  "query",
+  "toml",
+  "vim",
+  "vimdoc",
+  "yaml",
+}
+
+if vim.fn.has("nvim-0.12") == 1 then
+  -- Neovim 0.12+: use the rewritten main-branch API.
+  local treesitter = require("nvim-treesitter")
+
+  treesitter.setup({})
+
+  -- Install missing parsers asynchronously.
+  treesitter.install(treesitter_languages)
+
+  -- Enable highlighting when a file is opened.
+  vim.api.nvim_create_autocmd("FileType", {
+    group = config_group,
+    desc = "Enable Tree-sitter highlighting when a parser is available",
+    callback = function(event)
+      -- Skip special buffers such as terminals and plugin interfaces.
+      if vim.bo[event.buf].buftype ~= "" then
+        return
+      end
+
+      -- Files without an installed parser retain traditional highlighting.
+      pcall(vim.treesitter.start, event.buf)
+    end,
+  })
+else
+  -- Neovim 0.11: use the legacy master-branch API.
+  require("nvim-treesitter.configs").setup({
+    ensure_installed = treesitter_languages,
+    sync_install = false,
+    auto_install = false,
+
+    highlight = {
+      enable = true,
+      additional_vim_regex_highlighting = false,
+    },
+
+    -- Preserve your existing indentation behavior.
+    indent = {
+      enable = false,
+    },
+  })
+end
+
+--
+-- [ HAWTKEYS KEYBIND ERGONOMICS ]
 --
 
 require("hawtkeys").setup({
