@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "arena.nvim": {
+      "rev": "9ebbf55b4f0e3815e3caf3264cc1a2721b5111e9",
+      "src": "https://github.com/dzfrias/arena.nvim"
+    },
     "aura-theme": {
       "rev": "20924aa0a43975420edd0e0b2f919e07a3eff9c9",
       "src": "https://github.com/daltonmenezes/aura-theme",
@@ -13,6 +17,18 @@
     "blink.lib": {
       "rev": "fd9a48ebbe6ec30d5dfcc5b42c243941ccdca1aa",
       "src": "https://github.com/saghen/blink.lib"
+    },
+    "bufferline.nvim": {
+      "rev": "655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3",
+      "src": "https://github.com/akinsho/bufferline.nvim"
+    },
+    "carbon.nvim": {
+      "rev": "cf33bb88303ad10be251e0559dfd30bc8829373c",
+      "src": "https://github.com/SidOfc/carbon.nvim"
+    },
+    "dropbar.nvim": {
+      "rev": "f7c6fa21e2a7c32576e7a1791774a3736987f467",
+      "src": "https://github.com/Bekaboo/dropbar.nvim"
     },
     "eldritch.nvim": {
       "rev": "c9131a5a11f00a2f428f563a4eb2c4aeb680d963",
@@ -39,6 +55,10 @@
       "src": "https://github.com/rebelot/kanagawa.nvim",
       "version": "'master'"
     },
+    "lsp_lines.nvim": {
+      "rev": "a92c755f182b89ea91bd8a6a2227208026f27b4d",
+      "src": "https://git.sr.ht/~whynothugo/lsp_lines.nvim"
+    },
     "mason-lspconfig.nvim": {
       "rev": "a338f44149f5673882c32629697d67b0c0547aec",
       "src": "https://github.com/mason-org/mason-lspconfig.nvim",
@@ -62,6 +82,14 @@
       "rev": "832a2db084ac25c2801fd73a3fab58f3c82ed2ec",
       "src": "https://github.com/NeogitOrg/neogit",
       "version": "'master'"
+    },
+    "nvcode-color-schemes.vim": {
+      "rev": "3a0e624a67ecd2c7f990bc3c25a1044e85782b10",
+      "src": "https://github.com/ChristianChiarulli/nvcode-color-schemes.vim"
+    },
+    "nvim-colorizer.lua": {
+      "rev": "72a05f62c52241bc7441c820eb53946f92b2e6a4",
+      "src": "https://github.com/catgoose/nvim-colorizer.lua"
     },
     "nvim-lspconfig": {
       "rev": "77b7432d4770d23b277d37923e5a08a442d8bb07",
@@ -106,6 +134,10 @@
       "rev": "1ed8bcc9ce7d43a0e8e05d0001c9cadb822d95a8",
       "src": "https://github.com/spacedentist/resolve.nvim"
     },
+    "telescope-repo.nvim": {
+      "rev": "1f3d40352891b46ee27c0eea2ece767de7f1adfa",
+      "src": "https://github.com/cljoly/telescope-repo.nvim"
+    },
     "telescope.nvim": {
       "rev": "40aedd8a68c78a656a10a8d62d80c54af59420fb",
       "src": "https://github.com/nvim-telescope/telescope.nvim",
@@ -120,6 +152,14 @@
       "rev": "cdc07ac78467a233fd62c493de29a17e0cf2b2b6",
       "src": "https://github.com/folke/tokyonight.nvim",
       "version": "'main'"
+    },
+    "trouble.nvim": {
+      "rev": "bd67efe408d4816e25e8491cc5ad4088e708a69a",
+      "src": "https://github.com/folke/trouble.nvim"
+    },
+    "vim-illuminate": {
+      "rev": "1cc33d347c574c3bd21a4852fc9ffed677c1c58c",
+      "src": "https://github.com/RRethy/vim-illuminate"
     },
     "vim-moonfly-colors": {
       "rev": "2c883835f5b7b380a0a9e80695c420f7efebdfe4",
