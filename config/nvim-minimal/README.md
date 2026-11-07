@@ -1,6 +1,6 @@
 # Minimal
 
-A single-file Lua config for Neovim, with minimal modifications/configurations.
+A more minimal Lua config for Neovim. Plugins are sourced from [`plugins.lua`](./plugins.lua), and can be controlled with the `NVIM_DISABLE_PLUGINS` env var. The configuration will also look for a `~/.config/nvim/init.local.lua` file to source local, per-machine overrides.
 
 My definition of minimal:
 
