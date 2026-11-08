@@ -113,10 +113,6 @@ require("themery").setup({
       colorscheme = "moonfly",
     },
     {
-      name = "Nord",
-      colorscheme = "nord",
-    },
-    {
       name = "NVCode",
       colorscheme = "nvcode",
     },
