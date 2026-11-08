@@ -138,6 +138,10 @@
       "rev": "1ed8bcc9ce7d43a0e8e05d0001c9cadb822d95a8",
       "src": "https://github.com/spacedentist/resolve.nvim"
     },
+    "telescope-orgmode.nvim": {
+      "rev": "214fe56e105bb3d0638f33320ed959911a1bfcb1",
+      "src": "https://github.com/nvim-orgmode/telescope-orgmode.nvim"
+    },
     "telescope-repo.nvim": {
       "rev": "1f3d40352891b46ee27c0eea2ece767de7f1adfa",
       "src": "https://github.com/cljoly/telescope-repo.nvim"

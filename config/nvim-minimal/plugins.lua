@@ -204,6 +204,11 @@ vim.pack.add({
   {
     src = "https://github.com/nvim-orgmode/orgmode",
   },
+
+  -- Search Org headings and select refile destinations through Telescope.
+  {
+    src = "https://github.com/nvim-orgmode/telescope-orgmode.nvim",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -653,6 +658,12 @@ require("orgmode").setup({
     global = {
       org_agenda = { "<leader>oa", desc = "Open agenda" },
       org_capture = { "<leader>oc", desc = "Capture task" },
+    },
+
+    -- Disable org refile maping to avoid buffer-local binding.
+    -- Fixes having to type ~/org/ before .org files, i.e. for refiling.
+    org = {
+      org_refile = false,
     },
   },
 })
@@ -1186,6 +1197,21 @@ vim.keymap.set("n", "<leader>sR", function()
   require("telescope").extensions.repo.cached_list()
 end, {
   desc = "Search repositories",
+})
+
+-- Configure Telescope's orgmode integration
+require("telescope").load_extension("orgmode")
+
+vim.keymap.set("n", "<leader>or", function()
+  require("telescope").extensions.orgmode.refile_heading()
+end, {
+  desc = "Refile Org heading",
+})
+
+vim.keymap.set("n", "<leader>oh", function()
+  require("telescope").extensions.orgmode.search_headings()
+end, {
+  desc = "Search Org headings",
 })
 
 --
