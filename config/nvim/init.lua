@@ -337,12 +337,40 @@ vim.api.nvim_create_autocmd({ "BufWritePre", "FileWritePre" }, {
 })
 
 --
--- [ PLUGIN CONFIGURATION ]
+-- [ PLUGIN AND THEME CONFIGURATION ]
 --
 
--- Load plugins.lua if plugin loading is not disabled
+-- Set default colorscheme. Use one of Neovim's built-in themes here.
+-- If no other themes are installed, Neovim will fallback to this one.
+--
+-- Options:
+--   default
+--   vim
+--   blue
+--   darkblue
+--   delek
+--   desert
+--   elflord
+--   evening
+--   industry
+--   koehler
+--   morning
+--   murphy
+--   pablo
+--   peachpuff
+--   ron
+--   shine
+--   slate
+--   torte
+--   zellner
+vim.cmd.colorscheme("default")
+
+-- Load plugins and themes unless plugin loading is disabled.
 if plugins_enabled then
-  dofile(vim.fn.stdpath("config") .. "/plugins.lua")
+  local config_dir = vim.fn.stdpath("config")
+
+  dofile(config_dir .. "/plugins.lua")
+  dofile(config_dir .. "/themes.lua")
 end
 
 --
