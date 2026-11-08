@@ -609,24 +609,140 @@ end
 
 org_home = vim.fs.normalize(org_home)
 
--- Create the notes directory if it does not exist.
+-- Create the Org directory if it does not exist.
 vim.fn.mkdir(org_home, "p")
 
+-- Helper for Org files
+local function org_file(name)
+  return vim.fs.joinpath(org_home, name .. ".org")
+end
+
 require("orgmode").setup({
+  -- Continue recognizing existing Org files.
   org_agenda_files = {
     org_home .. "/**/*.org",
   },
 
-  org_default_notes_file = vim.fs.joinpath(org_home, "refile.org"),
+  -- Use the existing inbox as the default notebook.
+  org_default_notes_file = org_file("refile"),
+
+  -- Only two task states for now.
+  org_todo_keywords = {
+    "TODO",
+    "|",
+    "BLOCKED",
+    "DONE",
+  },
+
+  -- Avoid extra bookkeeping while learning.
+  org_log_done = false,
+
+  -- Open files with their contents visible.
+  org_startup_folded = "showeverything",
+
+  -- One optional capture action, one destination.
+  org_capture_templates = {
+    t = {
+      description = "Task",
+      template = "* TODO %?",
+      target = org_file("refile"),
+    },
+  },
+
+  mappings = {
+    global = {
+      org_agenda = { "<leader>oa", desc = "Open agenda" },
+      org_capture = { "<leader>oc", desc = "Capture task" },
+    },
+  },
 })
 
--- Open the capture destination directly.
-vim.keymap.set("n", "<leader>on", function()
-  vim.cmd.edit(vim.fn.fnameescape(vim.fs.joinpath(org_home, "refile.org")))
+-- Open inbox
+vim.keymap.set("n", "<leader>oi", function()
+  vim.cmd.edit(vim.fn.fnameescape(org_file("refile")))
 end, {
   desc = "Open Org inbox",
 })
 
+-- Open notes
+vim.keymap.set("n", "<leader>on", function()
+  vim.cmd.edit(vim.fn.fnameescape(org_file("notes")))
+end, {
+  desc = "Open Org notes",
+})
+
+-- Open projects
+vim.keymap.set("n", "<leader>op", function()
+  vim.cmd.edit(vim.fn.fnameescape(org_file("projects")))
+end, {
+  desc = "Open Org projects",
+})
+
+-- Open today's journal entry, creating it if necessary.
+vim.keymap.set("n", "<leader>oj", function()
+  vim.cmd.edit(vim.fn.fnameescape(org_file("journal")))
+
+  local bufnr = vim.api.nvim_get_current_buf()
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  local date = os.date("%Y-%m-%d")
+  local heading = "* " .. date .. " " .. os.date("%A")
+  local heading_line
+
+  -- Reuse an existing top-level heading for today.
+  for i, line in ipairs(lines) do
+    if line == "* " .. date or line:sub(1, 13) == "* " .. date .. " " then
+      heading_line = i
+      break
+    end
+  end
+
+  if not heading_line then
+    -- Create today's heading at the end of the file.
+    if #lines == 1 and lines[1] == "" then
+      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
+        heading,
+        "",
+      })
+      heading_line = 1
+    else
+      vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, {
+        "",
+        heading,
+        "",
+      })
+      heading_line = #lines + 2
+    end
+
+    lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  end
+
+  -- Find the end of today's entry, including any child headings.
+  local entry_end = #lines
+
+  for i = heading_line + 1, #lines do
+    if lines[i]:match("^%* ") then
+      entry_end = i - 1
+      break
+    end
+  end
+
+  -- Continue on a blank line after the entry's existing content.
+  local last_content = entry_end
+
+  while last_content > heading_line and lines[last_content]:match("^%s*$") do
+    last_content = last_content - 1
+  end
+
+  if last_content == entry_end then
+    vim.api.nvim_buf_set_lines(bufnr, entry_end, entry_end, false, { "" })
+  end
+
+  vim.api.nvim_win_set_cursor(0, { last_content + 1, 0 })
+  vim.cmd("normal! zv")
+  vim.cmd("startinsert")
+end, {
+  desc = "Open today's journal entry",
+})
 ---
 --- [ NEOGIT ]
 ---
