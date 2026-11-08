@@ -18,164 +18,164 @@ declare -a NVIM_APT_DEPENDENCIES=("build-essential" "ripgrep" "xclip" "git" "fzf
 # echo "[DEBUG] Neovim dependencies installable with apt: ${NVIM_APT_DEPENDENCIES[@]}"
 
 function return_to_root() {
-    cd $CWD
+	cd $CWD
 }
 
 function install-nerdfont() {
-    ## Install the FiraCode nerd font
+	## Install the FiraCode nerd font
 
-    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
-    FONT_DIR="$HOME/.local/share/fonts"
-    TEMP_DIR="/tmp/firacode-nerdfont"
+	FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
+	FONT_DIR="$HOME/.local/share/fonts"
+	TEMP_DIR="/tmp/firacode-nerdfont"
 
-    if [[ ! -d "$FONT_DIR/FiraCode" ]]; then
-        echo ""
-        echo "[ Neovim Setup - Install NerdFont ]"
-        echo ""
-    else
-        return
-    fi
+	if [[ ! -d "$FONT_DIR/FiraCode" ]]; then
+		echo ""
+		echo "[ Neovim Setup - Install NerdFont ]"
+		echo ""
+	else
+		return
+	fi
 
-    if [[ ! -d $FONT_DIR ]]; then
-        echo "Creating directory '$FONT_DIR'"
-        mkdir -pv "$FONT_DIR"
-    fi
+	if [[ ! -d $FONT_DIR ]]; then
+		echo "Creating directory '$FONT_DIR'"
+		mkdir -pv "$FONT_DIR"
+	fi
 
-    if [[ ! -d $TEMP_DIR ]]; then
-        echo "Creating directory '$TEMP_DIR'"
-        mkdir -pv "$TEMP_DIR"
-    fi
+	if [[ ! -d $TEMP_DIR ]]; then
+		echo "Creating directory '$TEMP_DIR'"
+		mkdir -pv "$TEMP_DIR"
+	fi
 
-    if [[ ! -f "${TEMP_DIR}/FiraCode.zip" ]]; then
-        echo "Downloading FiraCode font..."
-        cd $TEMP_DIR
+	if [[ ! -f "${TEMP_DIR}/FiraCode.zip" ]]; then
+		echo "Downloading FiraCode font..."
+		cd $TEMP_DIR
 
-        curl -LO "$FONT_URL"
-    fi
+		curl -LO "$FONT_URL"
+	fi
 
-    if [[ ! -d "${TEMP_DIR}/FiraCode" ]]; then
-        echo "Unzipping FiraCode font..."
+	if [[ ! -d "${TEMP_DIR}/FiraCode" ]]; then
+		echo "Unzipping FiraCode font..."
 
-        unzip -o FiraCode.zip -d FiraCode
-    fi
+		unzip -o FiraCode.zip -d FiraCode
+	fi
 
-    if [[ ! -d "${FONT_DIR}/FiraCode" ]]; then
-        echo "Installing FiraCode to $FONT_DIR"
+	if [[ ! -d "${FONT_DIR}/FiraCode" ]]; then
+		echo "Installing FiraCode to $FONT_DIR"
 
-        cp -R "${TEMP_DIR}/FiraCode" "${FONT_DIR}"
-    fi
+		cp -R "${TEMP_DIR}/FiraCode" "${FONT_DIR}"
+	fi
 
-    echo ""
-    echo "Refreshing font cache"
-    fc-cache -fv
+	echo ""
+	echo "Refreshing font cache"
+	fc-cache -fv
 
-    ## Change path back to starting point
-    return_to_root
+	## Change path back to starting point
+	return_to_root
 }
 
 function install-dependencies() {
-    ## Install all neovim dependencies
+	## Install all neovim dependencies
 
-    echo ""
-    echo "[ Neovim Setup - Install neovim dependencies ]"
-    echo ""
+	echo ""
+	echo "[ Neovim Setup - Install neovim dependencies ]"
+	echo ""
 
-    sudo apt update -y
-    sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
+	sudo apt update -y
+	sudo apt install -y "${NVIM_APT_DEPENDENCIES[@]}"
 
-    if ! command -v nvm > /dev/null 2>&1; then
-        echo "[WARNING] nvm is not installed."
+	if ! command -v nvm >/dev/null 2>&1; then
+		echo "[WARNING] nvm is not installed."
 
-        ## Download & install nvm
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+		## Download & install nvm
+		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-        source ~/.bashrc
-    fi
+		source ~/.bashrc
+	fi
 
-    if ! command -v npm > /dev/null 2>&1; then
-        echo "[WARNING] node is not installed."
+	if ! command -v npm >/dev/null 2>&1; then
+		echo "[WARNING] node is not installed."
 
-        nvm install --lts
-        nvm alias default lts/*
-    fi
+		nvm install --lts
+		nvm alias default lts/*
+	fi
 
-    if ! command -v tree-sitter --version > /dev/null 2>&1; then
-        echo "[WARNING] tree-sitter is not installed."
-        npm install -g tree-sitter-cli
-    fi
+	if ! command -v tree-sitter --version >/dev/null 2>&1; then
+		echo "[WARNING] tree-sitter is not installed."
+		npm install -g tree-sitter-cli
+	fi
 }
 
 function install-neovim() {
-    ## Install Neovim from Github release
+	## Install Neovim from Github release
 
-    TEMP_DIR="/tmp/neovim"
-    NEOVIM_DOWNLOAD_URL="https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
+	TEMP_DIR="/tmp/neovim"
+	NEOVIM_DOWNLOAD_URL="https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
 
-    # if command -v nvim > /dev/null 2>&1; then
-    #     echo ""
-    #     echo "Neovim is already installed."
-    #     # echo "[DEBUG] Neovim path: " $(which nvim)
-    #     echo ""
+	# if command -v nvim > /dev/null 2>&1; then
+	#     echo ""
+	#     echo "Neovim is already installed."
+	#     # echo "[DEBUG] Neovim path: " $(which nvim)
+	#     echo ""
 
-    #     return
-    # fi
+	#     return
+	# fi
 
-    # if [[ -f /usr/bin/nvim ]]; then
-    #     echo ""
-    #     echo "Neovim is already installed at path /usr/bin/nvim"
-        
-    #     return
-    # fi
+	# if [[ -f /usr/bin/nvim ]]; then
+	#     echo ""
+	#     echo "Neovim is already installed at path /usr/bin/nvim"
 
-    echo ""
-    echo "[ Neovim Setup - Install neovim ]"
-    echo ""
+	#     return
+	# fi
 
-    if [[ ! -d $TEMP_DIR ]]; then
-        echo "Creating directory: $TEMP_DIR"
+	echo ""
+	echo "[ Neovim Setup - Install neovim ]"
+	echo ""
 
-        mkdir -pv "${TEMP_DIR}"
-    fi
+	if [[ ! -d $TEMP_DIR ]]; then
+		echo "Creating directory: $TEMP_DIR"
 
-    cd $TEMP_DIR
+		mkdir -pv "${TEMP_DIR}"
+	fi
 
-    if [[ ! -f "${TEMP_DIR}/nvim.appimage" ]]; then
-        echo "Downloading latest stable release from Github"
-        curl -LO "${NEOVIM_DOWNLOAD_URL}"
-    fi
+	cd $TEMP_DIR
 
-    ## Make it executable
-    chmod +x nvim.appimage
+	if [[ ! -f "${TEMP_DIR}/nvim.appimage" ]]; then
+		echo "Downloading latest stable release from Github"
+		curl -LO "${NEOVIM_DOWNLOAD_URL}"
+	fi
 
-    # Replace the old version
-    sudo mv nvim.appimage /usr/bin/nvim
+	## Make it executable
+	chmod +x nvim.appimage
 
-    # Verify the update
-    nvim --version
+	# Replace the old version
+	sudo mv nvim.appimage /usr/bin/nvim
 
-    return_to_root
+	# Verify the update
+	nvim --version
+
+	return_to_root
 }
 
 function symlink-config() {
-    ## Create symbolic link from repository's config/nvim path to ~/.config/nvim
+	## Create symbolic link from repository's config/nvim path to ~/.config/nvim
 
-    if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
-	echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
-	mkdir -pv "${DOTCONFIG_DIR}"
-    else	
-	if [[ -d $NVIM_CONFIG_DIR ]]; then
-            echo "Neovim config already exists at $NVIM_CONFIG_DIR"
-        elif [ -L "${NVIM_CONFIG_DIR}" ]; then
-            echo "Neovim path is a symlink. Removing link"
-            rm "${NVIM_CONFIG_DIR}"
-        else
-            echo "Neovim path is not a symlink. Backing up to ${NVIM_CONFIG_DIR}.bak"
-            mv "${NVIM_CONFIG_DIR}" "${NVIM_CONFIG_DIR}.bak"
-        fi
-    fi
+	if [[ ! -d "${DOTCONFIG_DIR}" ]]; then
+		echo "Path '${DOTCONFIG_DIR}' does not exist. Creating."
+		mkdir -pv "${DOTCONFIG_DIR}"
+	else
+		if [[ -d $NVIM_CONFIG_DIR ]]; then
+			echo "Neovim config already exists at $NVIM_CONFIG_DIR"
+		elif [ -L "${NVIM_CONFIG_DIR}" ]; then
+			echo "Neovim path is a symlink. Removing link"
+			rm "${NVIM_CONFIG_DIR}"
+		else
+			echo "Neovim path is not a symlink. Backing up to ${NVIM_CONFIG_DIR}.bak"
+			mv "${NVIM_CONFIG_DIR}" "${NVIM_CONFIG_DIR}.bak"
+		fi
+	fi
 
-    echo "Creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DIR}"
-    ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DIR}"
+	echo "Creating symlink from ${NVIM_CONFIG_SRC} to ${NVIM_CONFIG_DIR}"
+	ln -s "${NVIM_CONFIG_SRC}" "${NVIM_CONFIG_DIR}"
 }
 
 ######################
@@ -185,29 +185,29 @@ function symlink-config() {
 ## Check if neovim is installed
 # if ! command -v nvim > /dev/null 2>&1; then
 #     echo "[WARNING] Neovim is not installed."
-    
+
 #     sudo apt update -y && sudo apt install -y neovim
 # fi
 
 ## Check if curl is installed
-if ! command -v curl > /dev/null 2>&1; then
-    echo "[WARNING] curl is not installed."
+if ! command -v curl >/dev/null 2>&1; then
+	echo "[WARNING] curl is not installed."
 
-    sudo apt update -y && sudo apt install -y curl
+	sudo apt update -y && sudo apt install -y curl
 fi
 
 ## Check if unzip is installed
-if ! command -v unzip > /dev/null 2>&1; then
-    echo "[WARNING] unzip is not installed."
+if ! command -v unzip >/dev/null 2>&1; then
+	echo "[WARNING] unzip is not installed."
 
-    sudo apt update -y && sudo apt install -y unzip
+	sudo apt update -y && sudo apt install -y unzip
 fi
 
 ## Check if fontconfig is installed
-if ! command -v fc-cache > /dev/null 2>&1; then
-    echo "[WARNING] fontconfig is not installed."
+if ! command -v fc-cache >/dev/null 2>&1; then
+	echo "[WARNING] fontconfig is not installed."
 
-    sudo apt update -y && sudo apt install -y fontconfig
+	sudo apt update -y && sudo apt install -y fontconfig
 fi
 
 #########
@@ -215,37 +215,37 @@ fi
 #########
 
 function main() {
-    echo ""
-    echo "[ Install Neovim Configuration - Debian Linux ]"
-    echo ""
+	echo ""
+	echo "[ Install Neovim Configuration - Debian Linux ]"
+	echo ""
 
-    if [[ -d $NVIM_CONFIG_DIR ]]; then
-        if [[ ! -L $NVIM_CONFIG_DIR ]];
-            then echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
+	if [[ -d $NVIM_CONFIG_DIR ]]; then
+		if [[ ! -L $NVIM_CONFIG_DIR ]]; then
+			echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
 
-            mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
-        else
-            echo "Existing neovim configuration is a symlink. Leaving in place."
-        fi
-    fi
+			mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
+		else
+			echo "Existing neovim configuration is a symlink. Leaving in place."
+		fi
+	fi
 
-    ## Install NERDFont
-    install-nerdfont
+	## Install NERDFont
+	install-nerdfont
 
-    ## Install neovim dependencies
-    install-dependencies
+	## Install neovim dependencies
+	install-dependencies
 
-    ## Install neovim from github
-    install-neovim
+	## Install neovim from github
+	install-neovim
 
-    ## Symlink neovim configuration
-    symlink-config
+	## Symlink neovim configuration
+	symlink-config
 }
 
 ## Run script
 main
 
 if [[ ! $? -eq 0 ]]; then
-    echo "[WARNING] Script exited with non-zero exit code: $?"
-    exit $?
+	echo "[WARNING] Script exited with non-zero exit code: $?"
+	exit $?
 fi

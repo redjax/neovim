@@ -9,42 +9,42 @@ __NEOVIM_INSTALL_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 unset __NEOVIM_INSTALL_LIB_DIR
 
 function npm_global_package_installed() {
-    ## Check if a global npm package is already installed
-    local pkg="$1"
-    local npm_root
+	## Check if a global npm package is already installed
+	local pkg="$1"
+	local npm_root
 
-    if ! command -v npm >/dev/null 2>&1; then
-        return 1
-    fi
+	if ! command -v npm >/dev/null 2>&1; then
+		return 1
+	fi
 
-    npm_root=$(npm root -g 2>/dev/null)
-    [[ -n "$npm_root" && -d "$npm_root/$pkg" ]]
+	npm_root=$(npm root -g 2>/dev/null)
+	[[ -n "$npm_root" && -d "$npm_root/$pkg" ]]
 }
 
 function install_missing_npm_global_packages() {
-    ## Install only missing npm packages in one invocation for faster installs
-    local -n npm_deps=$1
-    local -a missing_pkgs=()
-    local pkg
+	## Install only missing npm packages in one invocation for faster installs
+	local -n npm_deps=$1
+	local -a missing_pkgs=()
+	local pkg
 
-    for pkg in "${npm_deps[@]}"; do
-        [[ "$pkg" =~ ^# ]] && continue
+	for pkg in "${npm_deps[@]}"; do
+		[[ "$pkg" =~ ^# ]] && continue
 
-        if npm_global_package_installed "$pkg"; then
-            echo "Skipping NPM package (already installed): $pkg"
-            continue
-        fi
+		if npm_global_package_installed "$pkg"; then
+			echo "Skipping NPM package (already installed): $pkg"
+			continue
+		fi
 
-        missing_pkgs+=("$pkg")
-    done
+		missing_pkgs+=("$pkg")
+	done
 
-    if [[ ${#missing_pkgs[@]} -eq 0 ]]; then
-        echo "All requested NPM packages are already installed"
-        return 0
-    fi
+	if [[ ${#missing_pkgs[@]} -eq 0 ]]; then
+		echo "All requested NPM packages are already installed"
+		return 0
+	fi
 
-    echo "Installing missing NPM packages: ${missing_pkgs[*]}"
-    npm install -g "${missing_pkgs[@]}"
+	echo "Installing missing NPM packages: ${missing_pkgs[*]}"
+	npm install -g "${missing_pkgs[@]}"
 }
 
 ##########################
@@ -52,56 +52,56 @@ function install_missing_npm_global_packages() {
 ##########################
 
 function install_nerdfont() {
-    ## Install the FiraCode nerd font
+	## Install the FiraCode nerd font
 
-    local FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
-    local FONT_DIR="$HOME/.local/share/fonts"
-    local TEMP_DIR="/tmp/firacode-nerdfont"
+	local FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
+	local FONT_DIR="$HOME/.local/share/fonts"
+	local TEMP_DIR="/tmp/firacode-nerdfont"
 
-    if [[ ! -d "$FONT_DIR/FiraCode" ]]; then
-        echo ""
-        echo "[ Neovim Setup - Install NerdFont ]"
-        echo ""
-    else
-        return 0
-    fi
+	if [[ ! -d "$FONT_DIR/FiraCode" ]]; then
+		echo ""
+		echo "[ Neovim Setup - Install NerdFont ]"
+		echo ""
+	else
+		return 0
+	fi
 
-    if [[ ! -d $FONT_DIR ]]; then
-        echo "Creating directory '$FONT_DIR'"
-        mkdir -pv "$FONT_DIR" || return $?
-    fi
+	if [[ ! -d $FONT_DIR ]]; then
+		echo "Creating directory '$FONT_DIR'"
+		mkdir -pv "$FONT_DIR" || return $?
+	fi
 
-    if [[ ! -d $TEMP_DIR ]]; then
-        echo "Creating directory '$TEMP_DIR'"
-        mkdir -pv "$TEMP_DIR" || return $?
-    fi
+	if [[ ! -d $TEMP_DIR ]]; then
+		echo "Creating directory '$TEMP_DIR'"
+		mkdir -pv "$TEMP_DIR" || return $?
+	fi
 
-    if [[ ! -f "${TEMP_DIR}/FiraCode.zip" ]]; then
-        echo "Downloading FiraCode font..."
+	if [[ ! -f "${TEMP_DIR}/FiraCode.zip" ]]; then
+		echo "Downloading FiraCode font..."
 
-        curl -fL "$FONT_URL" \
-            -o "${TEMP_DIR}/FiraCode.zip" || return $?
-    fi
+		curl -fL "$FONT_URL" \
+			-o "${TEMP_DIR}/FiraCode.zip" || return $?
+	fi
 
-    if [[ ! -d "${TEMP_DIR}/FiraCode" ]]; then
-        echo "Unzipping FiraCode font..."
+	if [[ ! -d "${TEMP_DIR}/FiraCode" ]]; then
+		echo "Unzipping FiraCode font..."
 
-        unzip -o "${TEMP_DIR}/FiraCode.zip" \
-            -d "${TEMP_DIR}/FiraCode" || return $?
-    fi
+		unzip -o "${TEMP_DIR}/FiraCode.zip" \
+			-d "${TEMP_DIR}/FiraCode" || return $?
+	fi
 
-    if [[ ! -d "${FONT_DIR}/FiraCode" ]]; then
-        echo "Installing FiraCode to $FONT_DIR"
+	if [[ ! -d "${FONT_DIR}/FiraCode" ]]; then
+		echo "Installing FiraCode to $FONT_DIR"
 
-        cp -R "${TEMP_DIR}/FiraCode" "${FONT_DIR}" || return $?
-    fi
+		cp -R "${TEMP_DIR}/FiraCode" "${FONT_DIR}" || return $?
+	fi
 
-    echo ""
-    echo "Refreshing font cache"
-    fc-cache -fv || return $?
+	echo ""
+	echo "Refreshing font cache"
+	fc-cache -fv || return $?
 
-    ## Change path back to starting point
-    return_to_root
+	## Change path back to starting point
+	return_to_root
 }
 
 ###############################
@@ -109,154 +109,154 @@ function install_nerdfont() {
 ###############################
 
 function install_dependencies_apt() {
-    ## Install all neovim dependencies
-    ## Expects array name as first parameter: install_dependencies_apt NVIM_APT_DEPENDENCIES
-    if [[ $# -ne 1 ]]; then
-        echo "[ERROR] install_dependencies_apt requires a dependency array name." >&2
-        return 1
-    fi
+	## Install all neovim dependencies
+	## Expects array name as first parameter: install_dependencies_apt NVIM_APT_DEPENDENCIES
+	if [[ $# -ne 1 ]]; then
+		echo "[ERROR] install_dependencies_apt requires a dependency array name." >&2
+		return 1
+	fi
 
-    local -n apt_deps=$1
+	local -n apt_deps=$1
 
-    echo ""
-    echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
-    echo "Please enter your admin password when prompted to install dependency packages"
-    echo ""
+	echo ""
+	echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
+	echo "Please enter your admin password when prompted to install dependency packages"
+	echo ""
 
-    sudo apt-get update || return $?
-    sudo apt-get install -y "${apt_deps[@]}" || return $?
+	sudo apt-get update || return $?
+	sudo apt-get install -y "${apt_deps[@]}" || return $?
 
-    export NVM_DIR="${NVM_DIR:-"$HOME/.nvm"}"
+	export NVM_DIR="${NVM_DIR:-"$HOME/.nvm"}"
 
-    if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-        . "$NVM_DIR/nvm.sh" || return $?
-    fi
+	if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+		. "$NVM_DIR/nvm.sh" || return $?
+	fi
 
-    if ! command -v nvm >/dev/null 2>&1; then
-        echo "[WARNING] nvm is not installed."
+	if ! command -v nvm >/dev/null 2>&1; then
+		echo "[WARNING] nvm is not installed."
 
-        local nvm_installer
-        nvm_installer="$(mktemp)" || return $?
+		local nvm_installer
+		nvm_installer="$(mktemp)" || return $?
 
-        if ! curl -fsSL \
-            https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh \
-            -o "$nvm_installer"; then
-            rm -f -- "$nvm_installer"
-            return 1
-        fi
+		if ! curl -fsSL \
+			https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh \
+			-o "$nvm_installer"; then
+			rm -f -- "$nvm_installer"
+			return 1
+		fi
 
-        bash "$nvm_installer"
-        local nvm_status=$?
+		bash "$nvm_installer"
+		local nvm_status=$?
 
-        rm -f -- "$nvm_installer"
+		rm -f -- "$nvm_installer"
 
-        if [[ $nvm_status -ne 0 ]]; then
-            return "$nvm_status"
-        fi
+		if [[ $nvm_status -ne 0 ]]; then
+			return "$nvm_status"
+		fi
 
-        if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-            . "$NVM_DIR/nvm.sh" || return $?
-        else
-            echo "[ERROR] nvm.sh was not found after installation." >&2
-            return 1
-        fi
-    fi
+		if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+			. "$NVM_DIR/nvm.sh" || return $?
+		else
+			echo "[ERROR] nvm.sh was not found after installation." >&2
+			return 1
+		fi
+	fi
 
-    if ! command -v npm >/dev/null 2>&1; then
-        echo "[WARNING] node is not installed."
-        nvm install --lts || return $?
-        nvm alias default 'lts/*' || return $?
-    fi
+	if ! command -v npm >/dev/null 2>&1; then
+		echo "[WARNING] node is not installed."
+		nvm install --lts || return $?
+		nvm alias default 'lts/*' || return $?
+	fi
 
-    if ! command -v tree-sitter >/dev/null 2>&1; then
-        echo "[WARNING] tree-sitter is not installed."
-        npm install -g tree-sitter-cli || return $?
-    fi
+	if ! command -v tree-sitter >/dev/null 2>&1; then
+		echo "[WARNING] tree-sitter is not installed."
+		npm install -g tree-sitter-cli || return $?
+	fi
 
-    if npm_global_package_installed "neovim"; then
-        echo "Skipping npm install for neovim (already installed globally)"
-    else
-        echo "Installing neovim with npm"
-        npm install -g neovim || return $?
-    fi
+	if npm_global_package_installed "neovim"; then
+		echo "Skipping npm install for neovim (already installed globally)"
+	else
+		echo "Installing neovim with npm"
+		npm install -g neovim || return $?
+	fi
 
-    return 0
+	return 0
 }
 
 function install_dependencies_dnf() {
-    ## Install all neovim dependencies
+	## Install all neovim dependencies
 
-    ## Expects array name as first parameter: install_dependencies_dnf NVIM_DNF_DEPENDENCIES
-    if [[ $# -ne 1 ]]; then
-        echo "[ERROR] install_dependencies_dnf requires a dependency array name." >&2
-        return 1
-    fi
+	## Expects array name as first parameter: install_dependencies_dnf NVIM_DNF_DEPENDENCIES
+	if [[ $# -ne 1 ]]; then
+		echo "[ERROR] install_dependencies_dnf requires a dependency array name." >&2
+		return 1
+	fi
 
-    local -n dnf_deps=$1
+	local -n dnf_deps=$1
 
-    echo ""
-    echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
-    echo "Please enter your admin password when prompted to install dependency packages"
-    echo ""
+	echo ""
+	echo "[ Neovim Setup - Install neovim dependencies ($PKG_MGR) ]"
+	echo "Please enter your admin password when prompted to install dependency packages"
+	echo ""
 
-    sudo dnf install -y "${dnf_deps[@]}" || return $?
-    sudo dnf install -y @development-tools || return $?
+	sudo dnf install -y "${dnf_deps[@]}" || return $?
+	sudo dnf install -y @development-tools || return $?
 
-    export NVM_DIR="${NVM_DIR:-"$HOME/.nvm"}"
+	export NVM_DIR="${NVM_DIR:-"$HOME/.nvm"}"
 
-    if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-        . "$NVM_DIR/nvm.sh" || return $?
-    fi
+	if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+		. "$NVM_DIR/nvm.sh" || return $?
+	fi
 
-    if ! command -v nvm >/dev/null 2>&1; then
-        echo "[WARNING] nvm is not installed."
+	if ! command -v nvm >/dev/null 2>&1; then
+		echo "[WARNING] nvm is not installed."
 
-        local nvm_installer
-        nvm_installer="$(mktemp)" || return $?
+		local nvm_installer
+		nvm_installer="$(mktemp)" || return $?
 
-        if ! curl -fsSL \
-            https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh \
-            -o "$nvm_installer"; then
-            rm -f -- "$nvm_installer"
-            return 1
-        fi
+		if ! curl -fsSL \
+			https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh \
+			-o "$nvm_installer"; then
+			rm -f -- "$nvm_installer"
+			return 1
+		fi
 
-        bash "$nvm_installer"
-        local nvm_status=$?
+		bash "$nvm_installer"
+		local nvm_status=$?
 
-        rm -f -- "$nvm_installer"
+		rm -f -- "$nvm_installer"
 
-        if [[ $nvm_status -ne 0 ]]; then
-            return "$nvm_status"
-        fi
+		if [[ $nvm_status -ne 0 ]]; then
+			return "$nvm_status"
+		fi
 
-        if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-            . "$NVM_DIR/nvm.sh" || return $?
-        else
-            echo "[ERROR] nvm.sh was not found after installation." >&2
-            return 1
-        fi
-    fi
+		if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+			. "$NVM_DIR/nvm.sh" || return $?
+		else
+			echo "[ERROR] nvm.sh was not found after installation." >&2
+			return 1
+		fi
+	fi
 
-    if ! command -v npm >/dev/null 2>&1; then
-        echo "[WARNING] node is not installed."
-        nvm install --lts || return $?
-        nvm alias default 'lts/*' || return $?
-    fi
+	if ! command -v npm >/dev/null 2>&1; then
+		echo "[WARNING] node is not installed."
+		nvm install --lts || return $?
+		nvm alias default 'lts/*' || return $?
+	fi
 
-    if ! command -v tree-sitter >/dev/null 2>&1; then
-        echo "[WARNING] tree-sitter is not installed."
-        npm install -g tree-sitter-cli || return $?
-    fi
+	if ! command -v tree-sitter >/dev/null 2>&1; then
+		echo "[WARNING] tree-sitter is not installed."
+		npm install -g tree-sitter-cli || return $?
+	fi
 
-    if npm_global_package_installed "neovim"; then
-        echo "Skipping npm install for neovim (already installed globally)"
-    else
-        echo "Installing neovim with npm"
-        npm install -g neovim || return $?
-    fi
+	if npm_global_package_installed "neovim"; then
+		echo "Skipping npm install for neovim (already installed globally)"
+	else
+		echo "Installing neovim with npm"
+		npm install -g neovim || return $?
+	fi
 
-    return 0
+	return 0
 }
 
 #######################
@@ -264,123 +264,123 @@ function install_dependencies_dnf() {
 #######################
 
 function install_neovim_appimg() {
-    ## Install Neovim from Github release
+	## Install Neovim from Github release
 
-    local TEMP_DIR
-    local NEOVIM_ASSET
+	local TEMP_DIR
+	local NEOVIM_ASSET
 
-    case "$(uname -m)" in
-    x86_64)
-        NEOVIM_ASSET="nvim-linux-x86_64.appimage"
-        ;;
-    aarch64 | arm64)
-        NEOVIM_ASSET="nvim-linux-arm64.appimage"
-        ;;
-    *)
-        echo "[ERROR] Unsupported Neovim AppImage architecture: $(uname -m)" >&2
-        return 1
-        ;;
-    esac
+	case "$(uname -m)" in
+	x86_64)
+		NEOVIM_ASSET="nvim-linux-x86_64.appimage"
+		;;
+	aarch64 | arm64)
+		NEOVIM_ASSET="nvim-linux-arm64.appimage"
+		;;
+	*)
+		echo "[ERROR] Unsupported Neovim AppImage architecture: $(uname -m)" >&2
+		return 1
+		;;
+	esac
 
-    local NEOVIM_DOWNLOAD_URL="https://github.com/neovim/neovim/releases/latest/download/${NEOVIM_ASSET}"
+	local NEOVIM_DOWNLOAD_URL="https://github.com/neovim/neovim/releases/latest/download/${NEOVIM_ASSET}"
 
-    echo ""
-    echo "[ Neovim Setup - Install neovim (appimg) ]"
-    echo ""
+	echo ""
+	echo "[ Neovim Setup - Install neovim (appimg) ]"
+	echo ""
 
-    TEMP_DIR="$(mktemp -d)" || return $?
+	TEMP_DIR="$(mktemp -d)" || return $?
 
-    echo "Downloading latest stable release from Github"
+	echo "Downloading latest stable release from Github"
 
-    if ! curl -fL "$NEOVIM_DOWNLOAD_URL" \
-        -o "${TEMP_DIR}/nvim.appimage"; then
-        rm -rf -- "$TEMP_DIR"
-        return 1
-    fi
+	if ! curl -fL "$NEOVIM_DOWNLOAD_URL" \
+		-o "${TEMP_DIR}/nvim.appimage"; then
+		rm -rf -- "$TEMP_DIR"
+		return 1
+	fi
 
-    ## Make it executable
-    chmod +x "${TEMP_DIR}/nvim.appimage" || {
-        rm -rf -- "$TEMP_DIR"
-        return 1
-    }
+	## Make it executable
+	chmod +x "${TEMP_DIR}/nvim.appimage" || {
+		rm -rf -- "$TEMP_DIR"
+		return 1
+	}
 
-    ## Verify the download before replacing an existing installation
-    "${TEMP_DIR}/nvim.appimage" --version || {
-        rm -rf -- "$TEMP_DIR"
-        return 1
-    }
+	## Verify the download before replacing an existing installation
+	"${TEMP_DIR}/nvim.appimage" --version || {
+		rm -rf -- "$TEMP_DIR"
+		return 1
+	}
 
-    # Replace the old version
-    sudo install -d /usr/local/bin || {
-        rm -rf -- "$TEMP_DIR"
-        return 1
-    }
+	# Replace the old version
+	sudo install -d /usr/local/bin || {
+		rm -rf -- "$TEMP_DIR"
+		return 1
+	}
 
-    sudo install -m 0755 \
-        "${TEMP_DIR}/nvim.appimage" /usr/local/bin/nvim || {
-        rm -rf -- "$TEMP_DIR"
-        return 1
-    }
+	sudo install -m 0755 \
+		"${TEMP_DIR}/nvim.appimage" /usr/local/bin/nvim || {
+		rm -rf -- "$TEMP_DIR"
+		return 1
+	}
 
-    rm -rf -- "$TEMP_DIR"
-    hash -r
+	rm -rf -- "$TEMP_DIR"
+	hash -r
 
-    # Verify the update
-    /usr/local/bin/nvim --version || return $?
+	# Verify the update
+	/usr/local/bin/nvim --version || return $?
 
-    return_to_root
+	return_to_root
 }
 
 function install_neovim_source() {
 
-    local -a APT_DEPENDS=("git" "ninja-build" "gettext" "libtool" "libtool-bin" "autoconf" "automake" "cmake" "g++" "pkg-config" "unzip" "curl" "doxygen")
-    local -a DNF_DEPENDS=("git" "ninja-build" "libtool" "autoconf" "automake" "cmake" "gcc" "gcc-c++" "make" "pkgconfig" "unzip" "patch" "gettext" "curl")
+	local -a APT_DEPENDS=("git" "ninja-build" "gettext" "libtool" "libtool-bin" "autoconf" "automake" "cmake" "g++" "pkg-config" "unzip" "curl" "doxygen")
+	local -a DNF_DEPENDS=("git" "ninja-build" "libtool" "autoconf" "automake" "cmake" "gcc" "gcc-c++" "make" "pkgconfig" "unzip" "patch" "gettext" "curl")
 
-    if [[ $PKG_MGR == "dnf" ]]; then
-        echo "Installing build tools for neovim with dnf"
-        sudo "$PKG_MGR" install -y "${DNF_DEPENDS[@]}" || return $?
-    elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
-        echo "Installing build tools for neovim with apt"
-        sudo apt-get install -y "${APT_DEPENDS[@]}" || return $?
-    else
-        echo "[WARNING] Building neovim from source with package manager '${PKG_MGR}' is not supported."
-        return 1
-    fi
+	if [[ $PKG_MGR == "dnf" ]]; then
+		echo "Installing build tools for neovim with dnf"
+		sudo "$PKG_MGR" install -y "${DNF_DEPENDS[@]}" || return $?
+	elif [[ $PKG_MGR == "apt" || $PKG_MGR == "apt-get" ]]; then
+		echo "Installing build tools for neovim with apt"
+		sudo apt-get install -y "${APT_DEPENDS[@]}" || return $?
+	else
+		echo "[WARNING] Building neovim from source with package manager '${PKG_MGR}' is not supported."
+		return 1
+	fi
 
-    cd "$NEOVIM_MAKE_BUILD_DIR" || return $?
+	cd "$NEOVIM_MAKE_BUILD_DIR" || return $?
 
-    if [[ ! -d "neovim" ]]; then
-        echo "Cloning neovim repeository"
-        git clone https://github.com/neovim/neovim.git || return $?
-    else
-        echo "Neovim repository already exists at ${NEOVIM_MAKE_BUILD_DIR}/neovim. Changes will be pulled, and Neovim will be rebuilt."
-    fi
+	if [[ ! -d "neovim" ]]; then
+		echo "Cloning neovim repeository"
+		git clone https://github.com/neovim/neovim.git || return $?
+	else
+		echo "Neovim repository already exists at ${NEOVIM_MAKE_BUILD_DIR}/neovim. Changes will be pulled, and Neovim will be rebuilt."
+	fi
 
-    cd neovim || return $?
+	cd neovim || return $?
 
-    echo "Running a git pull to get any changes"
-    git pull --ff-only || return $?
+	echo "Running a git pull to get any changes"
+	git pull --ff-only || return $?
 
-    ## Remove Make cache if in container
-    if [[ "${CONTAINER_ENV:-0}" == "1" ]]; then
-        if [[ -d "${NEOVIM_MAKE_BUILD_DIR}/neovim/.deps" ]]; then
-            echo "[WARNING] Previous dependency build detected while building in container environment.
+	## Remove Make cache if in container
+	if [[ "${CONTAINER_ENV:-0}" == "1" ]]; then
+		if [[ -d "${NEOVIM_MAKE_BUILD_DIR}/neovim/.deps" ]]; then
+			echo "[WARNING] Previous dependency build detected while building in container environment.
             Removing ${NEOVIM_MAKE_BUILD_DIR}/neovim/.deps directory for a clean dependency build.
             "
 
-            rm -rf -- "${NEOVIM_MAKE_BUILD_DIR}/neovim/.deps" || return $?
-        fi
-    fi
+			rm -rf -- "${NEOVIM_MAKE_BUILD_DIR}/neovim/.deps" || return $?
+		fi
+	fi
 
-    echo "Building Neovim"
-    make CMAKE_BUILD_TYPE=RelWithDebInfo || return $?
+	echo "Building Neovim"
+	make CMAKE_BUILD_TYPE=RelWithDebInfo || return $?
 
-    echo "Installing Neovim after building source"
-    sudo make install || return $?
+	echo "Installing Neovim after building source"
+	sudo make install || return $?
 
-    echo "[SUCCESS] Neovim installed"
+	echo "[SUCCESS] Neovim installed"
 
-    return_to_root
+	return_to_root
 }
 
 ############################
@@ -388,89 +388,89 @@ function install_neovim_source() {
 ############################
 
 function install_treesitter() {
-    ## Install tree-sitter CLI
+	## Install tree-sitter CLI
 
-    if command -v tree-sitter >/dev/null 2>&1; then
-        echo "tree-sitter already installed: $(tree-sitter --version)"
-        return 0
-    fi
+	if command -v tree-sitter >/dev/null 2>&1; then
+		echo "tree-sitter already installed: $(tree-sitter --version)"
+		return 0
+	fi
 
-    ## Detect architecture
-    ARCH=$(uname -m)
-    case "$ARCH" in
-    x86_64)
-        GITHUB_ARCH="x86_64"
-        ;;
-    aarch64 | arm64)
-        GITHUB_ARCH="aarch64"
-        ;;
-    *)
-        echo "Unsupported architecture: $ARCH. Will try npm fallback." >&2
-        GITHUB_ARCH=""
-        ;;
-    esac
+	## Detect architecture
+	ARCH=$(uname -m)
+	case "$ARCH" in
+	x86_64)
+		GITHUB_ARCH="x86_64"
+		;;
+	aarch64 | arm64)
+		GITHUB_ARCH="aarch64"
+		;;
+	*)
+		echo "Unsupported architecture: $ARCH. Will try npm fallback." >&2
+		GITHUB_ARCH=""
+		;;
+	esac
 
-    ## Try GitHub release download first
-    if [[ -n "$GITHUB_ARCH" ]]; then
-        echo "Attempting to install tree-sitter-cli from GitHub releases"
+	## Try GitHub release download first
+	if [[ -n "$GITHUB_ARCH" ]]; then
+		echo "Attempting to install tree-sitter-cli from GitHub releases"
 
-        INSTALL_DIR="${HOME}/.local/bin"
-        mkdir -p "$INSTALL_DIR"
+		INSTALL_DIR="${HOME}/.local/bin"
+		mkdir -p "$INSTALL_DIR"
 
-        ## Get latest release download URL
-        RELEASE_URL="https://api.github.com/repos/tree-sitter/tree-sitter/releases/latest"
+		## Get latest release download URL
+		RELEASE_URL="https://api.github.com/repos/tree-sitter/tree-sitter/releases/latest"
 
-        if command -v curl >/dev/null 2>&1; then
-            ## Extract download URL for the appropriate architecture
-            DOWNLOAD_URL=$(curl -s "$RELEASE_URL" | grep -o "https://github.com/tree-sitter/tree-sitter/releases/download/[^\"]*linux-$GITHUB_ARCH\.gz" | head -1)
+		if command -v curl >/dev/null 2>&1; then
+			## Extract download URL for the appropriate architecture
+			DOWNLOAD_URL=$(curl -s "$RELEASE_URL" | grep -o "https://github.com/tree-sitter/tree-sitter/releases/download/[^\"]*linux-$GITHUB_ARCH\.gz" | head -1)
 
-            if [[ -n "$DOWNLOAD_URL" ]]; then
-                TEMP_DIR=$(mktemp -d)
-                trap "rm -rf $TEMP_DIR" EXIT
+			if [[ -n "$DOWNLOAD_URL" ]]; then
+				TEMP_DIR=$(mktemp -d)
+				trap "rm -rf $TEMP_DIR" EXIT
 
-                echo "Downloading from: $DOWNLOAD_URL"
-                if curl -L -o "$TEMP_DIR/tree-sitter.gz" "$DOWNLOAD_URL"; then
-                    if gunzip -c "$TEMP_DIR/tree-sitter.gz" >"$INSTALL_DIR/tree-sitter"; then
-                        chmod +x "$INSTALL_DIR/tree-sitter"
+				echo "Downloading from: $DOWNLOAD_URL"
+				if curl -L -o "$TEMP_DIR/tree-sitter.gz" "$DOWNLOAD_URL"; then
+					if gunzip -c "$TEMP_DIR/tree-sitter.gz" >"$INSTALL_DIR/tree-sitter"; then
+						chmod +x "$INSTALL_DIR/tree-sitter"
 
-                        ## Ensure ~/.local/bin is in PATH
-                        if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-                            echo "Adding $INSTALL_DIR to PATH"
-                            export PATH="$INSTALL_DIR:$PATH"
-                        fi
+						## Ensure ~/.local/bin is in PATH
+						if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
+							echo "Adding $INSTALL_DIR to PATH"
+							export PATH="$INSTALL_DIR:$PATH"
+						fi
 
-                        if command -v tree-sitter >/dev/null 2>&1; then
-                            echo "tree-sitter installed from GitHub: $(tree-sitter --version)"
-                            return 0
-                        fi
-                    fi
-                fi
-            fi
-        fi
+						if command -v tree-sitter >/dev/null 2>&1; then
+							echo "tree-sitter installed from GitHub: $(tree-sitter --version)"
+							return 0
+						fi
+					fi
+				fi
+			fi
+		fi
 
-        echo "GitHub download failed or curl not available. Falling back to npm" >&2
-    fi
+		echo "GitHub download failed or curl not available. Falling back to npm" >&2
+	fi
 
-    ## Fallback to npm install
-    if ! command -v npm >/dev/null 2>&1; then
-        echo "NPM is not installed and GitHub download failed. Please install Node.js/NPM first." >&2
-        return 1
-    fi
+	## Fallback to npm install
+	if ! command -v npm >/dev/null 2>&1; then
+		echo "NPM is not installed and GitHub download failed. Please install Node.js/NPM first." >&2
+		return 1
+	fi
 
-    echo "Installing tree-sitter-cli with npm"
-    if ! npm install -g tree-sitter-cli; then
-        echo "Failed to install tree-sitter-cli" >&2
-        return 1
-    fi
+	echo "Installing tree-sitter-cli with npm"
+	if ! npm install -g tree-sitter-cli; then
+		echo "Failed to install tree-sitter-cli" >&2
+		return 1
+	fi
 
-    if command -v tree-sitter >/dev/null 2>&1; then
-        echo "tree-sitter installed: $(tree-sitter --version)"
-        return 0
-    fi
+	if command -v tree-sitter >/dev/null 2>&1; then
+		echo "tree-sitter installed: $(tree-sitter --version)"
+		return 0
+	fi
 
-    echo "tree-sitter-cli installed but 'tree-sitter' is not in PATH yet." >&2
-    echo "Restart your shell and verify with: tree-sitter --version" >&2
-    return 1
+	echo "tree-sitter-cli installed but 'tree-sitter' is not in PATH yet." >&2
+	echo "Restart your shell and verify with: tree-sitter --version" >&2
+	return 1
 }
 
 ########################
@@ -478,122 +478,122 @@ function install_treesitter() {
 ########################
 
 function install_neovide() {
-    ## Install Neovide GUI
+	## Install Neovide GUI
 
-    # Paths
-    NEOVIDE_BIN_DIR="$HOME/.local/bin"
-    NEOVIDE_DESKTOP_DIR="$HOME/.local/share/applications"
-    NEOVIDE_ICON_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
-    NEOVIDE_DESKTOP_FILE="$NEOVIDE_DESKTOP_DIR/neovide.desktop"
-    NEOVIDE_ICON_PATH="$NEOVIDE_ICON_DIR/neovide.png"
+	# Paths
+	NEOVIDE_BIN_DIR="$HOME/.local/bin"
+	NEOVIDE_DESKTOP_DIR="$HOME/.local/share/applications"
+	NEOVIDE_ICON_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
+	NEOVIDE_DESKTOP_FILE="$NEOVIDE_DESKTOP_DIR/neovide.desktop"
+	NEOVIDE_ICON_PATH="$NEOVIDE_ICON_DIR/neovide.png"
 
-    GITHUB_API="https://api.github.com/repos/neovide/neovide/releases/latest"
+	GITHUB_API="https://api.github.com/repos/neovide/neovide/releases/latest"
 
-    mkdir -p "$NEOVIDE_BIN_DIR" "$NEOVIDE_DESKTOP_DIR" "$NEOVIDE_ICON_DIR"
+	mkdir -p "$NEOVIDE_BIN_DIR" "$NEOVIDE_DESKTOP_DIR" "$NEOVIDE_ICON_DIR"
 
-    ## Check if already installed
-    if command -v neovide >/dev/null 2>&1; then
-        echo "neovide is already installed: $(neovide --version)"
-        return 0
-    fi
+	## Check if already installed
+	if command -v neovide >/dev/null 2>&1; then
+		echo "neovide is already installed: $(neovide --version)"
+		return 0
+	fi
 
-    detect_distro() {
-        if [ -f /etc/os-release ]; then
-            . /etc/os-release
-            echo "$ID"
-        else
-            echo "unknown"
-        fi
-    }
+	detect_distro() {
+		if [ -f /etc/os-release ]; then
+			. /etc/os-release
+			echo "$ID"
+		else
+			echo "unknown"
+		fi
+	}
 
-    get_latest_version() {
-        curl -s "$GITHUB_API" | grep -Po '"tag_name": "\K.*?(?=")'
-    }
+	get_latest_version() {
+		curl -s "$GITHUB_API" | grep -Po '"tag_name": "\K.*?(?=")'
+	}
 
-    install_native_package() {
-        local distro=$1
-        if [[ "$distro" =~ ^(arch|manjaro)$ ]]; then
-            echo "Installing Neovide via pacman (Arch Linux)..."
-            sudo pacman -Sy --noconfirm neovide && return 0 || return 1
-        elif command -v nix-env >/dev/null 2>&1; then
-            echo "Installing Neovide via nix..."
-            nix-env -iA nixpkgs.neovide && return 0 || return 1
-        else
-            return 1
-        fi
-    }
+	install_native_package() {
+		local distro=$1
+		if [[ "$distro" =~ ^(arch|manjaro)$ ]]; then
+			echo "Installing Neovide via pacman (Arch Linux)..."
+			sudo pacman -Sy --noconfirm neovide && return 0 || return 1
+		elif command -v nix-env >/dev/null 2>&1; then
+			echo "Installing Neovide via nix..."
+			nix-env -iA nixpkgs.neovide && return 0 || return 1
+		else
+			return 1
+		fi
+	}
 
-    install_tarball() {
-        local arch=$(uname -m)
-        if [[ "$arch" != "x86_64" ]]; then
-            echo "No tarball available for architecture: $arch"
-            return 1
-        fi
+	install_tarball() {
+		local arch=$(uname -m)
+		if [[ "$arch" != "x86_64" ]]; then
+			echo "No tarball available for architecture: $arch"
+			return 1
+		fi
 
-        local version
-        version=$(get_latest_version)
-        local tarball_url="https://github.com/neovide/neovide/releases/download/${version}/neovide-linux-x86_64.tar.gz"
+		local version
+		version=$(get_latest_version)
+		local tarball_url="https://github.com/neovide/neovide/releases/download/${version}/neovide-linux-x86_64.tar.gz"
 
-        echo "Downloading tarball version $version..."
-        curl -L -o "/tmp/neovide.tar.gz" "$tarball_url"
+		echo "Downloading tarball version $version..."
+		curl -L -o "/tmp/neovide.tar.gz" "$tarball_url"
 
-        echo "Extracting Neovide binary..."
-        tar -xf /tmp/neovide.tar.gz -C /tmp
+		echo "Extracting Neovide binary..."
+		tar -xf /tmp/neovide.tar.gz -C /tmp
 
-        echo "Installing binary to $NEOVIDE_BIN_DIR..."
-        chmod +x /tmp/neovide
-        mv /tmp/neovide "$NEOVIDE_BIN_DIR/"
+		echo "Installing binary to $NEOVIDE_BIN_DIR..."
+		chmod +x /tmp/neovide
+		mv /tmp/neovide "$NEOVIDE_BIN_DIR/"
 
-        return 0
-    }
+		return 0
+	}
 
-    install_appimage() {
-        local arch=$(uname -m)
-        if [[ "$arch" != "x86_64" ]]; then
-            echo "AppImage only available for x86_64 for now."
-            return 1
-        fi
+	install_appimage() {
+		local arch=$(uname -m)
+		if [[ "$arch" != "x86_64" ]]; then
+			echo "AppImage only available for x86_64 for now."
+			return 1
+		fi
 
-        echo "Fetching latest AppImage URL from GitHub API..."
-        local appimage_url
-        appimage_url=$(curl -s "$GITHUB_API" | grep "browser_download_url" | grep "appimage" | cut -d '"' -f 4 | head -n1)
+		echo "Fetching latest AppImage URL from GitHub API..."
+		local appimage_url
+		appimage_url=$(curl -s "$GITHUB_API" | grep "browser_download_url" | grep "appimage" | cut -d '"' -f 4 | head -n1)
 
-        if [ -z "$appimage_url" ]; then
-            echo "Failed to find AppImage URL."
-            return 1
-        fi
+		if [ -z "$appimage_url" ]; then
+			echo "Failed to find AppImage URL."
+			return 1
+		fi
 
-        echo "Downloading AppImage..."
-        curl -L -o "$NEOVIDE_BIN_DIR/neovide" "$appimage_url"
-        chmod +x "$NEOVIDE_BIN_DIR/neovide"
+		echo "Downloading AppImage..."
+		curl -L -o "$NEOVIDE_BIN_DIR/neovide" "$appimage_url"
+		chmod +x "$NEOVIDE_BIN_DIR/neovide"
 
-        return 0
-    }
+		return 0
+	}
 
-    echo "[ Installing Neovide ]"
+	echo "[ Installing Neovide ]"
 
-    ## Try native package manager first
-    local distro
-    distro=$(detect_distro)
-    if install_native_package "$distro"; then
-        echo "[SUCCESS] Neovide installed via native package manager"
-        return 0
-    fi
+	## Try native package manager first
+	local distro
+	distro=$(detect_distro)
+	if install_native_package "$distro"; then
+		echo "[SUCCESS] Neovide installed via native package manager"
+		return 0
+	fi
 
-    ## Try tarball
-    if install_tarball; then
-        echo "[SUCCESS] Neovide installed from tarball"
-        return 0
-    fi
+	## Try tarball
+	if install_tarball; then
+		echo "[SUCCESS] Neovide installed from tarball"
+		return 0
+	fi
 
-    ## Try AppImage
-    if install_appimage; then
-        echo "[SUCCESS] Neovide installed from AppImage"
-        return 0
-    fi
+	## Try AppImage
+	if install_appimage; then
+		echo "[SUCCESS] Neovide installed from AppImage"
+		return 0
+	fi
 
-    echo "[WARNING] Could not install Neovide via any method"
-    return 1
+	echo "[WARNING] Could not install Neovide via any method"
+	return 1
 }
 
 #################################
@@ -602,207 +602,207 @@ function install_neovide() {
 
 function install_lsp_requirements() {
 
-    local failed=0
+	local failed=0
 
-    #########
-    # Paths #
-    #########
+	#########
+	# Paths #
+	#########
 
-    export PATH="$HOME/.local/bin:$PATH"
+	export PATH="$HOME/.local/bin:$PATH"
 
-    local BASE_DIR="$HOME/.local/share/neovim-lsp"
-    local VENV_DIR="$BASE_DIR/venv"
-    local PYTHON_BIN="$VENV_DIR/bin/python"
+	local BASE_DIR="$HOME/.local/share/neovim-lsp"
+	local VENV_DIR="$BASE_DIR/venv"
+	local PYTHON_BIN="$VENV_DIR/bin/python"
 
-    mkdir -p "$BASE_DIR"
+	mkdir -p "$BASE_DIR"
 
-    echo ""
-    echo "[ LSP Setup ]"
-    echo ""
+	echo ""
+	echo "[ LSP Setup ]"
+	echo ""
 
-    ##############
-    # Require uv #
-    ##############
+	##############
+	# Require uv #
+	##############
 
-    if ! command -v uv >/dev/null 2>&1; then
-        echo "[ERROR] uv is required but not installed"
-        return 1
-    fi
+	if ! command -v uv >/dev/null 2>&1; then
+		echo "[ERROR] uv is required but not installed"
+		return 1
+	fi
 
-    ###############################
-    # Create isolated environment #
-    ###############################
+	###############################
+	# Create isolated environment #
+	###############################
 
-    if [[ ! -x "$PYTHON_BIN" ]]; then
-        echo "[ Python ] Creating isolated user environment at $VENV_DIR"
+	if [[ ! -x "$PYTHON_BIN" ]]; then
+		echo "[ Python ] Creating isolated user environment at $VENV_DIR"
 
-        uv venv "$VENV_DIR" --python 3.12 || {
-            echo "[ERROR] Failed to create venv"
-            return 1
-        }
-    fi
+		uv venv "$VENV_DIR" --python 3.12 || {
+			echo "[ERROR] Failed to create venv"
+			return 1
+		}
+	fi
 
-    #####################################
-    # Bootstrap pip tooling inside venv #
-    #####################################
+	#####################################
+	# Bootstrap pip tooling inside venv #
+	#####################################
 
-    echo "[ Python ] Bootstrapping environment tools"
+	echo "[ Python ] Bootstrapping environment tools"
 
-    uv pip install \
-        --python "$PYTHON_BIN" \
-        --upgrade pip setuptools wheel >/dev/null 2>&1 || {
-        echo "[WARNING] Failed upgrading pip tooling"
-    }
+	uv pip install \
+		--python "$PYTHON_BIN" \
+		--upgrade pip setuptools wheel >/dev/null 2>&1 || {
+		echo "[WARNING] Failed upgrading pip tooling"
+	}
 
-    ###################################
-    # NPM tools (global user install) #
-    ###################################
+	###################################
+	# NPM tools (global user install) #
+	###################################
 
-    local -a NPM_DEPENDENCIES=(
-        "alex"
-        "neovim"
-        "bash-language-server"
-        "dockerfile-language-server-nodejs"
-        "yaml-language-server"
-        "prettier"
-        "sql-formatter"
-        "pyright"
-    )
+	local -a NPM_DEPENDENCIES=(
+		"alex"
+		"neovim"
+		"bash-language-server"
+		"dockerfile-language-server-nodejs"
+		"yaml-language-server"
+		"prettier"
+		"sql-formatter"
+		"pyright"
+	)
 
-    if command -v npm >/dev/null 2>&1; then
-        echo ""
-        echo "[ NPM ] Installing tools"
-        echo ""
+	if command -v npm >/dev/null 2>&1; then
+		echo ""
+		echo "[ NPM ] Installing tools"
+		echo ""
 
-        for pkg in "${NPM_DEPENDENCIES[@]}"; do
+		for pkg in "${NPM_DEPENDENCIES[@]}"; do
 
-            if npm list -g "$pkg" >/dev/null 2>&1; then
-                echo "Skipping (already installed): $pkg"
-                continue
-            fi
+			if npm list -g "$pkg" >/dev/null 2>&1; then
+				echo "Skipping (already installed): $pkg"
+				continue
+			fi
 
-            echo "Installing npm tool: $pkg"
-            npm install -g "$pkg" || {
-                echo "[WARNING] Failed npm install: $pkg"
-                failed=1
-            }
-        done
-    else
-        echo "[WARNING] npm not installed"
-    fi
+			echo "Installing npm tool: $pkg"
+			npm install -g "$pkg" || {
+				echo "[WARNING] Failed npm install: $pkg"
+				failed=1
+			}
+		done
+	else
+		echo "[WARNING] npm not installed"
+	fi
 
-    ####################
-    # Python CLI tools #
-    ####################
+	####################
+	# Python CLI tools #
+	####################
 
-    local -a PYTHON_TOOLS=(
-        "ruff"
-        "sqruff"
-        "cmake-language-server"
-        "proselint"
-        "mdformat"
-        "ansible-lint"
-        "yamlfix"
-    )
+	local -a PYTHON_TOOLS=(
+		"ruff"
+		"sqruff"
+		"cmake-language-server"
+		"proselint"
+		"mdformat"
+		"ansible-lint"
+		"yamlfix"
+	)
 
-    echo ""
-    echo "[ Python ] Installing CLI tools"
-    echo ""
+	echo ""
+	echo "[ Python ] Installing CLI tools"
+	echo ""
 
-    for pkg in "${PYTHON_TOOLS[@]}"; do
-        echo "Installing: $pkg"
+	for pkg in "${PYTHON_TOOLS[@]}"; do
+		echo "Installing: $pkg"
 
-        uv tool install --force \
-            --python "$PYTHON_BIN" \
-            "$pkg" || {
-            echo "[ERROR] Failed tool: $pkg"
-            failed=1
-        }
-    done
+		uv tool install --force \
+			--python "$PYTHON_BIN" \
+			"$pkg" || {
+			echo "[ERROR] Failed tool: $pkg"
+			failed=1
+		}
+	done
 
-    ####################
-    # Python libraries #
-    ####################
+	####################
+	# Python libraries #
+	####################
 
-    local -a PYTHON_LIBRARIES=(
-        "pynvim"
-        "pyyaml"
-    )
+	local -a PYTHON_LIBRARIES=(
+		"pynvim"
+		"pyyaml"
+	)
 
-    echo ""
-    echo "[ Python ] Installing libraries into venv"
-    echo ""
+	echo ""
+	echo "[ Python ] Installing libraries into venv"
+	echo ""
 
-    for pkg in "${PYTHON_LIBRARIES[@]}"; do
+	for pkg in "${PYTHON_LIBRARIES[@]}"; do
 
-        # FIX: correct uv pip check (not pip show)
-        if uv pip list --python "$PYTHON_BIN" 2>/dev/null | grep -q "^$pkg "; then
-            echo "Skipping (already installed): $pkg"
-            continue
-        fi
+		# FIX: correct uv pip check (not pip show)
+		if uv pip list --python "$PYTHON_BIN" 2>/dev/null | grep -q "^$pkg "; then
+			echo "Skipping (already installed): $pkg"
+			continue
+		fi
 
-        echo "Installing library: $pkg"
+		echo "Installing library: $pkg"
 
-        uv pip install \
-            --python "$PYTHON_BIN" \
-            "$pkg" || {
-            echo "[ERROR] Failed library: $pkg"
-            failed=1
-        }
-    done
+		uv pip install \
+			--python "$PYTHON_BIN" \
+			"$pkg" || {
+			echo "[ERROR] Failed library: $pkg"
+			failed=1
+		}
+	done
 
-    ########################################
-    # Explicitly block broken legacy chain #
-    ########################################
+	########################################
+	# Explicitly block broken legacy chain #
+	########################################
 
-    echo ""
-    echo "[ Python ] Optional legacy tools"
+	echo ""
+	echo "[ Python ] Optional legacy tools"
 
-    echo "Skipping salt-lsp (broken on Python 3.12 + pyyaml dependency chain)"
+	echo "Skipping salt-lsp (broken on Python 3.12 + pyyaml dependency chain)"
 
-    ##############
-    # Rust tools #
-    ##############
+	##############
+	# Rust tools #
+	##############
 
-    if command -v cargo >/dev/null 2>&1; then
-        echo ""
-        echo "[ Rust ] Installing tools"
+	if command -v cargo >/dev/null 2>&1; then
+		echo ""
+		echo "[ Rust ] Installing tools"
 
-        cargo install stylua || {
-            echo "[WARNING] stylua install failed"
-            failed=1
-        }
-    else
-        echo "[WARNING] Cargo not installed"
-    fi
+		cargo install stylua || {
+			echo "[WARNING] stylua install failed"
+			failed=1
+		}
+	else
+		echo "[WARNING] Cargo not installed"
+	fi
 
-    ############
-    # Go tools #
-    ############
+	############
+	# Go tools #
+	############
 
-    if command -v go >/dev/null 2>&1; then
-        echo ""
-        echo "[ Go ] Installing tools"
+	if command -v go >/dev/null 2>&1; then
+		echo ""
+		echo "[ Go ] Installing tools"
 
-        go install mvdan.cc/sh/v3/cmd/shfmt@latest || {
-            echo "[WARNING] go install failed"
-            failed=1
-        }
-    else
-        echo "[WARNING] Go not installed"
-    fi
+		go install mvdan.cc/sh/v3/cmd/shfmt@latest || {
+			echo "[WARNING] go install failed"
+			failed=1
+		}
+	else
+		echo "[WARNING] Go not installed"
+	fi
 
-    ################
-    # Final status #
-    ################
+	################
+	# Final status #
+	################
 
-    echo ""
+	echo ""
 
-    if [[ $failed -eq 0 ]]; then
-        echo "[SUCCESS] LSP requirements installed"
-    else
-        echo "[WARNING] Some installs failed"
-    fi
+	if [[ $failed -eq 0 ]]; then
+		echo "[SUCCESS] LSP requirements installed"
+	else
+		echo "[WARNING] Some installs failed"
+	fi
 
-    return $failed
+	return $failed
 }

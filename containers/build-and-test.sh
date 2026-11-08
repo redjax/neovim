@@ -8,34 +8,34 @@
 set -e
 
 usage() {
-    echo "Usage: $(basename "$0") [OPTIONS] [config-name] [base-image]"
-    echo ""
-    echo "Build and test Neovim configurations in Docker."
-    echo ""
-    echo "Arguments:"
-    echo "  config-name   Neovim config to test (default: nvim)"
-    echo "                Options: nvim, nvim-lazyvim, nvim-work, nvim-noplugins, nvim-kickstart"
-    echo "  base-image    Docker base image / distro (default: debian:stable-slim)"
-    echo "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help    Show this help message and exit"
-    echo ""
-    echo "Examples:"
-    echo "  $(basename "$0")                              # Build nvim on debian:stable-slim"
-    echo "  $(basename "$0") nvim-lazyvim                 # Build nvim-lazyvim on debian:stable-slim"
-    echo "  $(basename "$0") nvim ubuntu:24.04            # Build nvim on Ubuntu 24.04"
-    echo "  $(basename "$0") nvim-work fedora:42          # Build nvim-work on Fedora 42"
+	echo "Usage: $(basename "$0") [OPTIONS] [config-name] [base-image]"
+	echo ""
+	echo "Build and test Neovim configurations in Docker."
+	echo ""
+	echo "Arguments:"
+	echo "  config-name   Neovim config to test (default: nvim)"
+	echo "                Options: nvim, nvim-lazyvim, nvim-work, nvim-noplugins, nvim-kickstart"
+	echo "  base-image    Docker base image / distro (default: debian:stable-slim)"
+	echo "                Examples: debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base"
+	echo ""
+	echo "Options:"
+	echo "  -h, --help    Show this help message and exit"
+	echo ""
+	echo "Examples:"
+	echo "  $(basename "$0")                              # Build nvim on debian:stable-slim"
+	echo "  $(basename "$0") nvim-lazyvim                 # Build nvim-lazyvim on debian:stable-slim"
+	echo "  $(basename "$0") nvim ubuntu:24.04            # Build nvim on Ubuntu 24.04"
+	echo "  $(basename "$0") nvim-work fedora:42          # Build nvim-work on Fedora 42"
 }
 
 ## Check for help flag
 for arg in "$@"; do
-    case "$arg" in
-        -h|--help)
-            usage
-            exit 0
-            ;;
-    esac
+	case "$arg" in
+	-h | --help)
+		usage
+		exit 0
+		;;
+	esac
 done
 
 CONFIG_NAME="${1:-nvim}"
@@ -56,11 +56,11 @@ cd "${SCRIPT_DIR}"
 
 ## Check if config exists
 if [ ! -d "${REPO_ROOT}/config/${CONFIG_NAME}" ]; then
-    echo "Error: Config '${CONFIG_NAME}' not found in ${REPO_ROOT}/config/"
-    echo ""
-    echo "Available configs:"
-    ls -1 "${REPO_ROOT}/config/" | grep "^nvim"
-    exit 1
+	echo "Error: Config '${CONFIG_NAME}' not found in ${REPO_ROOT}/config/"
+	echo ""
+	echo "Available configs:"
+	ls -1 "${REPO_ROOT}/config/" | grep "^nvim"
+	exit 1
 fi
 
 ## Build the container
@@ -69,8 +69,8 @@ echo "Building container..."
 BASE_IMAGE="${BASE_IMAGE}" BASE_IMAGE_TAG="${BASE_IMAGE_TAG}" CONFIG_NAME="${CONFIG_NAME}" docker compose build
 
 if [ $? -ne 0 ]; then
-    echo "Build failed!"
-    exit 1
+	echo "Build failed!"
+	exit 1
 fi
 
 echo ""
