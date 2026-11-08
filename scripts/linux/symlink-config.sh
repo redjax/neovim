@@ -13,21 +13,21 @@ DEBUG=${DEBUG:-0}
 DOTCONFIG_DIR="${HOME}/.config"
 
 if [[ $DEBUG -eq 1 ]]; then
-  echo "[DEBUG] Script directory: ${SCRIPT_DIR}"
-  echo "[DEBUG] CWD: ${CWD}"
-  echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
+	echo "[DEBUG] Script directory: ${SCRIPT_DIR}"
+	echo "[DEBUG] CWD: ${CWD}"
+	echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
 fi
 
 if [[ ! -d "${CWD}/config" ]]; then
-  echo "[ERROR] Could not find directory 'config/' at path: ${CWD}"
-  exit 1
+	echo "[ERROR] Could not find directory 'config/' at path: ${CWD}"
+	exit 1
 fi
 
 REPO_CONFIGS=($(detect_repo_configs))
 
 echo "Found [${#REPO_CONFIGS[@]}] configurations:"
 for c in "${REPO_CONFIGS[@]}"; do
-  echo "  - $c"
+	echo "  - $c"
 done
 
 symlink-config REPO_CONFIGS

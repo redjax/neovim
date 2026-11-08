@@ -13,12 +13,12 @@ AUTO_YES=0
 
 VALID_PROFILES=()
 if ! discover_profile_names "$CONFIG_DIR" VALID_PROFILES; then
-  echo "Error: no profiles found in ${CONFIG_DIR}" >&2
-  exit 1
+	echo "Error: no profiles found in ${CONFIG_DIR}" >&2
+	exit 1
 fi
 
 usage() {
-  cat <<EOF
+	cat <<EOF
 Usage: $0 [-p|--profile <profile>|all] [--yes]
 Cleans profile data directories under ~/.local/share (not repo config files).
 
@@ -38,48 +38,48 @@ EOF
 }
 
 while [[ $# -gt 0 ]]; do
-  case "$1" in
-    -p|--profile)
-      if [[ -n "${2-}" ]]; then
-        PROFILE="$2"
-        shift 2
-      else
-        echo "Error: --profile requires an argument" >&2
-        usage
-        exit 1
-      fi
-      ;;
-    --yes)
-      AUTO_YES=1
-      shift
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Unknown argument: $1" >&2
-      usage
-      exit 1
-      ;;
-  esac
+	case "$1" in
+	-p | --profile)
+		if [[ -n "${2-}" ]]; then
+			PROFILE="$2"
+			shift 2
+		else
+			echo "Error: --profile requires an argument" >&2
+			usage
+			exit 1
+		fi
+		;;
+	--yes)
+		AUTO_YES=1
+		shift
+		;;
+	-h | --help)
+		usage
+		exit 0
+		;;
+	*)
+		echo "Unknown argument: $1" >&2
+		usage
+		exit 1
+		;;
+	esac
 done
 
 ALL_TARGETS=()
 
 if [[ "$PROFILE" == "all" ]]; then
-  for p in "${VALID_PROFILES[@]}"; do
-    PROFILE_TARGETS=()
-    profile_data_cleanup_targets "$p" PROFILE_TARGETS
-    ALL_TARGETS+=("${PROFILE_TARGETS[@]}")
-  done
+	for p in "${VALID_PROFILES[@]}"; do
+		PROFILE_TARGETS=()
+		profile_data_cleanup_targets "$p" PROFILE_TARGETS
+		ALL_TARGETS+=("${PROFILE_TARGETS[@]}")
+	done
 else
-  if ! profile_is_valid "$PROFILE" VALID_PROFILES; then
-    echo "Error: invalid profile '$PROFILE'. Valid: ${VALID_PROFILES[*]}, or all." >&2
-    exit 1
-  fi
+	if ! profile_is_valid "$PROFILE" VALID_PROFILES; then
+		echo "Error: invalid profile '$PROFILE'. Valid: ${VALID_PROFILES[*]}, or all." >&2
+		exit 1
+	fi
 
-  profile_data_cleanup_targets "$PROFILE" ALL_TARGETS
+	profile_data_cleanup_targets "$PROFILE" ALL_TARGETS
 fi
 
 remove_targets_with_prompt ALL_TARGETS "$AUTO_YES"
