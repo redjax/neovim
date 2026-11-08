@@ -1,18 +1,34 @@
-# Minimal
+# Main Config
 
-A more minimal Lua config for Neovim. Plugins are sourced from [`plugins.lua`](./plugins.lua), and can be controlled with the `NVIM_DISABLE_PLUGINS` env var. The configuration will also look for a `~/.config/nvim/init.local.lua` file to source local, per-machine overrides.
+My main/default Neovim configuration. All configuration is in a single [`init.lua`](./init.lua). Plugins are installed and configured using the [`plugins.lua` file](./plugins.lua). This file is separate to allow disabling plugins by setting `NVIM_DISABLE_PLUGINS=1`.
 
-My definition of minimal:
+The configuration will also look for a `~/.config/nvim/init.local.lua` file to source local, per-machine overrides.
 
-- Only options I've overridden.
-  - In other configs, I might have a configuration set to its default as a reference that it's something I can change.
-  - In this configuration, the only options that appear are overrides of a default.
-- Only useful plugins.
-  - I have a tendency to install a lot of plugins to test them out.
-  - This config narrows the plugin selection to the ones I actually find indispensible.
-  - It uses Neovim 0.12's new `vim.pack()` to install and configure plugins.
-- Single file.
-  - Instead of modularizing my Neovim configuration, this config uses a single `init.lua`, as is tradition.
+> [!WARNING]
+> No special care or attention has been given to make this compatible with Windows. For the best experience, install the configuration(s) in WSL and run Neovim there.
+
+## Requirements
+
+- Neovim 0.12+
+- `git`
+- `curl`
+- `tar`, `gzip`, `unzip`
+- C complier, i.e. GCC or Clang
+- `tree-sitter-cli` executable
+  - `brew install tree-sitter-cli`
+  - `mise use tree-sitter@latest`
+
+Optional:
+
+| Dependency            | Enables                                                                      | Behavior without it                                                                                            |
+| --------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Node.js and `npm`     | Node-based language servers: Bash, Pyright, Dockerfile, Docker Compose, YAML | Skip automatic installation and activation of those servers.                                                   |
+| Go                    | Go-based language servers                                                    | Skip `gopls` and, conservatively, `sqls`.                                                                      |
+| PowerShell 7 (`pwsh`) | PowerShell Editor Services and your optional Windows shell selection         | Skip `powershell_es`                                                                                           |
+| Rust / `cargo`        | Crate installation, compiling Rust apps                                      | N/a                                                                                                            |
+| ripgrep (`rg`)        | Telescope content search                                                     | Grep mappings and “Grep project” starter item will not work.                                                   |
+| `fd`                  | Improved filename discovery; repository discovery through `repo.list()`      | Telescope can use other filename finders.                                                                      |
+| Clipboard backend     | System clipboard integration                                                 | `unnamedplus` and system-clipboard mappings cannot provide the intended integration without a working backend. |
 
 ## Local override
 
