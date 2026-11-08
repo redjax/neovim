@@ -446,7 +446,7 @@ do
   if vim.g.have_nerd_font then
     require("mini.icons").setup()
     -- Used for backwards compatibility with plugins that require `nvim-web-devicons` (e.g. telescope.nvim)
-    MiniIcons.mock_nvim_web_devicons()
+    require("mini.icons").mock_nvim_web_devicons()
   end
 
   -- Better Around/Inside textobjects
@@ -1039,7 +1039,11 @@ do
 
     -- Enable treesitter based indentation
     if has_indent_query then
-      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      vim.api.nvim_set_option_value(
+        "indentexpr",
+        "v:lua.require'nvim-treesitter'.indentexpr()",
+        { buf = buf }
+      )
     end
   end
 
