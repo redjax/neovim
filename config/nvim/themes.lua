@@ -149,6 +149,10 @@ require("themery").setup({
       colorscheme = "tokyonight-night",
     },
     {
+      name = "Tokyo Night Storm",
+      colorscheme = "tokyonight-storm",
+    },
+    {
       name = "Vaporwave",
       colorscheme = "vaporwave",
     },
