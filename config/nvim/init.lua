@@ -150,6 +150,31 @@ vim.diagnostic.config({
   virtual_text = true,
 })
 
+-- Set default colorscheme. Use one of Neovim's built-in themes here.
+-- If no other themes are installed, Neovim will fallback to this one.
+--
+-- Options:
+--   default
+--   vim
+--   blue
+--   darkblue
+--   delek
+--   desert
+--   elflord
+--   evening
+--   industry
+--   koehler
+--   morning
+--   murphy
+--   pablo
+--   peachpuff
+--   ron
+--   shine
+--   slate
+--   torte
+--   zellner
+vim.cmd.colorscheme("default")
+
 --
 -- [ KEYBINDS ]
 --
