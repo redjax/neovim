@@ -5,9 +5,14 @@ REPO_ROOT=$(realpath -m "${THIS_DIR}/../../..")
 LIB_DIR="${THIS_DIR}/lib"
 
 ## Source lib scripts
+
+# shellcheck source=path.sh
 . "${LIB_DIR}/path.sh"
+# shellcheck source=utils.sh
 . "${LIB_DIR}/utils.sh"
+# shellcheck source=depends.sh
 . "${LIB_DIR}/install-depends.sh"
+# shellcheck source=config.sh
 . "${LIB_DIR}/config.sh"
 
 ## Set path where script was called from
@@ -42,9 +47,9 @@ declare -a NVIM_APT_DEPENDENCIES=(
 
 ## Arg defaults
 DEBUG=0
-APPIMG=0
+# APPIMG=0
 BUILD_DIR="$(pwd)/build"
-DEST="${HOME}/.config"
+# DEST="${HOME}/.config"
 CREATE_SYMLINKS=0
 
 ## Parse args
@@ -62,10 +67,10 @@ while [[ $# -gt 0 ]]; do
         BUILD_DIR="$2"
         shift 2
         ;;
-    --dest)
-        DEST="$2"
-        shift 2
-        ;;
+    # --dest)
+    #     DEST="$2"
+    #     shift 2
+    #     ;;
     --symlink | -S)
         CREATE_SYMLINKS=1
         shift
@@ -85,7 +90,7 @@ fi
 DOTCONFIG_DIR="${HOME}/.config"
 
 ## Path to neovim configuration directory src in this repository
-NVIM_CONFIG_SRC="${CWD}/config"
+# NVIM_CONFIG_SRC="${CWD}/config"
 
 ## Determine the OS type
 OS_TYPE=$(uname -s)
@@ -100,12 +105,12 @@ NEOVIM_MAKE_BUILD_DIR=$BUILD_DIR
 ## If $INSTALL_NVIM_APPIMG=1, add FUSE dependency
 if [[ ${INSTALL_NVIM_APPIMG} -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
     echo "Neovim will be installed by AppImage. Install FUSE dependency."
-    if [[ ! " ${NVIM_DNF_DEPENDENCIES[@]} " =~ " fuse " ]]; then
+    if [[ ! " ${NVIM_DNF_DEPENDENCIES[*]} " =~ " fuse " ]]; then
         ## Add "fuse" to dnf dependencies
         NVIM_DNF_DEPENDENCIES+=("fuse")
     fi
 
-    if [[ ! " ${NVIM_APT_DEPENDENCIES[@]} " =~ " fuse " ]]; then
+    if [[ ! " ${NVIM_APT_DEPENDENCIES[*]} " =~ " fuse " ]]; then
         echo "Neovim will be installed by AppImage. Install FUSE dependency."
         ## Add "fuse" to apt dependencies
         NVIM_APT_DEPENDENCIES+=("fuse")
@@ -166,7 +171,7 @@ function main() {
     echo "--[ Install NERDFont"
     ## Install NERDFont
     # echo "[DEBUG] Would install Nerd Fonts"
-    install_nerdfont  
+    install_nerdfont
 
     if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
         # echo "[DEBUG] Would install nvim from appimg"
@@ -181,16 +186,16 @@ function main() {
     fi
 
     eval_last $?
-    
+
     echo "--[ Symlink configurations"
     ## Symlink neovim configuration
     if [[ $CREATE_SYMLINKS -eq 1 ]]; then
-        REPO_CONFIGS=($(detect_repo_configs))
+        mapfile -t REPO_CONFIGS < <(detect_repo_configs)
         symlink-config REPO_CONFIGS
     fi
 }
 
-if command -v nvim > /dev/null 2>&1; then
+if command -v nvim >/dev/null 2>&1; then
     echo "Neovim is already installed. Reinstalling Neovim from source or appimage, then linking config."
 
     # Reinstall neovim (update it)
@@ -201,8 +206,8 @@ if command -v nvim > /dev/null 2>&1; then
     fi
     eval_last $?
 
-    REPO_CONFIGS=($(detect_repo_configs))
-    symlink-config $REPO_CONFIGS
+    mapfile -t REPO_CONFIGS < <(detect_repo_configs)
+    symlink-config "${REPO_CONFIGS[@]}"
 
     # Install deps again (in case Neovim version changed)
     if [[ ${PKG_MGR} == "dnf" ]]; then
@@ -214,10 +219,11 @@ else
     main
 fi
 
-if [[ ! $? -eq 0 ]]; then
-    echo "[WARNING] Script exited with non-zero exit code: $?"
+LAST_EXIT=$?
+if [[ ! $LAST_EXIT -eq 0 ]]; then
+    echo "[WARNING] Script exited with non-zero exit code: $LAST_EXIT"
     # sleep 6
-    exit $?
+    exit $LAST_EXIT
 else
     echo ""
     echo "--[ Finished installing & configuring Neovim."

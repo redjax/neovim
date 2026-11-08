@@ -4,6 +4,7 @@
 
 __NEOVIM_UTILS_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# shellcheck source=path.sh
 . "${__NEOVIM_UTILS_LIB_DIR}/path.sh"
 unset __NEOVIM_UTILS_LIB_DIR
 
@@ -35,6 +36,8 @@ function eval_last() {
 
 ## Determine OS release and family
 if [ -f /etc/os-release ]; then
+    ## Provided by the target Linux system.
+    # shellcheck source=/dev/null
     . /etc/os-release
     OS_RELEASE=$NAME
     OS_VERSION=${VERSION_ID:-"Unknown"}
@@ -82,7 +85,7 @@ if [[ $OS_FAMILY == "RedHat-family" ]]; then
     if ! command -v dnf >/dev/null 2>&1; then
         echo "dnf not detected. Trying yum"
 
-        if ! command -v yum 2 >/dev/null &>1; then
+        if ! command -v yum >/dev/null 2>&1; then
             echo "[ERROR] RedHat family OS was detected, but script could not find dnf or yum package manager..."
 
             exit 1
@@ -131,7 +134,7 @@ PLATFORM_STR="\n
 ######################
 
 function print_platform() {
-    echo -e $PLATFORM_STR
+    echo -e "${PLATFORM_STR}"
 }
 
 function print_unsupported_platform() {
@@ -144,7 +147,7 @@ function print_unsupported_platform() {
 
 function check_system_dependencies() {
     ## Check if curl is installed
-    if ! command -v curl > /dev/null 2>&1; then
+    if ! command -v curl >/dev/null 2>&1; then
         echo "[WARNING] curl is not installed."
 
         if [[ $PKG_MGR == "dnf" ]]; then
@@ -158,7 +161,7 @@ function check_system_dependencies() {
     fi
 
     ## Check if unzip is installed
-    if ! command -v unzip > /dev/null 2>&1; then
+    if ! command -v unzip >/dev/null 2>&1; then
         echo "[WARNING] unzip is not installed."
 
         if [[ $PKG_MGR == "dnf" ]]; then
@@ -172,7 +175,7 @@ function check_system_dependencies() {
     fi
 
     ## Check if fontconfig is installed
-    if ! command -v fc-cache > /dev/null 2>&1; then
+    if ! command -v fc-cache >/dev/null 2>&1; then
         echo "[WARNING] fontconfig is not installed."
 
         if [[ $PKG_MGR == "dnf" ]]; then
