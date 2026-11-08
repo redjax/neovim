@@ -73,6 +73,10 @@ require("eldritch").setup({
 require("themery").setup({
   themes = {
     {
+      name = "Aurora",
+      colorscheme = "aurora",
+    },
+    {
       name = "Eldritch",
       colorscheme = "eldritch",
     },
@@ -85,8 +89,8 @@ require("themery").setup({
       colorscheme = "eldritch-minimal",
     },
     {
-      name = "Kanagawa Wave",
-      colorscheme = "kanagawa-wave",
+      name = "Gruvbox",
+      colorscheme = "gruvbox",
     },
     {
       name = "Kanagawa Dragon",
@@ -97,16 +101,20 @@ require("themery").setup({
       colorscheme = "kanagawa-lotus",
     },
     {
-      name = "Tokyo Night Night",
-      colorscheme = "tokyonight-night",
-    },
-    {
-      name = "Tokyo Night Moon",
-      colorscheme = "tokyonight-moon",
+      name = "Kanagawa Wave",
+      colorscheme = "kanagawa-wave",
     },
     {
       name = "Moonfly",
       colorscheme = "moonfly",
+    },
+    {
+      name = "Nord",
+      colorscheme = "nord",
+    },
+    {
+      name = "NVCode",
+      colorscheme = "nvcode",
     },
     {
       name = "OneDark",
@@ -125,8 +133,24 @@ require("themery").setup({
       colorscheme = "oxocarbon",
     },
     {
+      name = "Palenight",
+      colorscheme = "palenight",
+    },
+    {
       name = "Slate",
       colorscheme = "slate",
+    },
+    {
+      name = "Snazzy",
+      colorscheme = "snazzy",
+    },
+    {
+      name = "Tokyo Night Moon",
+      colorscheme = "tokyonight-moon",
+    },
+    {
+      name = "Tokyo Night Night",
+      colorscheme = "tokyonight-night",
     },
     {
       name = "Vaporwave",
@@ -141,36 +165,12 @@ require("themery").setup({
       colorscheme = "wildcharm",
     },
     {
-      name = "Zaibatsu",
-      colorscheme = "zaibatsu",
-    },
-    {
-      name = "NVCode",
-      colorscheme = "nvcode",
-    },
-    {
-      name = "Nord",
-      colorscheme = "nord",
-    },
-    {
-      name = "Aurora",
-      colorscheme = "aurora",
-    },
-    {
-      name = "Gruvbox",
-      colorscheme = "gruvbox",
-    },
-    {
-      name = "Palenight",
-      colorscheme = "palenight",
-    },
-    {
-      name = "Snazzy",
-      colorscheme = "snazzy",
-    },
-    {
       name = "Xoria",
       colorscheme = "xoria",
+    },
+    {
+      name = "Zaibatsu",
+      colorscheme = "zaibatsu",
     },
   },
 
