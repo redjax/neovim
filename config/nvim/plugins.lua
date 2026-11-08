@@ -161,6 +161,26 @@ vim.pack.add({
   {
     src = "https://github.com/nvim-orgmode/telescope-orgmode.nvim",
   },
+
+  -- Debug Adapter Protocol client.
+  {
+    src = "https://github.com/mfussenegger/nvim-dap",
+  },
+
+  -- Async utilities required by nvim-dap-ui.
+  {
+    src = "https://github.com/nvim-neotest/nvim-nio",
+  },
+
+  -- Debugger panels for variables, watches, stacks, and breakpoints.
+  {
+    src = "https://github.com/rcarriga/nvim-dap-ui",
+  },
+
+  -- Install and configure debug adapters through Mason.
+  {
+    src = "https://github.com/jay-babu/mason-nvim-dap.nvim",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -832,6 +852,158 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 --
+-- [ DEBUGGING / DAP ]
+--
+
+local dap = require("dap")
+local dapui = require("dapui")
+
+-- Check executables available to this Neovim process.
+local function has_executable(command)
+  return vim.fn.executable(command) == 1
+end
+
+-- Only request adapters whose language runtimes are available.
+local available_adapters = {
+  python = has_executable("python3") or has_executable("python"),
+  delve = has_executable("go"),
+}
+
+local ensure_adapters = {}
+
+for name, available in pairs(available_adapters) do
+  if available then
+    ensure_adapters[#ensure_adapters + 1] = name
+  end
+end
+
+table.sort(ensure_adapters)
+
+require("mason-nvim-dap").setup({
+  ensure_installed = ensure_adapters,
+
+  -- Do not install additional adapters implicitly.
+  automatic_installation = false,
+
+  handlers = {
+    function(config)
+      -- Also skip configuration of previously installed adapters
+      -- when the corresponding runtime is unavailable.
+      if available_adapters[config.name] then
+        require("mason-nvim-dap").default_setup(config)
+      end
+    end,
+  },
+})
+
+-- Initialize debugger panels.
+dapui.setup({})
+
+-- Open the panels once a debug session has initialized.
+dap.listeners.after.event_initialized["minimal_dapui"] = function()
+  dapui.open()
+end
+
+-- Close the panels when the session ends.
+dap.listeners.before.event_terminated["minimal_dapui"] = function()
+  dapui.close()
+end
+
+dap.listeners.before.event_exited["minimal_dapui"] = function()
+  dapui.close()
+end
+
+-- Use ASCII breakpoint and execution markers.
+vim.fn.sign_define("DapBreakpoint", {
+  text = "B",
+  texthl = "DiagnosticError",
+})
+
+vim.fn.sign_define("DapBreakpointCondition", {
+  text = "C",
+  texthl = "DiagnosticWarn",
+})
+
+vim.fn.sign_define("DapLogPoint", {
+  text = "L",
+  texthl = "DiagnosticInfo",
+})
+
+vim.fn.sign_define("DapStopped", {
+  text = ">",
+  texthl = "DiagnosticInfo",
+  linehl = "Visual",
+})
+
+vim.fn.sign_define("DapBreakpointRejected", {
+  text = "!",
+  texthl = "DiagnosticError",
+})
+
+--
+-- [ DEBUGGING KEYBINDINGS ]
+--
+
+-- Launch a session or resume execution.
+vim.keymap.set("n", "<leader>dc", dap.continue, {
+  desc = "Debug: start / continue",
+})
+
+-- Toggle a breakpoint on the current line.
+vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, {
+  desc = "Debug: toggle breakpoint",
+})
+
+-- Stop only when an expression evaluates to true.
+vim.keymap.set("n", "<leader>dB", function()
+  vim.ui.input({
+    prompt = "Breakpoint condition: ",
+  }, function(condition)
+    if condition and condition ~= "" then
+      dap.set_breakpoint(condition)
+    end
+  end)
+end, {
+  desc = "Debug: conditional breakpoint",
+})
+
+vim.keymap.set("n", "<leader>dn", dap.step_over, {
+  desc = "Debug: step over",
+})
+
+vim.keymap.set("n", "<leader>di", dap.step_into, {
+  desc = "Debug: step into",
+})
+
+vim.keymap.set("n", "<leader>do", dap.step_out, {
+  desc = "Debug: step out",
+})
+
+vim.keymap.set("n", "<leader>dt", dap.terminate, {
+  desc = "Debug: terminate",
+})
+
+vim.keymap.set("n", "<leader>dr", dap.run_last, {
+  desc = "Debug: run last",
+})
+
+vim.keymap.set("n", "<leader>du", dapui.toggle, {
+  desc = "Debug: toggle panels",
+})
+
+vim.keymap.set("n", "<leader>dR", function()
+  dap.repl.toggle()
+end, {
+  desc = "Debug: toggle REPL",
+})
+
+vim.keymap.set({ "n", "x" }, "<leader>de", function()
+  dapui.eval()
+end, {
+  desc = "Debug: evaluate expression",
+})
+
+--
 -- [ TREESITTER ]
 --
 
@@ -1142,6 +1314,7 @@ require("which-key").setup({
 
   -- Label keybinding prefixes; individual mappings supply their own descriptions.
   spec = {
+    { "<leader>d", group = "Debug" },
     { "<leader>g", group = "Git" },
     { "<leader>s", group = "Search" },
     { "<leader>u", group = "UI" },
