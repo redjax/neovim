@@ -28,6 +28,12 @@ vim.pack.add({
     version = "master",
   },
 
+  -- Material colorscheme.
+  {
+    src = "https://github.com/marko-cerovac/material.nvim",
+    version = "main",
+  },
+
   -- Moonfly colorscheme.
   {
     src = "https://github.com/bluz71/vim-moonfly-colors",
@@ -129,6 +135,30 @@ require("themery").setup({
     {
       name = "Kanagawa Wave",
       colorscheme = "kanagawa-wave",
+    },
+    {
+      name = "Material",
+      colorscheme = "material",
+    },
+    {
+      name = "Material Darker",
+      colorscheme = "material-darker",
+    },
+    {
+      name = "Material Deep Ocean",
+      colorscheme = "material-deep-ocean",
+    },
+    {
+      name = "Material Lighter",
+      colorscheme = "material-lighter",
+    },
+    {
+      name = "Material Oceanic",
+      colorscheme = "material-oceanic",
+    },
+    {
+      name = "Material Palenight",
+      colorscheme = "material-palenight",
     },
     {
       name = "Moonfly",

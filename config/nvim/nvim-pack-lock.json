@@ -73,6 +73,11 @@
       "src": "https://github.com/mason-org/mason.nvim",
       "version": "'main'"
     },
+    "material.nvim": {
+      "rev": "92f7366a9315cd386bc4fa4d716fde375dda210f",
+      "src": "https://github.com/marko-cerovac/material.nvim",
+      "version": "'main'"
+    },
     "mini.nvim": {
       "rev": "a321b535c75ca88ba7fddfd8eb5b583fbda50dd6",
       "src": "https://github.com/nvim-mini/mini.nvim",
