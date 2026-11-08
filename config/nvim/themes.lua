@@ -161,10 +161,6 @@ require("themery").setup({
       colorscheme = "vscode_modern",
     },
     {
-      name = "Xoria",
-      colorscheme = "xoria",
-    },
-    {
       name = "Zaibatsu",
       colorscheme = "zaibatsu",
     },
