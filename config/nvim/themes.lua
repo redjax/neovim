@@ -160,10 +160,6 @@ require("themery").setup({
       name = "VSCode Modern",
       colorscheme = "vscode_modern",
     },
-    {
-      name = "Zaibatsu",
-      colorscheme = "zaibatsu",
-    },
   },
 
   -- Preview themes while navigating the menu.
