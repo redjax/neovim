@@ -87,6 +87,11 @@
       "rev": "3a0e624a67ecd2c7f990bc3c25a1044e85782b10",
       "src": "https://github.com/ChristianChiarulli/nvcode-color-schemes.vim"
     },
+    "nvim": {
+      "rev": "edefef779ab08ce1a4a404713e3012b0d202bd35",
+      "src": "https://github.com/catppuccin/nvim",
+      "version": "'main'"
+    },
     "nvim-colorizer.lua": {
       "rev": "72a05f62c52241bc7441c820eb53946f92b2e6a4",
       "src": "https://github.com/catgoose/nvim-colorizer.lua"

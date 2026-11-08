@@ -10,6 +10,12 @@ vim.pack.add({
     version = "main",
   },
 
+  -- Catppuccin
+  {
+    src = "https://github.com/catppuccin/nvim",
+    version = "main",
+  },
+
   -- Eldritch colorscheme.
   {
     src = "https://github.com/eldritch-theme/eldritch.nvim",
@@ -75,6 +81,26 @@ require("themery").setup({
     {
       name = "Aurora",
       colorscheme = "aurora",
+    },
+    {
+      name = "Catppuccin",
+      colorscheme = "catppuccin-nvim",
+    },
+    {
+      name = "Catppuccin Frappe",
+      colorscheme = "catppuccin-frappe",
+    },
+    {
+      name = "Catppuccin Latte",
+      colorscheme = "catppuccin-latte",
+    },
+    {
+      name = "Catppuccin Macchiato",
+      colorscheme = "catppuccin-macchiato",
+    },
+    {
+      name = "Catppuccin Mocha",
+      colorscheme = "catppuccin-mocha",
     },
     {
       name = "Eldritch",
