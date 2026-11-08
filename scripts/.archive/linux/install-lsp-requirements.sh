@@ -11,30 +11,30 @@ OS_TYPE=$(uname -s)
 CONTAINER_ENV=${CONTAINER_ENV:-0}
 
 if [[ $CONTAINER_ENV -eq 1 || $CONTAINER_ENV == "1" ]]; then
-    echo "[DEBUG] Container environment: ${CONTAINER_ENV}"
+	echo "[DEBUG] Container environment: ${CONTAINER_ENV}"
 
-    ## Pause to allow viewing output in a Docker environment
-    # sleep 4
+	## Pause to allow viewing output in a Docker environment
+	# sleep 4
 fi
 
 declare -a NPM_DEPENDENCIES=(
-    "azure-pipelines-language-server"
-    "bash-language-server"
-    "css-variables-language-server"
-    "@microsoft/compose-language-service"
-    "dockerfile-language-server-nodejs"
+	"azure-pipelines-language-server"
+	"bash-language-server"
+	"css-variables-language-server"
+	"@microsoft/compose-language-service"
+	"dockerfile-language-server-nodejs"
 )
 
-if ! command -v npm --version > /dev/null; then
-    echo "NPM is not installed."
-    exit 1
+if ! command -v npm --version >/dev/null; then
+	echo "NPM is not installed."
+	exit 1
 fi
 
 echo "Installing language servers with npm"
 
 for npmPkg in "${NPM_DEPENDENCIES[@]}"; do
-    npm i -g $npmPkg
-    if [[ $? -ne 0 ]]; then
-        echo "[ERROR] Failed to install npm package '$npmPkg'."
-    fi
+	npm i -g $npmPkg
+	if [[ $? -ne 0 ]]; then
+		echo "[ERROR] Failed to install npm package '$npmPkg'."
+	fi
 done

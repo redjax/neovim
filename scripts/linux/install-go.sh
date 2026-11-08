@@ -4,27 +4,27 @@ set -uo pipefail
 VERSION=""
 
 # Parse args
-while (( "$#" )); do
-  case "$1" in
-    -v|--version)
-      if [ -n "$2" ] && [[ "${2:0:1}" != "-" ]]; then
-        VERSION=$2
-        shift 2
-      else
-        echo "Error: Argument for $1 is missing" >&2
-        exit 1
-      fi
-      ;;
-    *)
-      shift
-      ;;
-  esac
+while (("$#")); do
+	case "$1" in
+	-v | --version)
+		if [ -n "$2" ] && [[ "${2:0:1}" != "-" ]]; then
+			VERSION=$2
+			shift 2
+		else
+			echo "Error: Argument for $1 is missing" >&2
+			exit 1
+		fi
+		;;
+	*)
+		shift
+		;;
+	esac
 done
 
 # Fetch latest Go version cleanly
 if [[ -z "$VERSION" ]]; then
-  echo "Detecting latest Go version..."
-  VERSION=$(curl -s https://go.dev/VERSION?m=text | head -n 1 | tr -d '\r')
+	echo "Detecting latest Go version..."
+	VERSION=$(curl -s https://go.dev/VERSION?m=text | head -n 1 | tr -d '\r')
 fi
 
 echo "Installing Go $VERSION"
@@ -47,12 +47,12 @@ rm -f "$TARBALL"
 
 # Ensure PATH
 if ! grep -q '/usr/local/go/bin' "$HOME/.bashrc"; then
-  echo 'export PATH="/usr/local/go/bin:$PATH"' >> "$HOME/.bashrc"
+	echo 'export PATH="/usr/local/go/bin:$PATH"' >>"$HOME/.bashrc"
 fi
 
 # Disable Go toolchain auto-downloads
 if ! grep -q 'GOTOOLCHAIN=local' "$HOME/.bashrc"; then
-  echo 'export GOTOOLCHAIN=local' >> "$HOME/.bashrc"
+	echo 'export GOTOOLCHAIN=local' >>"$HOME/.bashrc"
 fi
 
 export PATH="/usr/local/go/bin:$PATH"
