@@ -52,6 +52,12 @@ vim.pack.add({
     version = "main",
   },
 
+  -- Sonokai colorscheme.
+  {
+    src = "https://github.com/sainnhe/sonokai",
+    version = "master",
+  },
+
   -- Tokyo Night colorscheme.
   {
     src = "https://github.com/folke/tokyonight.nvim",
@@ -179,6 +185,10 @@ require("themery").setup({
     {
       name = "Snazzy",
       colorscheme = "snazzy",
+    },
+    {
+      name = "Sonokai",
+      colorscheme = "sonokai",
     },
     {
       name = "Tokyo Night Moon",
