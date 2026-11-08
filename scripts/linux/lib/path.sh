@@ -5,5 +5,5 @@ REPO_ROOT=$(realpath -m "${__NEOVIM_PATH_LIB_DIR}/../../..")
 unset __NEOVIM_PATH_LIB_DIR
 
 function return_to_root() {
-    cd "${REPO_ROOT}"
+	cd "${REPO_ROOT}"
 }

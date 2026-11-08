@@ -1,7 +1,7 @@
 #!/bin/bash
 
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT=$(realpath -m "${THIS_DIR}/../../..")
+# REPO_ROOT=$(realpath -m "${THIS_DIR}/../../..")
 LIB_DIR="${THIS_DIR}/lib"
 
 ## Source lib scripts
