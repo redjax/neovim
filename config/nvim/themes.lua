@@ -4,10 +4,16 @@
 
 -- Install themes
 vim.pack.add({
-  -- Tokyo Night colorscheme.
+  -- Aura colorscheme.
   {
-    src = "https://github.com/folke/tokyonight.nvim",
+    src = "https://github.com/daltonmenezes/aura-theme",
     version = "main",
+  },
+
+  -- Eldritch colorscheme.
+  {
+    src = "https://github.com/eldritch-theme/eldritch.nvim",
+    version = "master",
   },
 
   -- Kanagawa colorscheme.
@@ -22,15 +28,9 @@ vim.pack.add({
     version = "master",
   },
 
-  -- Aura colorscheme.
+  -- OneDark Pro colorscheme.
   {
-    src = "https://github.com/daltonmenezes/aura-theme",
-    version = "main",
-  },
-
-  -- VSCode Modern colorscheme.
-  {
-    src = "https://github.com/gmr458/vscode_modern_theme.nvim",
+    src = "https://github.com/olimorris/onedarkpro.nvim",
     version = "main",
   },
 
@@ -40,16 +40,16 @@ vim.pack.add({
     version = "main",
   },
 
-  -- OneDark Pro colorscheme.
+  -- Tokyo Night colorscheme.
   {
-    src = "https://github.com/olimorris/onedarkpro.nvim",
+    src = "https://github.com/folke/tokyonight.nvim",
     version = "main",
   },
 
-  -- Eldritch colorscheme.
+  -- VSCode Modern colorscheme.
   {
-    src = "https://github.com/eldritch-theme/eldritch.nvim",
-    version = "master",
+    src = "https://github.com/gmr458/vscode_modern_theme.nvim",
+    version = "main",
   },
 })
 
@@ -91,6 +91,10 @@ require("themery").setup({
     {
       name = "Gruvbox",
       colorscheme = "gruvbox",
+    },
+    {
+      name = "Kanagawa",
+      colorscheme = "kanagawa",
     },
     {
       name = "Kanagawa Dragon",
