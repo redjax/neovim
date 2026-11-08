@@ -1,6 +1,6 @@
 # Main Config
 
-My main/default Neovim configuration. All configuration is in a single [`init.lua`](./init.lua). Plugins are installed and configured using the [`plugins.lua` file](./plugins.lua). This file is separate to allow disabling plugins by setting `NVIM_DISABLE_PLUGINS=1`.
+My main/default Neovim configuration. All configuration is in a single [`init.lua`](./init.lua). Plugins are installed and configured using the [`plugins.lua` file](./plugins.lua). Themes are installed and configured using the [`themes.lua` file](./themes.lua). These files are separate from `init.lua` to allow disabling plugins by setting `NVIM_DISABLE_PLUGINS=1`.
 
 The configuration will also look for a `~/.config/nvim/init.local.lua` file to source local, per-machine overrides.
 
