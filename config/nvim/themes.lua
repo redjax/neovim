@@ -97,10 +97,6 @@ require("themery").setup({
       colorscheme = "catppuccin-frappe",
     },
     {
-      name = "Catppuccin Latte",
-      colorscheme = "catppuccin-latte",
-    },
-    {
       name = "Catppuccin Macchiato",
       colorscheme = "catppuccin-macchiato",
     },
@@ -129,10 +125,6 @@ require("themery").setup({
       colorscheme = "kanagawa-dragon",
     },
     {
-      name = "Kanagawa Lotus",
-      colorscheme = "kanagawa-lotus",
-    },
-    {
       name = "Kanagawa Wave",
       colorscheme = "kanagawa-wave",
     },
@@ -147,10 +139,6 @@ require("themery").setup({
     {
       name = "Material Deep Ocean",
       colorscheme = "material-deep-ocean",
-    },
-    {
-      name = "Material Lighter",
-      colorscheme = "material-lighter",
     },
     {
       name = "Material Oceanic",
