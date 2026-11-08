@@ -74,7 +74,7 @@
       "version": "'main'"
     },
     "mini.nvim": {
-      "rev": "a321b535c75ca88ba7fddfd8eb5b583fbda50dd6",
+      "rev": "1345d191bb3da9c7b0e977f4387c5761f9bff68d",
       "src": "https://github.com/nvim-mini/mini.nvim",
       "version": "'stable'"
     },
@@ -97,7 +97,7 @@
       "version": "'master'"
     },
     "nvim-tree.lua": {
-      "rev": "69eb0c34ed3d836d5a0d92d913b77dd73b054f2f",
+      "rev": "321bc61580fd066b76861c32de3319c3a6d089e7",
       "src": "https://github.com/nvim-tree/nvim-tree.lua",
       "version": "'v1.14.0'"
     },
