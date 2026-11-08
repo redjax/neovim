@@ -161,10 +161,6 @@ require("themery").setup({
       colorscheme = "vscode_modern",
     },
     {
-      name = "Wild Charm",
-      colorscheme = "wildcharm",
-    },
-    {
       name = "Xoria",
       colorscheme = "xoria",
     },
