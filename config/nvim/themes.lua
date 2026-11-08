@@ -137,10 +137,6 @@ require("themery").setup({
       colorscheme = "palenight",
     },
     {
-      name = "Slate",
-      colorscheme = "slate",
-    },
-    {
       name = "Snazzy",
       colorscheme = "snazzy",
     },
