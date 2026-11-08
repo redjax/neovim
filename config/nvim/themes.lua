@@ -115,10 +115,6 @@ require("themery").setup({
       colorscheme = "eldritch-minimal",
     },
     {
-      name = "Gruvbox",
-      colorscheme = "gruvbox",
-    },
-    {
       name = "Kanagawa",
       colorscheme = "kanagawa",
     },
