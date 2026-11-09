@@ -2,7 +2,7 @@
 ## Go and Rust are self-contained, so they can be copied cross-distro.
 ## Python must be installed from the distro's package manager (SSL linkage issues).
 FROM golang:1.27.3@sha256:e519d3b0a5b285e5aa53ab9eef02bc6bbb9cb04608389b743a136a9ce75f0d1e AS go-base
-FROM rust:1.99@sha256:09027f873d45b8ecd1dc86f1fa13b7a62b875c961f017a0e331267b350430137 AS rust-base
+FROM rust:1.99@sha256:8a4e90c7946b74626488b1446f712c0fe0ed1a596cbd3d871684bc9c5433ae07 AS rust-base
 
 ## -----------------------------------------------------------
 ## Single-stage build: simulates a fresh install on a target distro
