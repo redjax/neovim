@@ -14,7 +14,7 @@ discover_profiles() {
 	done
 }
 
-llink_configs() {
+link_configs() {
 	local target_root=$1
 	local backup_configs=${2:-0}
 	local dry_run=${3:-0}
