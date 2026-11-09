@@ -273,6 +273,23 @@ if [[ $METHOD == auto ]]; then
 
 		if package_available neovim; then
 			METHOD="package"
+
+			## Determine if available package meets minimum version
+			if [[ $BACKEND == apt-get ]]; then
+				candidate_version="$(
+					apt-cache policy neovim |
+						awk '/Candidate:/ { print $2; exit }'
+				)"
+
+				## Remove a Debian epoch and packaging revision before comparing.
+				upstream_version=${candidate_version#*:}
+				upstream_version=${upstream_version%%-*}
+
+				if ! version_at_least "$upstream_version" "$MIN_NVIM"; then
+					log "Repository Neovim $candidate_version is below $MIN_NVIM; selecting source."
+					METHOD="source"
+				fi
+			fi
 		else
 			METHOD="source"
 		fi
