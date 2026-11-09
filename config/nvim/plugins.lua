@@ -7,6 +7,77 @@ local plugin_group = vim.api.nvim_create_augroup("MinimalPlugins", {
 })
 
 --
+-- [ EXTERNAL REQUIREMENTS ]
+--
+
+-- Check executables visible to this Neovim process.
+local function has_executable(command)
+  return vim.fn.executable(command) == 1
+end
+
+-- Return any missing commands from a prerequisite list.
+local function missing_commands(commands)
+  local missing = {}
+
+  for _, command in ipairs(commands) do
+    if not has_executable(command) then
+      missing[#missing + 1] = command
+    end
+  end
+
+  return missing
+end
+
+-- Find the first available executable from a list.
+local function first_executable(commands)
+  for _, command in ipairs(commands) do
+    if has_executable(command) then
+      return command
+    end
+  end
+end
+
+-- Record unavailable optional features without startup notifications.
+local unavailable_features = {}
+
+local function record_unavailable(feature, reason)
+  unavailable_features[feature] = reason
+end
+
+-- Guard interactive actions so missing tools produce a useful message.
+local function guarded_action(feature, check, action)
+  return function(...)
+    local available, reason = check()
+
+    if not available then
+      vim.notify(feature .. ": " .. (reason or "required tool unavailable"), vim.log.levels.WARN)
+      return
+    end
+
+    return action(...)
+  end
+end
+
+vim.api.nvim_create_user_command("ConfigTools", function()
+  local lines = {}
+
+  for feature, reason in pairs(unavailable_features) do
+    lines[#lines + 1] = feature .. ": " .. reason
+  end
+
+  table.sort(lines)
+
+  vim.notify(
+    #lines == 0 and "No optional features were skipped during setup."
+      or "Unavailable optional features:\n" .. table.concat(lines, "\n"),
+    vim.log.levels.INFO
+  )
+end, {
+  force = true,
+  desc = "Show optional features skipped during setup",
+})
+
+--
 -- [ PLUGINS ]
 --
 
@@ -818,15 +889,57 @@ local servers = {
   taplo = {},
 }
 
--- Configure each server before Mason enables it.
+-- Prerequisites for automatic installation and use.
+-- Servers without an entry here have no additional runtime gate.
+local server_requirements = {
+  bashls = { "node", "npm" },
+  dockerls = { "node", "npm" },
+  docker_compose_language_service = { "node", "npm" },
+  pyright = { "node", "npm" },
+  yamlls = { "node", "npm" },
+
+  gopls = { "go" },
+  sqls = { "go" },
+
+  powershell_es = { "pwsh" },
+}
+
+local enabled_servers = {}
+local skipped_servers = {}
+
 for name, config in pairs(servers) do
-  vim.lsp.config(name, config)
+  local missing = missing_commands(server_requirements[name] or {})
+
+  if #missing == 0 then
+    vim.lsp.config(name, config)
+    enabled_servers[#enabled_servers + 1] = name
+  else
+    local reason = "missing " .. table.concat(missing, ", ")
+
+    skipped_servers[#skipped_servers + 1] = name .. ": " .. reason
+    record_unavailable("LSP " .. name, reason)
+  end
 end
 
--- Install and automatically enable the language servers listed above.
+table.sort(enabled_servers)
+table.sort(skipped_servers)
+
 require("mason-lspconfig").setup({
-  ensure_installed = vim.tbl_keys(servers),
-  automatic_enable = vim.tbl_keys(servers),
+  ensure_installed = enabled_servers,
+
+  -- Limit activation too, including previously installed servers.
+  automatic_enable = enabled_servers,
+})
+
+-- Report skipped servers only when requested.
+vim.api.nvim_create_user_command("LspSkipped", function()
+  local message = #skipped_servers == 0 and "No language servers skipped."
+    or "Skipped language servers:\n" .. table.concat(skipped_servers, "\n")
+
+  vim.notify(message, vim.log.levels.INFO)
+end, {
+  force = true,
+  desc = "Show language servers skipped because prerequisites are missing",
 })
 
 -- Add buffer-local mappings when a language server attaches.
@@ -858,16 +971,44 @@ vim.api.nvim_create_autocmd("LspAttach", {
 local dap = require("dap")
 local dapui = require("dapui")
 
--- Check executables available to this Neovim process.
-local function has_executable(command)
-  return vim.fn.executable(command) == 1
+-- Check Python's environment-creation modules before requesting debugpy.
+local python_command = first_executable({ "python3", "python" })
+local python_debug_ready = false
+local python_debug_reason = "missing python3 or python"
+
+if python_command then
+  local ok, result = pcall(function()
+    return vim
+      .system({
+        python_command,
+        "-c",
+        "import sys; assert sys.version_info.major == 3; import venv, ensurepip",
+      }, {
+        text = true,
+      })
+      :wait(3000)
+  end)
+
+  python_debug_ready = ok and result.code == 0
+
+  if not python_debug_ready then
+    python_debug_reason = "Python 3 needs working venv and ensurepip modules"
+  end
 end
 
 -- Only request adapters whose language runtimes are available.
 local available_adapters = {
-  python = has_executable("python3") or has_executable("python"),
+  python = python_debug_ready,
   delve = has_executable("go"),
 }
+
+if not available_adapters.python then
+  record_unavailable("DAP Python", python_debug_reason)
+end
+
+if not available_adapters.delve then
+  record_unavailable("DAP Go", "missing go")
+end
 
 local ensure_adapters = {}
 
@@ -940,12 +1081,26 @@ vim.fn.sign_define("DapBreakpointRejected", {
   texthl = "DiagnosticError",
 })
 
+-- Avoid starting a session without a configuration for this filetype.
+local debug_continue = guarded_action("Debug", function()
+  if dap.session() then
+    return true
+  end
+
+  local configurations = dap.configurations[vim.bo.filetype]
+
+  return configurations ~= nil and #configurations > 0,
+    "no debug configuration for filetype " .. vim.bo.filetype
+end, function()
+  dap.continue()
+end)
+
 --
 -- [ DEBUGGING KEYBINDINGS ]
 --
 
 -- Launch a session or resume execution.
-vim.keymap.set("n", "<leader>dc", dap.continue, {
+vim.keymap.set("n", "<leader>dc", debug_continue, {
   desc = "Debug: start / continue",
 })
 
@@ -1061,6 +1216,25 @@ local treesitter_languages = {
   "query",
 }
 
+local treesitter_missing = missing_commands({ "curl", "tar" })
+
+if not first_executable({ "cc", "gcc", "clang", "cl", "zig" }) then
+  treesitter_missing[#treesitter_missing + 1] = "C compiler"
+end
+
+if vim.fn.has("nvim-0.12") == 1 and not has_executable("tree-sitter") then
+  treesitter_missing[#treesitter_missing + 1] = "tree-sitter"
+end
+
+local can_install_parsers = #treesitter_missing == 0
+
+if not can_install_parsers then
+  record_unavailable(
+    "Treesitter automatic installation",
+    "missing " .. table.concat(treesitter_missing, ", ")
+  )
+end
+
 if vim.fn.has("nvim-0.12") == 1 then
   -- Neovim 0.12+: use the rewritten main-branch API.
   local treesitter = require("nvim-treesitter")
@@ -1068,7 +1242,9 @@ if vim.fn.has("nvim-0.12") == 1 then
   treesitter.setup({})
 
   -- Install missing parsers asynchronously.
-  treesitter.install(treesitter_languages)
+  if can_install_parsers then
+    treesitter.install(treesitter_languages)
+  end
 
   -- Enable highlighting when a file is opened.
   vim.api.nvim_create_autocmd("FileType", {
@@ -1087,7 +1263,7 @@ if vim.fn.has("nvim-0.12") == 1 then
 else
   -- Neovim 0.11: use the legacy master-branch API.
   require("nvim-treesitter.configs").setup({
-    ensure_installed = treesitter_languages,
+    ensure_installed = can_install_parsers and treesitter_languages or {},
     sync_install = false,
     auto_install = false,
 
@@ -1135,6 +1311,49 @@ require("telescope").load_extension("repo")
 -- Load Telescope's built-in search pickers.
 local pickers = require("telescope.builtin")
 
+local function check_ripgrep()
+  return has_executable("rg"), "install ripgrep (rg)"
+end
+
+if not has_executable("rg") then
+  record_unavailable("Telescope content search", "missing rg")
+end
+
+local search_word = guarded_action("Search current word", check_ripgrep, function()
+  pickers.grep_string()
+end)
+
+local search_grep = guarded_action("Search file contents", check_ripgrep, function()
+  pickers.live_grep()
+end)
+
+if not has_executable("man") then
+  record_unavailable("Manual-page search", "missing man")
+end
+
+local search_manuals = guarded_action("Search manuals", function()
+  return has_executable("man"), "install man and manual pages"
+end, function()
+  pickers.man_pages()
+end)
+
+-- Keep indexed repository discovery optional.
+local function locate_command()
+  return first_executable({ "plocate", "locate", "glocate" })
+end
+
+if not locate_command() then
+  record_unavailable("Repository search", "missing plocate, locate, or glocate")
+end
+
+local search_repositories = guarded_action("Search repositories", function()
+  return locate_command() ~= nil, "install a locate implementation and populate its database"
+end, function()
+  require("telescope").extensions.repo.cached_list({
+    bin = locate_command(),
+  })
+end)
+
 vim.keymap.set("n", "<leader>t", "<cmd>Telescope<CR>", {
   desc = "Open Telescope",
 })
@@ -1155,12 +1374,12 @@ vim.keymap.set("n", "<leader>sf", pickers.find_files, {
 })
 
 -- Search for the word under the cursor.
-vim.keymap.set("n", "<leader>sw", pickers.grep_string, {
+vim.keymap.set("n", "<leader>sw", search_word, {
   desc = "Search current word",
 })
 
 -- Search file contents interactively.
-vim.keymap.set("n", "<leader>sg", pickers.live_grep, {
+vim.keymap.set("n", "<leader>sg", search_grep, {
   desc = "Search by grep",
 })
 
@@ -1175,14 +1394,12 @@ vim.keymap.set("n", "<leader>sh", pickers.help_tags, {
 })
 
 -- Search available system manual pages.
-vim.keymap.set("n", "<leader>sm", pickers.man_pages, {
+vim.keymap.set("n", "<leader>sm", search_manuals, {
   desc = "Search manuals",
 })
 
 -- Find repositories using the system's filesystem index.
-vim.keymap.set("n", "<leader>sR", function()
-  require("telescope").extensions.repo.cached_list()
-end, {
+vim.keymap.set("n", "<leader>sR", search_repositories, {
   desc = "Search repositories",
 })
 
@@ -1500,6 +1717,7 @@ vim.api.nvim_create_user_command("PluginsUpdate", function()
     force = true,
   })
 end, {
+  nargs = 0,
   desc = "Update all plugins without confirmation",
 })
 
@@ -1530,16 +1748,12 @@ starter.setup({
     },
     {
       name = "Grep project",
-      action = function()
-        require("telescope.builtin").live_grep()
-      end,
+      action = search_grep,
       section = "Search",
     },
     {
       name = "Repositories",
-      action = function()
-        require("telescope").extensions.repo.cached_list()
-      end,
+      action = search_repositories,
       section = "Search",
     },
     {
