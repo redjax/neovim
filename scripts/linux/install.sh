@@ -237,11 +237,19 @@ if [[ $SKIP_DEPS == 0 ]]; then
 	install_tree_sitter
 
 	for group in "${WITH[@]}"; do
-		if [[ $group == font ]]; then
+		case "$group" in
+		font)
 			install_font
-		else
+			;;
+
+		uv)
+			install_uv
+			;;
+
+		*)
 			install_group "$group"
-		fi
+			;;
+		esac
 	done
 fi
 

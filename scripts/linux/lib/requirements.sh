@@ -140,10 +140,6 @@ packages_for() {
 		echo "fzf"
 		;;
 
-	uv:*)
-		echo "uv"
-		;;
-
 	flatpak:*)
 		echo "flatpak"
 		;;

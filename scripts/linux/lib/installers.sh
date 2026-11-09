@@ -118,6 +118,47 @@ version_at_least() {
 
 }
 
+install_uv() (
+	set -eo pipefail
+
+	if has uv; then
+		log "uv already installed: $(uv --version)"
+		return 0
+	fi
+
+	if [[ $BACKEND == brew ]]; then
+		install_packages uv
+		return 0
+	fi
+
+	if [[ ${DRY_RUN:-0} == 1 ]]; then
+		log "Would install uv using Astral's official installer into $BIN_DIR."
+		return 0
+	fi
+
+	need curl
+
+	local tmp
+
+	tmp="$(mktemp -d)"
+	trap 'rm -rf -- "$tmp"' EXIT
+
+	log "Downloading Astral's uv installer"
+
+	curl -fLsS --retry 3 \
+		https://astral.sh/uv/install.sh \
+		-o "$tmp/install-uv.sh"
+
+	log "Installing uv into $BIN_DIR"
+
+	env \
+		UV_INSTALL_DIR="$BIN_DIR" \
+		UV_NO_MODIFY_PATH=1 \
+		sh "$tmp/install-uv.sh"
+
+	"$BIN_DIR/uv" --version
+)
+
 install_tree_sitter() (
 	set -eo pipefail
 
