@@ -22,11 +22,11 @@ need() {
 }
 
 run() {
-	printf '+' >&2
-	printf ' %q' "$@" >&2
-	printf '\n' >&2
-
-	if [[ ${DRY_RUN:-0} == 0 ]]; then
+	if [[ ${DRY_RUN:-0} == 1 ]]; then
+		printf '[DRY RUN]' >&2
+		printf ' %q' "$@" >&2
+		printf '\n' >&2
+	else
 		"$@"
 	fi
 }

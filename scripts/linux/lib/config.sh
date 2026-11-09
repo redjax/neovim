@@ -29,11 +29,11 @@ link_configs() {
 	(
 		## Names are unique to this subshell and do not replace common.sh's run().
 		link_run() {
-			printf '+' >&2
-			printf ' %q' "$@" >&2
-			printf '\n' >&2
-
-			if [[ $dry_run == 0 ]]; then
+			if [[ $dry_run == 1 ]]; then
+				printf '[DRY RUN]' >&2
+				printf ' %q' "$@" >&2
+				printf '\n' >&2
+			else
 				"$@"
 			fi
 		}
