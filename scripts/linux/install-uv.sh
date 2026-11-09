@@ -1,23 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if command -v uv >/dev/null 2>&1; then
-	echo "uv is already installed."
-	exit 0
-fi
+set -eo pipefail
 
-if command -v curl >/dev/null 2>&1; then
-	echo "Installing uv"
-	curl -LsSf https://astral.sh/uv/install.sh | sh
-	if [[ $? -ne 0 ]]; then
-		echo "[ERROR] Failed to install uv."
-	fi
-elif command -v wget >/dev/null 2>&1; then
-	echo "Installing uv"
-	wget -qO- https://astral.sh/uv/install.sh | sh
-	if [[ $? -ne 0 ]]; then
-		echo "[ERROR] Failed to install uv."
-	fi
-else
-	echo "[ERROR] Missing both curl & wget. Install one or both and try again."
-	exit 1
+SCRIPT_DIR="$(
+	cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &&
+		pwd -P
+)"
+
+if ! exec bash "$SCRIPT_DIR/install.sh" \
+	--deps-only \
+	--with uv \
+	"$@" 2>&1; then
+	errexit "Failed installing Uv."
 fi

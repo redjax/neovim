@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LIB_DIR="${THIS_DIR}/lib"
+set -eo pipefail
 
-## Source lib scripts
-. "${LIB_DIR}/path.sh"
-. "${LIB_DIR}/install-depends.sh"
+SCRIPT_DIR="$(
+	cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &&
+		pwd -P
+)"
 
-## Call the Neovide installation function
-install_neovide
-exit $?
+if ! exec bash "$SCRIPT_DIR/install.sh" \
+	--deps-only \
+	--with neovide \
+	"$@" 2>&1; then
+	errexit "[ERROR] Failed installing Neovide"
+fi

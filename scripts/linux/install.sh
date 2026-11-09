@@ -1,239 +1,366 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# REPO_ROOT=$(realpath -m "${THIS_DIR}/../../..")
-LIB_DIR="${THIS_DIR}/lib"
+set -eo pipefail
 
-## Source lib scripts
+SCRIPT_DIR="$(
+	cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &&
+		pwd -P
+)"
 
-# shellcheck source=path.sh
-. "${LIB_DIR}/path.sh"
-# shellcheck source=utils.sh
-. "${LIB_DIR}/utils.sh"
-# shellcheck source=depends.sh
-. "${LIB_DIR}/install-depends.sh"
-# shellcheck source=config.sh
-. "${LIB_DIR}/config.sh"
+# shellcheck source=lib/common.sh
+. "$SCRIPT_DIR/lib/common.sh"
 
-## Set path where script was called from
-CWD=$(pwd)
+# shellcheck source=lib/requirements.sh
+. "$SCRIPT_DIR/lib/requirements.sh"
 
-## Neovim dependency packages installable with dnf
-declare -a NVIM_DNF_DEPENDENCIES=(
-	"ripgrep"
-	"xclip"
-	"git"
-	"fzf"
-	"wl-clipboard"
-	"openssl-devel"
-	"lua-devel"
-	"luarocks"
-	"fd-find"
-)
+# shellcheck source=lib/config.sh
+. "$SCRIPT_DIR/lib/config.sh"
 
-## Neovim dependency packages installable with apt
-declare -a NVIM_APT_DEPENDENCIES=(
-	"build-essential"
-	"ripgrep"
-	"xclip"
-	"wl-clipboard"
-	"git"
-	"fzf"
-	"libssl-dev"
-	"liblua5.1-0-dev"
-	"luarocks"
-	"fd-find"
-)
+# shellcheck source=lib/installers.sh
+. "$SCRIPT_DIR/lib/installers.sh"
 
-## Arg defaults
-DEBUG=0
-# APPIMG=0
-BUILD_DIR="$(pwd)/build"
-# DEST="${HOME}/.config"
-CREATE_SYMLINKS=0
+METHOD="auto"
+REF="stable"
 
-## Parse args
+DRY_RUN=0
+SKIP_DEPS=0
+DEPS_ONLY=0
+
+LINK_CONFIGS=1
+BACKUP_CONFIGS=0
+
+MIN_NVIM="${MIN_NVIM:-0.12.0}"
+
+WITH=()
+
+usage() {
+	cat <<'EOF'
+Usage: install.sh [OPTIONS]
+
+Default: Homebrew -> supported native package repository -> source.
+Installs core tools, Tree-sitter CLI, Neovim, and links config profiles.
+
+Options:
+  --from-source           Force a source build
+  --flatpak               Force Flatpak (Linux)
+  --appimage, --appimg    Force AppImage (Linux)
+
+  --ref REF               Git tag/branch for source builds (default: stable)
+  --build-dir DIR         Temporary source-build parent directory
+  --prefix DIR            Source installation prefix. Default: ~/.local/opt/neovim
+
+  --with GROUP            Add optional dependencies. Can be passed multiple times
+  --deps-only             Install dependencies, but not Neovim or config links
+  --skip-deps             Do not install dependencies or Tree-sitter CLI
+
+  --no-symlink            Do not link configuration profiles
+  --backup-configs        Move conflicting config paths aside before linking
+  --config-source DIR     Repository profile directory
+
+  --dry-run               Print changes without making them
+  --debug, -D             Enable Bash tracing
+  -h, --help              Show help
+
+Dependency groups (--with <group>):
+  search
+  shell
+  node
+  go
+  python
+  powershell
+  rust
+  clipboard
+  repos
+  font
+  neovide
+  fzf
+  uv
+  fuse
+
+Environment:
+  MIN_NVIM
+  TREE_SITTER_RELEASE
+  NVIM_RELEASE
+  GITHUB_TOKEN
+  BIN_DIR
+  CONFIG_SOURCE
+  BUILD_DIR
+  PREFIX
+  XDG_CONFIG_HOME
+  XDG_DATA_HOME
+  XDG_CACHE_HOME
+
+Package availability depends on configured repositories.
+
+No repositories are added automatically, except user Flathub when
+--flatpak is explicitly requested.
+EOF
+}
+
+select_method() {
+	[[ $METHOD == auto ]] ||
+		errexit "Choose only one installation-method override."
+
+	METHOD=$1
+}
+
 while [[ $# -gt 0 ]]; do
 	case "$1" in
-	--debug | -D)
-		DEBUG=1
+	--from-source)
+		select_method source
 		shift
 		;;
-	--appimg)
-		INSTALL_NVIM_APPIMG=1
+
+	--flatpak)
+		select_method flatpak
 		shift
 		;;
-	--build-dir)
-		BUILD_DIR="$2"
+
+	--appimage | --appimg)
+		select_method appimage
+		shift
+		;;
+
+	--ref)
+		require_value "$@"
+		REF=$2
 		shift 2
 		;;
-	# --dest)
-	#     DEST="$2"
-	#     shift 2
-	#     ;;
-	--symlink | -S)
-		CREATE_SYMLINKS=1
+
+	--build-dir)
+		require_value "$@"
+		BUILD_DIR=$2
+		shift 2
+		;;
+
+	--prefix)
+		require_value "$@"
+		PREFIX=$2
+		shift 2
+		;;
+
+	--config-source)
+		require_value "$@"
+		CONFIG_SOURCE=$2
+		shift 2
+		;;
+
+	--with)
+		require_value "$@"
+
+		case "$2" in
+		search | shell | node | go | python | powershell | rust | \
+			clipboard | repos | font | neovide | fzf | uv | fuse)
+			WITH+=("$2")
+			;;
+
+		*)
+			errexit "Unknown dependency group: $2"
+			;;
+		esac
+
+		shift 2
+		;;
+
+	--deps-only)
+		DEPS_ONLY=1
+		LINK_CONFIGS=0
 		shift
 		;;
+
+	--skip-deps)
+		SKIP_DEPS=1
+		shift
+		;;
+
+	--no-symlink)
+		LINK_CONFIGS=0
+		shift
+		;;
+
+	--backup-configs)
+		BACKUP_CONFIGS=1
+		shift
+		;;
+
+	--dry-run)
+		DRY_RUN=1
+		shift
+		;;
+
+	--debug | -D)
+		set -x
+		shift
+		;;
+
+	-h | --help)
+		usage
+		exit 0
+		;;
+
 	*)
-		echo "Unknown option: $1"
-		exit 1
+		errexit "Unknown option: $1"
 		;;
 	esac
 done
 
-if [[ $DEBUG -eq 1 ]]; then
-	echo "DEBUG logging enabled"
+[[ $OS == Linux || $OS == Darwin ]] ||
+	errexit "This installer supports Linux and macOS; Windows needs a separate installer."
+
+[[ $PREFIX == /* &&
+	$BUILD_DIR == /* &&
+	$BIN_DIR == /* ]] ||
+	errexit "Use absolute prefix, build, and binary paths."
+
+[[ $SKIP_DEPS == 0 || ${#WITH[@]} == 0 ]] ||
+	errexit "--skip-deps cannot be combined with --with."
+
+if [[ $LINK_CONFIGS == 1 && $DEPS_ONLY == 0 ]]; then
+	[[ -d $CONFIG_SOURCE ]] ||
+		errexit "Config source not found: $CONFIG_SOURCE"
 fi
 
-## Path for .config directory
-DOTCONFIG_DIR="${HOME}/.config"
+export PATH="$BIN_DIR:$PATH"
 
-## Path to neovim configuration directory src in this repository
-# NVIM_CONFIG_SRC="${CWD}/config"
+log "Platform: $OS / $ARCH; dependency backend: ${BACKEND:-none}"
 
-## Determine the OS type
-OS_TYPE=$(uname -s)
-
-## Detect container environment
-#  Set CONTAINER_ENV=1 to enable
-CONTAINER_ENV=${CONTAINER_ENV:-0}
-
-## Set build directory for building from source
-NEOVIM_MAKE_BUILD_DIR=$BUILD_DIR
-
-## If $INSTALL_NVIM_APPIMG=1, add FUSE dependency
-if [[ ${INSTALL_NVIM_APPIMG} -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
-	echo "Neovim will be installed by AppImage. Install FUSE dependency."
-	if [[ ! " ${NVIM_DNF_DEPENDENCIES[*]} " =~ " fuse " ]]; then
-		## Add "fuse" to dnf dependencies
-		NVIM_DNF_DEPENDENCIES+=("fuse")
+# Install the shared requirements before selecting/installing Neovim.
+if [[ $SKIP_DEPS == 0 ]]; then
+	if [[ -n $BACKEND ]]; then
+		install_group core
 	fi
 
-	if [[ ! " ${NVIM_APT_DEPENDENCIES[*]} " =~ " fuse " ]]; then
-		echo "Neovim will be installed by AppImage. Install FUSE dependency."
-		## Add "fuse" to apt dependencies
-		NVIM_APT_DEPENDENCIES+=("fuse")
-	fi
+	check_core
+	install_tree_sitter
+
+	for group in "${WITH[@]}"; do
+		if [[ $group == font ]]; then
+			install_font
+		else
+			install_group "$group"
+		fi
+	done
 fi
 
-if [[ $DEBUG -eq 1 ]]; then
-	echo "[DEBUG] CWD: $CWD"
-	echo "[DEBUG] OS_TYPE: $OS_TYPE"
-	echo "[DEBUG] CONTAINER_ENV: $CONTAINER_ENV"
-	echo "[DEBUG] NEOVIM_MAKE_BUILD_DIR: $NEOVIM_MAKE_BUILD_DIR"
-fi
-
-## Create build directory
-if [[ ! -d $NEOVIM_MAKE_BUILD_DIR ]]; then
-	echo "Creating build path: ${NEOVIM_MAKE_BUILD_DIR}"
-	mkdir -pv "${NEOVIM_MAKE_BUILD_DIR}"
-fi
-
-function main() {
-	echo ""
-	echo "[ Install Neovim Configuration - ${OS_FAMILY} ($CPU_ARCH) (release: ${OS_RELEASE}, version: ${OS_VERSION}) ]"
-	echo ""
-
-	print_platform
-
-	echo "-- [ Install dependencies"
-	## Install neovim dependencies
-	if [[ ${PKG_MGR} == "dnf" ]]; then
-		# echo "[DEBUG] Would install dependencies with $PKG_MGR"
-		install_dependencies_dnf NVIM_DNF_DEPENDENCIES
-	elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
-		# echo "[DEBUG] Would install dependencies with $PKG_MGR"
-		install_dependencies_apt NVIM_APT_DEPENDENCIES
-	else
-		print_unsupported_platform
-		# sleep 6
-		exit 1
-	fi
-	eval_last $?
-
-	## Ensure script dependencies are installed
-	check_system_dependencies
-	eval_last $?
-
-	# if [[ -d $NVIM_CONFIG_DIR ]]; then
-	#     if [[ ! -L $NVIM_CONFIG_DIR ]];
-	#         then echo "[WARNING] Existing neovim configuration detected at $NVIM_CONFIG_DIR. Moving to $NVIM_CONFIG_DIR.bak"
-
-	#         mv $NVIM_CONFIG_DIR "${NVIM_CONFIG_DIR}.bak"
-	#     else
-	#         echo "Existing neovim configuration is a symlink. Removing link, it will be recreated by the script."
-	#         rm "${NVIM_CONFIG_DIR}"
-	#     fi
-	# fi
-	# eval_last $?
-
-	echo "--[ Install NERDFont"
-	## Install NERDFont
-	# echo "[DEBUG] Would install Nerd Fonts"
-	install_nerdfont
-
-	if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
-		# echo "[DEBUG] Would install nvim from appimg"
-		## Install neovim appimg from github
-		echo "--[ Install Neovim AppImage"
-		install_neovim_appimg
-	else
-		echo "--[ Install Neovim from source"
-		# echo "[DEBUG] Would install nvim from source"
-		## Install neovim from source
-		install_neovim_source
-	fi
-
-	eval_last $?
-
-	echo "--[ Symlink configurations"
-	## Symlink neovim configuration
-	if [[ $CREATE_SYMLINKS -eq 1 ]]; then
-		mapfile -t REPO_CONFIGS < <(detect_repo_configs)
-		symlink-config REPO_CONFIGS
-	fi
-}
-
-if command -v nvim >/dev/null 2>&1; then
-	echo "Neovim is already installed. Reinstalling Neovim from source or appimage, then linking config."
-
-	# Reinstall neovim (update it)
-	if [[ $INSTALL_NVIM_APPIMG -eq 1 || $INSTALL_NVIM_APPIMG == "1" ]]; then
-		install_neovim_appimg
-	else
-		install_neovim_source
-	fi
-	eval_last $?
-
-	mapfile -t REPO_CONFIGS < <(detect_repo_configs)
-	symlink-config "${REPO_CONFIGS[@]}"
-
-	# Install deps again (in case Neovim version changed)
-	if [[ ${PKG_MGR} == "dnf" ]]; then
-		install_dependencies_dnf
-	elif [[ ${PKG_MGR} == "apt" || $PKG_MGR == "apt-get" ]]; then
-		install_dependencies_apt
-	fi
-else
-	main
-fi
-
-LAST_EXIT=$?
-if [[ ! $LAST_EXIT -eq 0 ]]; then
-	echo "[WARNING] Script exited with non-zero exit code: $LAST_EXIT"
-	# sleep 6
-	exit $LAST_EXIT
-else
-	echo ""
-	echo "--[ Finished installing & configuring Neovim."
-	echo ""
-	echo "    Neovim configurations were installed to: $DOTCONFIG_DIR"
-	echo "    To use a specific configuration, run NVIM_APPNAME=nvim-\$config_name nvim"
-	echo ""
-	echo "    For example, to use the 'nvim-noplugins' profile, run:"
-	echo "      NVIM_APPNAME=nvim-noplugins nvim"
-	echo ""
-
+if [[ $DEPS_ONLY == 1 ]]; then
+	log "Dependency installation complete."
 	exit 0
+fi
+
+# Automatic selection is based on available tools and repositories.
+if [[ $METHOD == auto ]]; then
+	if has brew; then
+		METHOD="brew"
+	elif [[ -n $NATIVE_PM ]]; then
+		BACKEND="$NATIVE_PM"
+
+		refresh_packages
+
+		if [[ $DRY_RUN == 1 ]]; then
+			log "Dry run: testing package availability against current local metadata."
+		fi
+
+		if package_available neovim; then
+			METHOD="package"
+		else
+			METHOD="source"
+		fi
+	else
+		METHOD="source"
+	fi
+fi
+
+log "Neovim installation method: $METHOD"
+
+NVIM_CHECK=""
+
+case "$METHOD" in
+brew)
+	run brew install neovim
+
+	if [[ $DRY_RUN == 0 ]]; then
+		NVIM_CHECK="$(brew --prefix neovim)/bin/nvim"
+	fi
+	;;
+
+package)
+	install_packages neovim
+	hash -r
+
+	NVIM_CHECK="$(command -v nvim || true)"
+	;;
+
+source)
+	install_source "${REF}"
+	NVIM_CHECK="$BIN_DIR/nvim"
+	;;
+
+appimage)
+	install_appimage
+	NVIM_CHECK="$BIN_DIR/nvim"
+	;;
+
+flatpak)
+	install_flatpak
+	;;
+esac
+
+# Verify the installed version before linking configurations.
+if [[ $DRY_RUN == 0 ]]; then
+	if [[ $METHOD == flatpak ]]; then
+		VERSION="$(
+			flatpak run io.neovim.nvim --version |
+				head -n 1
+		)"
+	else
+		[[ -n $NVIM_CHECK ]] ||
+			errexit "Installation returned without a usable nvim executable."
+
+		VERSION="$(
+			"$NVIM_CHECK" --version |
+				head -n 1
+		)"
+	fi
+
+	VERSION=${VERSION#NVIM v}
+
+	version_at_least "$VERSION" "$MIN_NVIM" ||
+		errexit "Installed Neovim $VERSION is below $MIN_NVIM. Use --from-source --ref <suitable-tag-or-branch>; no implicit method switch was made."
+
+	log "Verified Neovim: $VERSION"
+fi
+
+## Flatpak uses a separate configuration root.
+if [[ $LINK_CONFIGS == 1 ]]; then
+	if [[ $METHOD == flatpak ]]; then
+		link_configs \
+			"$HOME/.var/app/io.neovim.nvim/config" \
+			"$BACKUP_CONFIGS" \
+			"$DRY_RUN"
+	else
+		link_configs \
+			"$CONFIG_HOME" \
+			"$BACKUP_CONFIGS" \
+			"$DRY_RUN"
+	fi
+fi
+
+log "Finished."
+
+if [[ $METHOD == flatpak ]]; then
+	log "Launch: flatpak run --env=NVIM_APPNAME=nvim-noplugins io.neovim.nvim"
+
+	warn "Flatpak tools and permissions are sandboxed; host runtimes may not be visible."
+else
+	log "Launch: NVIM_APPNAME=nvim-noplugins nvim"
+
+	log "For user installs, ensure $BIN_DIR is on your shell PATH. No shell files were changed."
+
+	if [[ $DRY_RUN == 0 ]]; then
+		log "This shell resolves nvim to: $(command -v nvim || true)"
+		log "Installation checked using: $NVIM_CHECK"
+
+		[[ $(command -v nvim || true) == "$NVIM_CHECK" ]] ||
+			warn "Another installation may shadow the selected installation. Check: type -a nvim"
+	fi
 fi

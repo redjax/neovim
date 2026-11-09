@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LIB_DIR="${THIS_DIR}/lib"
+set -eo pipefail
 
-## Source lib scripts
-. "${LIB_DIR}/path.sh"
-. "${LIB_DIR}/install-depends.sh"
+SCRIPT_DIR="$(
+	cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &&
+		pwd -P
+)"
 
-## Call the tree-sitter installation function
-install_treesitter
-exit $?
+if ! exec bash "$SCRIPT_DIR/install.sh" \
+	--deps-only \
+	"$@" 2>&1; then
+	errexit "Failed installing tree-sitter-cli"
+fi

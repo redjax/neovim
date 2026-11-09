@@ -23,20 +23,27 @@ CONFIG_DIR="${REPO_ROOT}/config"
 
 ## Discover profiles that use lazy.nvim (have a lazy-lock.json)
 discover_lazy_profiles() {
-	local profiles=()
-	for d in "$CONFIG_DIR"/*/; do
-		[[ -d "$d" ]] && [[ -f "$d/lazy-lock.json" ]] && profiles+=("$(basename "$d")")
+	local directory
+
+	for directory in "$CONFIG_DIR"/*/; do
+		[[ -d $directory ]] || continue
+		[[ -f "$directory/lazy-lock.json" ]] || continue
+
+		directory=${directory%/}
+		printf '%s\n' "${directory##*/}"
 	done
-	echo "${profiles[@]}"
 }
 
 ## Discover all valid profiles (for validation)
 discover_all_profiles() {
-	local profiles=()
-	for d in "$CONFIG_DIR"/*/; do
-		[[ -d "$d" ]] && profiles+=("$(basename "$d")")
+	local directory
+
+	for directory in "$CONFIG_DIR"/*/; do
+		[[ -d $directory ]] || continue
+
+		directory=${directory%/}
+		printf '%s\n' "${directory##*/}"
 	done
-	echo "${profiles[@]}"
 }
 
 ## Temp array for user-supplied profiles
@@ -47,6 +54,11 @@ while [[ $# -gt 0 ]]; do
 	key="$1"
 	case $key in
 	-p | --profile)
+		if [[ -z ${2:-} || $2 == -* ]]; then
+			echo "[ERROR] $1 requires a profile name." >&2
+			exit 1
+		fi
+
 		USER_PROFILES+=("$2")
 		shift 2
 		;;
@@ -65,22 +77,35 @@ while [[ $# -gt 0 ]]; do
 done
 
 ## Use user profiles if provided, otherwise discover from config/
+PROFILES=()
+
 if [[ ${#USER_PROFILES[@]} -gt 0 ]]; then
-	ALL_PROFILES=($(discover_all_profiles))
-	PROFILES=()
-	for up in "${USER_PROFILES[@]}"; do
+	ALL_PROFILES=()
+
+	while IFS= read -r profile; do
+		ALL_PROFILES+=("$profile")
+	done < <(discover_all_profiles)
+
+	for requested_profile in "${USER_PROFILES[@]}"; do
 		found=0
-		for ap in "${ALL_PROFILES[@]}"; do
-			[[ "$up" == "$ap" ]] && found=1 && break
+
+		for available_profile in "${ALL_PROFILES[@]}"; do
+			if [[ $requested_profile == "$available_profile" ]]; then
+				found=1
+				break
+			fi
 		done
+
 		if [[ $found -eq 1 ]]; then
-			PROFILES+=("$up")
+			PROFILES+=("$requested_profile")
 		else
-			echo "[WARNING] Profile '$up' not found in ${CONFIG_DIR}, skipping."
+			echo "[WARNING] Profile '$requested_profile' not found in ${CONFIG_DIR}, skipping."
 		fi
 	done
 else
-	PROFILES=($(discover_lazy_profiles))
+	while IFS= read -r profile; do
+		PROFILES+=("$profile")
+	done < <(discover_lazy_profiles)
 fi
 
 if [[ ${#PROFILES[@]} -eq 0 ]]; then

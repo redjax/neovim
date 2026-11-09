@@ -1,41 +1,74 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LIB_DIR="${SCRIPT_DIR}/lib"
+SCRIPT_DIR="$(
+	cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &&
+		pwd -P
+)"
 
-. "${LIB_DIR}/path.sh"
-. "${LIB_DIR}/config.sh"
+# shellcheck source=lib/common.sh
+. "$SCRIPT_DIR/lib/common.sh"
 
-CWD=$(pwd)
-DEBUG=${DEBUG:-0}
-DOTCONFIG_DIR="${HOME}/.config"
+# shellcheck source=lib/config.sh
+. "$SCRIPT_DIR/lib/config.sh"
 
-if [[ $DEBUG -eq 1 ]]; then
-	echo "[DEBUG] Script directory: ${SCRIPT_DIR}"
-	echo "[DEBUG] CWD: ${CWD}"
-	echo "[DEBUG] Config directory: ${DOTCONFIG_DIR}"
-fi
+DRY_RUN=0
+BACKUP_CONFIGS=0
 
-if [[ ! -d "${CWD}/config" ]]; then
-	echo "[ERROR] Could not find directory 'config/' at path: ${CWD}"
-	exit 1
-fi
+TARGET="$CONFIG_HOME"
 
-REPO_CONFIGS=($(detect_repo_configs))
+usage() {
+	cat <<'EOF'
+Usage: symlink-config.sh [OPTIONS]
 
-echo "Found [${#REPO_CONFIGS[@]}] configurations:"
-for c in "${REPO_CONFIGS[@]}"; do
-	echo "  - $c"
+Options:
+  --dry-run              Describe changes without making them
+  --backup-configs       Move conflicting paths aside before linking
+  --flatpak              Link into Flatpak's configuration directory
+  --config-source DIR    Override the repository profile directory
+  -h, --help             Show this help
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+	--dry-run)
+		DRY_RUN=1
+		shift
+		;;
+
+	--backup-configs)
+		BACKUP_CONFIGS=1
+		shift
+		;;
+
+	--flatpak)
+		TARGET="$HOME/.var/app/io.neovim.nvim/config"
+		shift
+		;;
+
+	--config-source)
+		require_value "$@"
+		CONFIG_SOURCE=$2
+		shift 2
+		;;
+
+	-h | --help)
+		usage
+		exit 0
+		;;
+
+	*)
+		errexit "Unknown option: $1"
+		;;
+	esac
 done
 
-symlink-config REPO_CONFIGS
+[[ -d $CONFIG_SOURCE ]] ||
+	errexit "Config source not found: $CONFIG_SOURCE"
 
-echo ""
-echo "Finished linking Neovim configurations."
-echo ""
-echo "To launch a specific config, use:"
-echo "  NVIM_APPNAME=\$nvim_conf nvim"
-echo "  i.e. NVIM_APPNAME=nvim-noplugins nvim"
-echo ""
+link_configs "$TARGET" "$BACKUP_CONFIGS" "$DRY_RUN"
+
+log "Finished linking configurations."
+log "Example: NVIM_APPNAME=nvim-noplugins nvim"
