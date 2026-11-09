@@ -204,6 +204,14 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
+printf '[DEBUG] script=%q OS=%q uname=%q\n' \
+	"${BASH_SOURCE[0]}" \
+	"${OS-UNSET}" \
+	"$(uname -s)" >&2
+
+[[ $OS == Linux || $OS == Darwin ]] ||
+	die "This installer supports Linux and macOS; Windows needs a separate installer."
+
 [[ $OS == Linux || $OS == Darwin ]] ||
 	errexit "This installer supports Linux and macOS; Windows needs a separate installer."
 

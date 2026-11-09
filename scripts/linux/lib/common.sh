@@ -62,15 +62,23 @@ REPO_ROOT="$(
 )"
 
 CONFIG_SOURCE="${CONFIG_SOURCE:-$REPO_ROOT/config}"
-# CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-# DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+## Shared setting consumed by scripts that source this library.
+# shellcheck disable=SC2034
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+## Shared setting consumed by scripts that source this library.
+# shellcheck disable=SC2034
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 BIN_DIR="${BIN_DIR:-$HOME/.local/bin}"
 BUILD_DIR="${BUILD_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/neovim-installer}"
 PREFIX="${PREFIX:-$HOME/.local/opt/neovim}"
 
-# OS="$(uname -s)"
-# ARCH="$(uname -m)"
+## Shared setting consumed by scripts that source this library.
+# shellcheck disable=SC2034
+OS="$(uname -s)"
+## Shared setting consumed by scripts that source this library.
+# shellcheck disable=SC2034
+ARCH="$(uname -m)"
 
 ## Native package backends supported by this installer.
 NATIVE_PM=""
