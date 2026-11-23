@@ -100,7 +100,9 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
 
 -- Set the target width for formatting and automatic text wrapping.
-vim.opt.textwidth = 80
+-- Default: 80
+-- Use 0 to skip automatic line breaks
+vim.opt.textwidth = 0
 
 -- File encoding
 if vim.g.platform == "windows" then
