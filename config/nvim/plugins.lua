@@ -69,7 +69,7 @@ vim.api.nvim_create_user_command("ConfigTools", function()
 
   vim.notify(
     #lines == 0 and "No optional features were skipped during setup."
-    or "Unavailable optional features:\n" .. table.concat(lines, "\n"),
+      or "Unavailable optional features:\n" .. table.concat(lines, "\n"),
     vim.log.levels.INFO
   )
 end, {
@@ -100,6 +100,10 @@ vim.filetype.add({
     jinja2 = "jinja",
   },
 })
+
+-- Add languages to treesitter
+vim.treesitter.language.register("yaml", "yaml.ansible")
+vim.treesitter.language.register("yaml", "yaml.docker-compose")
 
 --
 -- [ PLUGINS ]
@@ -936,7 +940,7 @@ local tools = {
   dockerfmt = {},
   goimports = { "go" },
   prettier = { "node", "npm" },
-  sqlfluff = { "python3" },
+  ["sql-formatter"] = { "node", "npm" },
   ["markdown-toc"] = { "node", "npm" },
 
   -- Linters.
@@ -967,7 +971,7 @@ require("mason-tool-installer").setup({
 -- Report skipped servers only when requested.
 vim.api.nvim_create_user_command("LspSkipped", function()
   local message = #skipped_servers == 0 and "No language servers skipped."
-      or "Skipped language servers:\n" .. table.concat(skipped_servers, "\n")
+    or "Skipped language servers:\n" .. table.concat(skipped_servers, "\n")
 
   vim.notify(message, vim.log.levels.INFO)
 end, {
@@ -1008,14 +1012,14 @@ local python_debug_reason = "missing python3 or python"
 if python_command then
   local ok, result = pcall(function()
     return vim
-        .system({
-          python_command,
-          "-c",
-          "import sys; assert sys.version_info.major == 3; import venv, ensurepip",
-        }, {
-          text = true,
-        })
-        :wait(3000)
+      .system({
+        python_command,
+        "-c",
+        "import sys; assert sys.version_info.major == 3; import venv, ensurepip",
+      }, {
+        text = true,
+      })
+      :wait(3000)
   end)
 
   python_debug_ready = ok and result.code == 0
@@ -1119,7 +1123,7 @@ local debug_continue = guarded_action("Debug", function()
   local configurations = dap.configurations[vim.bo.filetype]
 
   return configurations ~= nil and #configurations > 0,
-      "no debug configuration for filetype " .. vim.bo.filetype
+    "no debug configuration for filetype " .. vim.bo.filetype
 end, function()
   dap.continue()
 end)
@@ -1326,7 +1330,7 @@ local formatters_by_ft = {
   toml = { "taplo" },
   dockerfile = { "dockerfmt" },
   markdown = { "markdown-toc" },
-  sql = { "sqlfluff" },
+  sql = { "sql_formatter" },
 }
 
 -- These formatters call programs that Mason does not install.
@@ -1372,7 +1376,7 @@ local function run_linter(name)
   end
 end
 
-vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost" }, {
+vim.api.nvim_create_autocmd({ "BufReadPost", "FileType", "BufWritePost" }, {
   group = plugin_group,
   desc = "Run linters that are not language servers",
   callback = function(event)
@@ -1738,29 +1742,29 @@ local wk = require("which-key")
 
 wk.add({
   -- mini.operators
-  { "gx",    desc = "Exchange text" },
-  { "gX",    desc = "Replace with register" },
-  { "gm",    desc = "Multiply text" },
-  { "gs",    desc = "Sort text" },
-  { "g=",    desc = "Evaluate text" },
+  { "gx", desc = "Exchange text" },
+  { "gX", desc = "Replace with register" },
+  { "gm", desc = "Multiply text" },
+  { "gs", desc = "Sort text" },
+  { "g=", desc = "Evaluate text" },
 
   -- mini.move
-  { "<M-h>", desc = "Move selection left",         mode = { "n", "v" } },
-  { "<M-j>", desc = "Move selection down",         mode = { "n", "v" } },
-  { "<M-k>", desc = "Move selection up",           mode = { "n", "v" } },
-  { "<M-l>", desc = "Move selection right",        mode = { "n", "v" } },
+  { "<M-h>", desc = "Move selection left", mode = { "n", "v" } },
+  { "<M-j>", desc = "Move selection down", mode = { "n", "v" } },
+  { "<M-k>", desc = "Move selection up", mode = { "n", "v" } },
+  { "<M-l>", desc = "Move selection right", mode = { "n", "v" } },
 
   -- mini.pairs
-  { "(",     desc = "Insert matching parentheses", mode = "i" },
-  { "[",     desc = "Insert matching brackets",    mode = "i" },
-  { "{",     desc = "Insert matching braces",      mode = "i" },
-  { '"',     desc = "Insert matching quotes",      mode = "i" },
-  { "'",     desc = "Insert matching quotes",      mode = "i" },
-  { "`",     desc = "Insert matching backticks",   mode = "i" },
+  { "(", desc = "Insert matching parentheses", mode = "i" },
+  { "[", desc = "Insert matching brackets", mode = "i" },
+  { "{", desc = "Insert matching braces", mode = "i" },
+  { '"', desc = "Insert matching quotes", mode = "i" },
+  { "'", desc = "Insert matching quotes", mode = "i" },
+  { "`", desc = "Insert matching backticks", mode = "i" },
 
   -- mini.align
-  { "ga",    desc = "Align text" },
-  { "gA",    desc = "Align text with preview" },
+  { "ga", desc = "Align text" },
+  { "gA", desc = "Align text with preview" },
 })
 
 --
