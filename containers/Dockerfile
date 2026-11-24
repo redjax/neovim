@@ -11,7 +11,7 @@ FROM rust:1.100@sha256:223cc32ddca8f3ee90c436dbc94b6b5f052ea7f9653c5201e9612f08a
 ## Set BASE_IMAGE to test different distros:
 ##   debian:stable-slim, ubuntu:24.04, fedora:42, archlinux:base
 ## -----------------------------------------------------------
-FROM debian:stable-slim@sha256:fbfb4059d2127120aa05b6e6064523d2102552f0cf0026ddf0701c12f1f8f3e0
+FROM debian:stable-slim@sha256:a64d9dbf633e2a2503afac76be521dc25d9b5765150b30d31a3914d4ae969cab
 
 ENV DEBIAN_FRONTEND=noninteractive
 
