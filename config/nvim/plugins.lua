@@ -252,6 +252,11 @@ vim.pack.add({
   {
     src = "https://github.com/jay-babu/mason-nvim-dap.nvim",
   },
+  -- Install Conform for auto-formatting
+  {
+    src = "https://github.com/stevearc/conform.nvim",
+    version = "master",
+  },
 }, {
   -- Install missing plugins without asking for confirmation.
   confirm = false,
@@ -809,6 +814,9 @@ local servers = {
   -- Python completion and analysis.
   pyright = {},
 
+  -- Python linting & formatting
+  ruff = {},
+
   -- Dockerfiles.
   dockerls = {},
 
@@ -1280,6 +1288,29 @@ else
 end
 
 --
+-- [ FORMATTING ]
+--
+
+require("conform").setup({
+  formatters_by_ft = {
+    -- Apply safe lint fixes, sort imports, then format.
+    python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
+  },
+
+  -- Format on save. Falls back to an attached LSP when no formatter is set.
+  format_on_save = {
+    timeout_ms = 1000,
+    lsp_format = "fallback",
+  },
+})
+
+vim.keymap.set({ "n", "x" }, "<leader>f", function()
+  require("conform").format({ async = true, lsp_format = "fallback" })
+end, {
+  desc = "Format buffer",
+})
+
+--
 -- [ HAWTKEYS KEYBIND ERGONOMICS ]
 --
 
@@ -1557,6 +1588,16 @@ require("mini.bracketed").setup({})
 -- Highlight and remove trailing whitespace.
 require("mini.trailspace").setup({})
 
+-- Automatically remove trailing whitepsace in all filetypes
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = plugin_group,
+  desc = "Trim trailing whitespace and blank lines",
+  callback = function()
+    MiniTrailspace.trim()
+    MiniTrailspace.trim_last_lines()
+  end,
+})
+
 -- Visualize indentation scope.
 require("mini.indentscope").setup({
   draw = {
@@ -1635,6 +1676,9 @@ wk.add({
   -- mini.align
   { "ga", desc = "Align text" },
   { "gA", desc = "Align text with preview" },
+
+  -- Format buffer
+  { "<leader>f", desc = "Format buffer", mode = { "n", "x" } },
 })
 
 --
