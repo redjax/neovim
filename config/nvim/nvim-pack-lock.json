@@ -65,7 +65,7 @@
       "src": "https://git.sr.ht/~whynothugo/lsp_lines.nvim"
     },
     "mason-lspconfig.nvim": {
-      "rev": "a338f44149f5673882c32629697d67b0c0547aec",
+      "rev": "761d376b5fbe6b21f659432ffadc1205c660176c",
       "src": "https://github.com/mason-org/mason-lspconfig.nvim",
       "version": "'main'"
     },
@@ -89,7 +89,7 @@
       "version": "'main'"
     },
     "mini.nvim": {
-      "rev": "a321b535c75ca88ba7fddfd8eb5b583fbda50dd6",
+      "rev": "1345d191bb3da9c7b0e977f4387c5761f9bff68d",
       "src": "https://github.com/nvim-mini/mini.nvim",
       "version": "'stable'"
     },
@@ -138,7 +138,7 @@
       "src": "https://github.com/nvim-neotest/nvim-nio"
     },
     "nvim-tree.lua": {
-      "rev": "69eb0c34ed3d836d5a0d92d913b77dd73b054f2f",
+      "rev": "321bc61580fd066b76861c32de3319c3a6d089e7",
       "src": "https://github.com/nvim-tree/nvim-tree.lua",
       "version": "'v1.14.0'"
     },
@@ -193,7 +193,7 @@
       "src": "https://github.com/cljoly/telescope-repo.nvim"
     },
     "telescope.nvim": {
-      "rev": "40aedd8a68c78a656a10a8d62d80c54af59420fb",
+      "rev": "1e1bab730218eaf97fce743be3f56e51075928ac",
       "src": "https://github.com/nvim-telescope/telescope.nvim",
       "version": "'master'"
     },
